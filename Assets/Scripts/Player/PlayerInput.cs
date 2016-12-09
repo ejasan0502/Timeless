@@ -17,7 +17,7 @@ public class PlayerInput : MonoBehaviour {
     }
     void Start(){
         Camera.main.transform.SetParent(transform);
-        Camera.main.gameObject.AddComponent<CameraControl>();
+        Camera.main.gameObject.AddComponent<BirdEyeCameraControl>();
     }
     void Update(){
         Movement();
