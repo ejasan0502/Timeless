@@ -14,11 +14,29 @@ public class Server : MonoBehaviour {
     private NetSocket socket;
     private NetZoneServer zoneServer;
     private NetZoneManager zoneManager;
+    private NetViewManager netViewManager;
 
-    private void Start() {
+    private static Server _instance;
+    public static Server instance {
+        get {
+            if ( _instance == null ){
+                _instance = GameObject.FindObjectOfType<Server>();
+            }
+            return _instance;
+        }
+    }
+
+    void Awake(){
+        if ( GameObject.FindObjectsOfType<Server>().Length > 1 )
+            Destroy(gameObject);
+
+        DontDestroyOnLoad(this);
+    }
+    void Start() {
         socket = GetComponent<NetSocket>();
         zoneManager = GetComponent<NetZoneManager>();
         zoneServer = GetComponent<NetZoneServer>();
+        netViewManager = GetComponent<NetViewManager>();
 
         zoneServer.OnAssignment += AssignedToZone;
 
@@ -29,6 +47,7 @@ public class Server : MonoBehaviour {
         socket.Events.OnPeerApproval += PeerApproval;
         socket.Events.OnSocketStart += SocketStart;
         socket.Events.OnFailedToConnect += FailedToConnect;
+        socket.Events.OnClientDisconnected += OnClientDisconnect;
 
         socket.StartSocket(ServerAddress + ":" + ServerPortRoot);
         socket.RegisterRpcListener(this);
@@ -47,13 +66,15 @@ public class Server : MonoBehaviour {
     }
     private void ConfigureZones() {
         zoneManager.Authority = true;
-        zoneManager.CreateZone(new Vector3(0, 0, 200));
-        zoneManager.CreateZone(new Vector3(0, 0, -200));
+        zoneManager.CreateZone(new Vector3(0, 0, 0));
         zoneManager.AddSelfAsServer();
 
         gameObject.AddComponent<LoginServer>();
     }
 
+    private void OnClientDisconnect(NetConnection conn){
+        netViewManager.DestroyAuthorizedViews(conn);
+    }
     private void FailedToConnect(IPEndPoint endpoint) {
         string epString = endpoint.ToString();
         if (PeerAddresses.Contains(epString)) {
@@ -76,4 +97,9 @@ public class Server : MonoBehaviour {
         
     }
 
+    [NetRPC]
+    private void SpawnRequest(NetConnection conn){
+        Debug.Log("Spawning player...");
+        netViewManager.CreateView(conn, 0, "Player");
+    }
 }

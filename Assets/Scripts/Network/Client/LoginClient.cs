@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using System.Net;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,7 +12,6 @@ public class LoginClient : MonoBehaviour {
     public string serverIp = "127.0.0.1";
     public int serverPort = 17000;
 
-    public GameObject loginWindow;
     public Text msgText;
     public InputField username;
     public InputField password;
@@ -19,16 +20,22 @@ public class LoginClient : MonoBehaviour {
     private NetSocket socket;
     private NetConnection loginServer;
 
-    void Awake() {
-        socket = GetComponent<NetSocket>();
-
-        loginWindow.SetActive(false);
+    void Start() {
+        socket = Client.instance.Socket;
 
         socket.RegisterRpcListener(this);
         socket.Events.OnConnectedToServer += ConnectedToServer;
         socket.Events.OnSocketStart += ConnectToLoginServer;
         socket.Events.OnFailedToConnect += ConnectFailed;
         socket.Events.OnDisconnectedFromServer += DisconnectedFromServer;
+    }
+    void Update(){
+        if ( Input.GetKeyDown(KeyCode.Tab) ){
+            EventSystem.current.SetSelectedGameObject( EventSystem.current.currentSelectedGameObject == username.gameObject ? password.gameObject : username.gameObject );
+        }
+        if ( Input.GetKeyDown(KeyCode.Return) ){
+            Login();
+        }
     }
 
     private void ConnectToLoginServer() {
@@ -47,14 +54,14 @@ public class LoginClient : MonoBehaviour {
     }
     private void ConnectedToLoginServer(NetConnection connection) {
         loginServer = connection;
-        loginWindow.SetActive(true);
     }
 
     [NetRPC]
     private void OnLoginResponse(bool loginSuccess, string msg, NetConnection conn){
         // Check for successful login
         if ( loginSuccess ){
-            msgText.text = msg;
+            socket.Send("SpawnRequest", conn);
+            Destroy(gameObject);
         } else {
             msgText.text = msg;   
         }

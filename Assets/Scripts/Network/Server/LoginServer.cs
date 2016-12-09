@@ -6,10 +6,6 @@ using MassiveNet;
 
 [RequireComponent(typeof(NetSocket))] 
 public class LoginServer : MonoBehaviour {
-    
-    public delegate void LoginSuccess(NetConnection conn, Account acc);
-
-    public event LoginSuccess OnLoginSuccess;
 
     private NetSocket socket;
     private Dictionary<IPEndPoint, Account> sessions = new Dictionary<IPEndPoint,Account>();
@@ -32,7 +28,7 @@ public class LoginServer : MonoBehaviour {
             if ( acc.username == username || acc.email == username ){
                 if ( acc.password == password ){
                     CreateSession(acc, conn);
-                    socket.Send("OnLoginResponse", conn, true, "Welcome!");
+                    socket.Send("OnLoginResponse", conn, true, "");
                 } else {
                     socket.Send("OnLoginResponse", conn, false, "Invalid password");
                 }

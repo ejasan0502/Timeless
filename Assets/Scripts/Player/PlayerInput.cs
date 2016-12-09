@@ -15,6 +15,10 @@ public class PlayerInput : MonoBehaviour {
         cc = GetComponent<CharacterController>();
         moveTo = transform.position;
     }
+    void Start(){
+        Camera.main.transform.SetParent(transform);
+        Camera.main.gameObject.AddComponent<CameraControl>();
+    }
     void Update(){
         Movement();
     }
@@ -23,10 +27,15 @@ public class PlayerInput : MonoBehaviour {
         if ( Input.GetMouseButtonDown(0) ){
             RaycastHit hit;
             if ( Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 1000f, 1 << LayerMask.NameToLayer("Terrain")) ){
-                moveTo = hit.point;
+                Move(hit.point);
             }
         }
 
         cc.SimpleMove( (moveTo-transform.position).normalized*speed*Time.deltaTime );
+    }
+
+    [NetRPC]
+    private void Move(Vector3 moveTo){
+        this.moveTo = moveTo;
     }
 }
