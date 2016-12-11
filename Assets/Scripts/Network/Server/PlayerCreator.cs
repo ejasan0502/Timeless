@@ -1,5 +1,4 @@
-﻿// MIT License (MIT) - Copyright (c) 2014 jakevn - Please see included LICENSE file
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using MassiveNet;
 using UnityEngine;
 
@@ -32,12 +31,9 @@ namespace Massive.Examples.NetAdvanced {
         }
 
         private Vector3 lastPos = Vector3.zero;
-        //private Quaternion lastRot = Quaternion.identity;
         private Vector2 lastVel = Vector3.zero;
 
         RpcTarget WriteSync(NetStream syncStream) {
-            // If we don't want to sync for this frame, return RpcTarget.None
-            // If lastPos == Vector3.zero, position change has already been synced.
             if (lastPos == Vector3.zero) return RpcTarget.None;
 
             syncStream.WriteFloat(transform.position.x);
@@ -46,9 +42,6 @@ namespace Massive.Examples.NetAdvanced {
 
             lastPos = Vector3.zero;
 
-            // We return the RpcTarget for who we want to send the sync info to. Since we receive
-            // the position, rotation, and velocity from the PlayerOwner, we want to send to everyone
-            // BUT the PlayerOwner, so we choose to return RpcTarget.NonControllers.
             return RpcTarget.NonControllers;
         }
 
@@ -57,22 +50,20 @@ namespace Massive.Examples.NetAdvanced {
             Quaternion rotation = syncStream.ReadQuaternion();
             Vector2 velocity = syncStream.ReadVector2();
             lastPos = position;
-            //lastRot = rotation;
             lastVel = velocity;
             transform.position = position;
             transform.rotation = rotation;
+        }
+        void ReadInstantiateData(NetStream stream) {
+            transform.position = stream.ReadVector3();
         }
 
         void WriteInstantiateData(NetStream stream) {
             stream.WriteVector3(transform.position);
         }
-
         void WriteOwnerData(NetStream stream) {
             stream.WriteVector3(transform.position);
         }
 
-        void ReadInstantiateData(NetStream stream) {
-            transform.position = stream.ReadVector3();
-        }
     }
 }
