@@ -11,12 +11,6 @@ public class Inventory : MonoBehaviour {
 
     public readonly List<InventoryItem> items = new List<InventoryItem>();
 
-    private NetView netView;
-
-    void Awake(){
-        netView = GetComponent<NetView>();
-    }
-
     public void AddItem(Item item, int amt){
         InventoryItem ii = items.Where(i => i.item.id == item.id).FirstOrDefault<InventoryItem>();
         if ( ii != null ){
