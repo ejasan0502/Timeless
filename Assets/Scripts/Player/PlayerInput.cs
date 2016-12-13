@@ -25,9 +25,11 @@ public class PlayerInput : MonoBehaviour {
 
     private void Movement(){
         if ( Input.GetMouseButtonDown(0) ){
-            RaycastHit hit;
-            if ( Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 1000f, 1 << LayerMask.NameToLayer("Terrain")) ){
-                Move(hit.point);
+            if ( !UIManager.instance.InDeadZone(Input.mousePosition) ){
+                RaycastHit hit;
+                if ( Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 1000f, 1 << LayerMask.NameToLayer("Terrain")) ){
+                    Move(hit.point);
+                }
             }
         }
 

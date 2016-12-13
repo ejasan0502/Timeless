@@ -44,4 +44,15 @@ public class UIManager : MonoBehaviour {
     public UI GetUI(string id){
         return uiElements.Where<UI>(ui => ui.Id == id).FirstOrDefault<UI>();
     }
+    public bool InDeadZone(Vector2 screenPos){
+        foreach (UI ui in uiElements){
+            if ( ui.Script.gameObject.activeSelf ){
+                if ( RectTransformUtility.RectangleContainsScreenPoint( (RectTransform)ui.Script.transform, screenPos, null) ){
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }
