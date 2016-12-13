@@ -34,6 +34,11 @@ public class Client : MonoBehaviour {
             return viewManager ?? GetComponent<NetViewManager>();
         }
     }
+    public NetConnection Server {
+        get {
+            return server;
+        }
+    }
 
     void Awake(){
         if ( GameObject.FindObjectsOfType<Client>().Length > 1 )

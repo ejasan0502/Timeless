@@ -2,7 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 
-public class InventoryUI : MonoBehaviour {
+public class InventoryUI : MonoBehaviour, UI {
 
     public GameObject slotPrefab;
     public RectTransform content;
@@ -20,8 +20,9 @@ public class InventoryUI : MonoBehaviour {
         player = GameObject.FindWithTag("Player") ? GameObject.FindWithTag("Player").GetComponent<PlayerOwner>() : null;
         scrollView = (RectTransform) content.parent.parent ?? null;
     }
-    void Start(){
+    void OnEnable(){
         CreateGrid();
+        UpdateAll();
     }
 
     private void CreateGrid(){
@@ -52,6 +53,20 @@ public class InventoryUI : MonoBehaviour {
                 y += slotRT.rect.height;
             }
         }
+    }
+
+    public string Id {
+        get {
+            return GetType().ToString();
+        }
+    }
+    public MonoBehaviour Script {
+        get {
+            return this;
+        }
+    }
+    public void SetDisplay(bool b){
+        gameObject.SetActive(b);
     }
     
     public void UpdateAll(){
