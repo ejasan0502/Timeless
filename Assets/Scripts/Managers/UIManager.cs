@@ -37,7 +37,7 @@ public class UIManager : MonoBehaviour {
     void Update(){
         if ( Input.GetKeyDown(KeyCode.I) ){
             UI ui = GetUI("InventoryUI");
-            if ( ui != null ) ui.SetDisplay(true);
+            if ( ui != null ) ui.SetDisplay(!ui.Script.gameObject.activeSelf);
         }
     }
 

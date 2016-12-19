@@ -16,6 +16,12 @@ public class Server : MonoBehaviour {
     private NetZoneManager zoneManager;
     private NetViewManager netViewManager;
 
+    public NetSocket Socket {
+        get {
+            return socket;
+        }
+    }
+
     private static Server _instance;
     public static Server instance {
         get {

@@ -8,7 +8,7 @@ public class InventoryUI : MonoBehaviour, UI {
     public RectTransform content;
     public Text currencyText;
 
-    private PlayerOwner player;
+    public PlayerOwner player;
     private RectTransform scrollView;
 
     void Awake(){
@@ -19,9 +19,13 @@ public class InventoryUI : MonoBehaviour, UI {
 
         player = GameObject.FindWithTag("Player") ? GameObject.FindWithTag("Player").GetComponent<PlayerOwner>() : null;
         scrollView = (RectTransform) content.parent.parent ?? null;
+
+        CreateGrid();
     }
     void OnEnable(){
-        CreateGrid();
+        if ( player == null ){
+            player = GameObject.FindWithTag("Player") ? GameObject.FindWithTag("Player").GetComponent<PlayerOwner>() : null;
+        }
         UpdateAll();
     }
 
@@ -37,7 +41,7 @@ public class InventoryUI : MonoBehaviour, UI {
 
         float startX = scrollView.rect.min.x + slotRT.rect.width/2.00f;
         float x = startX;
-        float y = scrollView.rect.min.y + slotRT.rect.height/2.00f;
+        float y = scrollView.rect.max.y - slotRT.rect.height/2.00f;
         for (int i = 0; i < maxSlots; i++){
             GameObject o = Instantiate(slotPrefab);
             o.name = i+"";
@@ -50,7 +54,7 @@ public class InventoryUI : MonoBehaviour, UI {
             x += slotRT.rect.width;
             if ( i != 0 && (i+1)%width == 0 ){
                 x = startX;
-                y += slotRT.rect.height;
+                y -= slotRT.rect.height;
             }
         }
     }
@@ -79,8 +83,9 @@ public class InventoryUI : MonoBehaviour, UI {
         string amt = "";
 
         if ( player != null && index < player.inventory.items.Count ){
-            icon = player.inventory.items[index].item.icon;
+            icon = player.inventory.items[index].item.icon ?? Resources.Load<Sprite>("Icons/default");
             amt = player.inventory.items[index].amt > 1 ? player.inventory.items[index].amt+"" : "";
+            Debug.Log("Displaying slot " + index + ": " + player.inventory.items[index].item.id + " x" + player.inventory.items[index].amt);
         }
 
         content.GetChild(index).GetChild(0).GetComponent<Image>().sprite = icon;

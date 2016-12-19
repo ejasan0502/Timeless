@@ -6,8 +6,14 @@ public class PlayerCreator : MonoBehaviour {
 
     public NetView View { get; private set; }
 
+    private Inventory inventory;
+
     void Awake() {
         View = GetComponent<NetView>();
+        inventory = GetComponent<Inventory>();
+
+        inventory.OnItemAdd += OnItemAdded;
+        inventory.OnItemRemove += OnItemRemoved;
 
         View.OnWriteSync += WriteSync;
         View.OnReadSync += ReadSync;
@@ -55,4 +61,10 @@ public class PlayerCreator : MonoBehaviour {
         stream.WriteVector3(transform.position);
     }
 
+    private void OnItemAdded(Item item, int amt){
+        View.SendReliable("ReceiveAdd", RpcTarget.Controllers, item.id, amt);
+    }
+    private void OnItemRemoved(int index, int amt){
+        View.SendReliable("ReceiveRemove", RpcTarget.Controllers, index, amt);
+    }
 }
