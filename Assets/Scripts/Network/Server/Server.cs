@@ -58,7 +58,8 @@ public class Server : MonoBehaviour {
         socket.StartSocket(ServerAddress + ":" + ServerPortRoot);
         socket.RegisterRpcListener(this);
 
-        ConfigureNetSerializers();
+        NetSerializer.Add<Item>(Item.Serialize,Item.Deserialize);
+        NetSerializer.Add<Equip>(Item.Serialize,Item.Deserialize);
     }
 
     private void SocketStart() {
@@ -78,10 +79,6 @@ public class Server : MonoBehaviour {
         zoneManager.AddSelfAsServer();
 
         gameObject.AddComponent<LoginServer>();
-    }
-    private void ConfigureNetSerializers(){
-        NetSerializer.Add<Item>(Item.SerializeItem,Item.DeserializeItem);
-        NetSerializer.Add<Equip>(Equip.SerializeEquip,Equip.DeserializeEquip);
     }
 
     private void OnClientDisconnect(NetConnection conn){

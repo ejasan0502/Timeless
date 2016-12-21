@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Net;
 using System.Reflection;
 using System.Collections;
@@ -10,6 +11,7 @@ public class Item {
     public string id;
     public string description;
     public string iconPath;
+    public ItemType itemType;
 
     public Sprite icon {
         get {
@@ -26,18 +28,23 @@ public class Item {
         id = "";
         description = "";
         iconPath = "Icons/default";
+        itemType = ItemType.item;
     }
-    public Item(string name, string id, string description, string icon){
+    public Item(string name, string id, string description, string icon, ItemType itemType){
         this.name = name;
         this.id = id;
         this.description = description;
         this.iconPath = icon;
+        this.itemType = itemType;
     }
     public Item(Item item){
         FieldInfo[] fields1 = GetType().GetFields();
         FieldInfo[] fields2 = item.GetType().GetFields();
         for (int i = 0; i < fields1.Length; i++){
-            fields1[i].SetValue(this, (string)fields2[i].GetValue(item));
+            if ( typeof(ItemType).IsAssignableFrom(fields2[i].GetValue(item).GetType()) ){
+                fields1[i].SetValue(this, (ItemType)fields2[i].GetValue(item));
+            } else
+                fields1[i].SetValue(this, fields2[i].GetValue(item));
         }
     }
     public Item(string s){
@@ -45,16 +52,15 @@ public class Item {
         FieldInfo[] fields = GetType().GetFields();
         for (int i = 0; i < args.Length; i++){
             if ( i >= fields.Length ) break;
-
-            fields[i].SetValue(this, (string)args[i]);
+            fields[i].SetValue(this, Global.Parse(fields[i].FieldType,args[i]));
         }
     }
 
-    public static void SerializeItem(NetStream stream, object instance){
+    public static void Serialize(NetStream stream, object instance){
         Item item = (Item)instance;
         stream.WriteString(item.ToString());
     }
-    public static object DeserializeItem(NetStream stream){
+    public static object Deserialize(NetStream stream){
         Item item = new Item(stream.ReadString());
         return item;
     }
@@ -67,9 +73,8 @@ public class Item {
             if ( i != 0 )
                 s += ",";
 
-            s += (string)fields[i].GetValue(this);
+            s += fields[i].GetValue(this);
         }
-
         return s;
     }
 }

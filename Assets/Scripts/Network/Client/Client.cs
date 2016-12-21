@@ -59,15 +59,12 @@ public class Client : MonoBehaviour {
         socket.StartSocket();
         socket.RegisterRpcListener(this);
 
-        ConfigureNetSerializers();
+        NetSerializer.Add<Item>(Item.Serialize,Item.Deserialize);
+        NetSerializer.Add<Equip>(Item.Serialize,Item.Deserialize);
 
         socket.Connect(serverIp + ":" + serverPort);
     }
     
-    private void ConfigureNetSerializers(){
-        NetSerializer.Add<Item>(Item.SerializeItem,Item.DeserializeItem);
-        NetSerializer.Add<Equip>(Equip.SerializeEquip,Equip.DeserializeEquip);
-    }
     private void ZoneSetupSuccessful(NetConnection conn) {
         
     }

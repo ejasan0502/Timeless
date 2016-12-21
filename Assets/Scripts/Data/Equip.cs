@@ -7,7 +7,7 @@ using MassiveNet;
 
 public class Equip : Item {
 
-    public EquipType type;
+    public EquipType equipType;
     public EquipStats stats;
 
     public override Equip GetAsEquip(){
@@ -19,17 +19,22 @@ public class Equip : Item {
         id = "";
         description = "";
         iconPath = "";
+        itemType = ItemType.equip;
 
-        type = EquipType.primary;
+        equipType = EquipType.primary;
         stats = new EquipStats();
+    }
+    public Equip(string name, string id, string description, string iconPath, ItemType itemType, EquipType equipType, EquipStats stats){
+
     }
     public Equip(Equip e){
         name = e.name;
         id = e.id;
         description = e.description;
         iconPath = e.iconPath;
+        itemType = ItemType.equip;
 
-        type = e.type;
+        equipType = e.equipType;
         stats = new EquipStats(e.stats);
     }
     public Equip(string s){
@@ -38,23 +43,8 @@ public class Equip : Item {
         for (int i = 0; i < args.Length; i++){
             if ( i >= fields.Length ) break;
             
-            if ( typeof(EquipType).IsAssignableFrom(fields[i].GetValue(this).GetType()) ){
-                fields[i].SetValue(this, (EquipType)Enum.Parse(typeof(EquipType), args[i]));
-            } else if ( typeof(EquipStats).IsAssignableFrom(fields[i].GetValue(this).GetType()) ){
-                fields[i].SetValue(this, new EquipStats(args[i]));
-            } else {
-                fields[i].SetValue(this, args[i]);
-            }
+            fields[i].SetValue(this, Global.Parse(fields[i].FieldType, args[i]));
         }
-    }
-
-    public static void SerializeEquip(NetStream stream, object instance){
-        Equip equip = (Equip)instance;
-        stream.WriteString(equip.ToString());
-    }
-    public static object DeserializeEquip(NetStream stream){
-        Item item = new Item(stream.ReadString());
-        return item;
     }
 
     public override string ToString(){
@@ -65,9 +55,9 @@ public class Equip : Item {
             if ( i != 0 )
                 s += ",";
                 
-            if ( typeof(EquipType).IsAssignableFrom(fields[i].GetValue(this).GetType()) ){
+            if ( fields[i].FieldType == typeof(EquipType) ){
                 s += ((EquipType)fields[i].GetValue(this)).ToString();
-            } else if ( typeof(EquipStats).IsAssignableFrom(fields[i].GetValue(this).GetType()) ){
+            } else if ( fields[i].FieldType == typeof(EquipStats) ){
                 s += ((EquipStats)fields[i].GetValue(this)).ToString();
             } else {
                 s += (string)fields[i].GetValue(this);

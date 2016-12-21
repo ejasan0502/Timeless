@@ -85,7 +85,6 @@ public class InventoryUI : MonoBehaviour, UI {
         if ( player != null && index < player.inventory.items.Count ){
             icon = player.inventory.items[index].item.icon ?? Resources.Load<Sprite>("Icons/default");
             amt = player.inventory.items[index].amt > 1 ? player.inventory.items[index].amt+"" : "";
-            Debug.Log("Displaying slot " + index + ": " + player.inventory.items[index].item.id + " x" + player.inventory.items[index].amt);
         }
 
         content.GetChild(index).GetChild(0).GetComponent<Image>().sprite = icon;

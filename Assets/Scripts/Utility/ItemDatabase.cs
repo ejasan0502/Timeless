@@ -7,7 +7,7 @@ using MassiveNet;
 public class ItemDatabase {
 
     private List<Item> items = new List<Item>(){
-        new Item("Sword", "sword-0", "This is a sword.", null)
+        new Equip("Sword", "sword-0", "This is a sword.", null, ItemType.equip, EquipType.primary, new EquipStats(1f))
     }; 
 
     private static ItemDatabase _instance;
@@ -21,7 +21,7 @@ public class ItemDatabase {
     }
 
     public ItemDatabase(){
-        
+
     }
 
     public Item GetItem(string id){
