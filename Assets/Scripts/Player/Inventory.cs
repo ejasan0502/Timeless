@@ -32,8 +32,7 @@ public class Inventory : MonoBehaviour {
     }
 
     [NetRPC]
-    private void ReceiveAdd(string id, int amt){
-        Item item = ItemDatabase.instance.GetItem(id);
+    private void ReceiveAdd(Item item, int amt){
         AddItem(item,amt);
     }
     [NetRPC]
@@ -44,6 +43,10 @@ public class Inventory : MonoBehaviour {
     public void SendAdd(string id, int amt){
         Item item = ItemDatabase.instance.GetItem(id);
 
+        AddItem(item,amt);
+        if ( OnItemAdd != null ) OnItemAdd(item,amt);
+    }
+    public void SendAdd(Item item, int amt){
         AddItem(item,amt);
         if ( OnItemAdd != null ) OnItemAdd(item,amt);
     }

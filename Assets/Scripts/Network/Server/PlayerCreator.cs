@@ -62,7 +62,7 @@ public class PlayerCreator : MonoBehaviour {
     }
 
     private void OnItemAdded(Item item, int amt){
-        View.SendReliable("ReceiveAdd", RpcTarget.Controllers, item.id, amt);
+        View.SendReliable("ReceiveAdd", RpcTarget.Controllers, item, amt);
     }
     private void OnItemRemoved(int index, int amt){
         View.SendReliable("ReceiveRemove", RpcTarget.Controllers, index, amt);

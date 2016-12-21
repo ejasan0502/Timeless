@@ -48,11 +48,11 @@ public class Equip : Item {
         }
     }
 
-    public static void SerializeItem(NetStream stream, object instance){
-        Item item = (Item)instance;
-        stream.WriteString(item.ToString());
+    public static void SerializeEquip(NetStream stream, object instance){
+        Equip equip = (Equip)instance;
+        stream.WriteString(equip.ToString());
     }
-    public static object DeserializeItem(NetStream stream){
+    public static object DeserializeEquip(NetStream stream){
         Item item = new Item(stream.ReadString());
         return item;
     }

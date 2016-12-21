@@ -67,7 +67,7 @@ public class Item {
             if ( i != 0 )
                 s += ",";
 
-            s += fields[i].GetValue(this).ToString();
+            s += (string)fields[i].GetValue(this);
         }
 
         return s;
