@@ -7,10 +7,18 @@ using MassiveNet;
 
 public class Equipment : MonoBehaviour {
 
+    public delegate void Equipping(Item item, int amt);
+
+    public event Equipping OnEquip;
+
     private Equip[] equips;
 
     void Awake(){
         equips = new Equip[Enum.GetValues(typeof(EquipType)).Length];
+    }
+
+    private void Equip(Equip e){
+        equips[(int)e.equipType] = e;
     }
 
 }

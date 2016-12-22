@@ -13,17 +13,9 @@ public class BirdEyeCameraControl : MonoBehaviour {
     private Vector3 offset;             // Offset between the camera and the object
     private bool rotating = false;      // Receiving player input
 
-    void Awake(){
-        if ( !objectToFollow ){
-            objectToFollow = transform.parent;
-        }
-
-        // Set initial rotation of the camera
-        transform.LookAt(objectToFollow);
-        // Save initial offset of camera
-        offset = transform.position - objectToFollow.position;
-    }
     void Update(){
+        if ( objectToFollow == null ) return;
+
         // Check for player input, apply rotation to movement
         if ( !rotating )
             transform.position = Vector3.Lerp(transform.position,objectToFollow.position + offset,followSpeed*Time.deltaTime);
@@ -70,5 +62,14 @@ public class BirdEyeCameraControl : MonoBehaviour {
         }
         #endif
 
+    }
+
+    public void SetFollow(Transform t){
+        objectToFollow = t;
+
+        // Set initial rotation of the camera
+        transform.LookAt(objectToFollow);
+        // Save initial offset of camera
+        offset = transform.position - objectToFollow.position;
     }
 }
