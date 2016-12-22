@@ -18,7 +18,6 @@ public class PlayerOwner : MonoBehaviour {
 
     void Instantiate(NetStream stream) {
         Vector3 pos = stream.ReadVector3();
-        // Prevemt jumpiness during handoff by ignoring position data if similar enough:
         if (transform.position != Vector3.zero && Vector3.Distance(transform.position, pos) < 5) return;
         transform.position = pos;
     }

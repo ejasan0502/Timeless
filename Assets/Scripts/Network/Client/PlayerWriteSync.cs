@@ -1,7 +1,7 @@
 ﻿using MassiveNet;
 using UnityEngine;
 
-public class PlayerSync : MonoBehaviour {
+public class PlayerWriteSync : MonoBehaviour {
 
     private float inputX;
     private float inputZ;
