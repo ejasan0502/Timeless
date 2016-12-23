@@ -16,7 +16,8 @@ public class PlayerProxy : MonoBehaviour {
         if ( baseModel != "" ){
             GameObject o = (GameObject) Instantiate(Resources.Load(baseModel));
             o.transform.SetParent(transform);
-            o.transform.localPosition = Vector3.zero;
+            o.transform.localPosition = new Vector3(0f,-1f,0f);
+            GetComponent<PlayerReadSync>().anim = o.GetComponent<Animator>();
         }
 
         transform.position = stream.ReadVector3();

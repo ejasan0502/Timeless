@@ -17,7 +17,7 @@ public class PlayerWriteSync : MonoBehaviour {
         Vector3 velocity = transform.position - lastPos;
         syncStream.WriteVector3(transform.position);
         syncStream.WriteQuaternion(transform.rotation);
-        syncStream.WriteVector2(new Vector2(velocity.x, velocity.z));
+        syncStream.WriteVector3(velocity);
         lastPos = transform.position;
         return RpcTarget.Server;
     }

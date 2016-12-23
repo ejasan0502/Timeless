@@ -32,18 +32,21 @@ public class PlayerReadSync : MonoBehaviour {
     private Vector3 positionDiff;
 
     private NetView view;
+    public Animator anim;
 
     void Awake() {
         view = GetComponent<NetView>();
         view.OnReadSync += ReadSync;
+
+        anim = GetComponentInChildren<Animator>();
     }
 
     void ReadSync(NetStream syncStream) {
-        Vector3 position = new Vector3(syncStream.ReadFloat(), transform.position.y, syncStream.ReadFloat());
-        Vector3 velocity = syncStream.ReadVector2();
+        Vector3 position = syncStream.ReadVector3();
+        Vector3 velocity = syncStream.ReadVector3();
 
         lastPos = position;
-        lastVel = new Vector3(velocity.x, 0, velocity.y);
+        lastVel = velocity;
         if (Time.time - lastTime > 1.2) {
             if (Vector3.Distance(transform.position, lastPos) > 2f) {
                 transform.position = lastPos;
@@ -51,6 +54,7 @@ public class PlayerReadSync : MonoBehaviour {
         }
         lastTime = Time.time;
         positionDiff = transform.position - position;
+        if ( anim != null ) anim.SetFloat("speed",velocity.magnitude);
     }
 
     private Vector3 localLastPos;
