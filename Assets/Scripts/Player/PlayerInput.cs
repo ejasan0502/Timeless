@@ -10,7 +10,7 @@ public class PlayerInput : MonoBehaviour {
     private CharacterController cc;
 
     private Vector3 moveTo = Vector3.zero;
-    private Animator anim;
+    public Animator anim;
 
     void Awake(){
         cc = GetComponent<CharacterController>();
@@ -38,11 +38,14 @@ public class PlayerInput : MonoBehaviour {
         cc.SimpleMove( (moveTo-transform.position).normalized*speed*Time.deltaTime );
         if ( anim != null ) anim.SetFloat("speed", cc.velocity.magnitude);
     }
-
     private void Move(Vector3 moveTo){
         Instantiate(Resources.Load("Effects/MovePointer"), moveTo, Quaternion.identity);
 
         this.moveTo = moveTo;
         transform.LookAt(new Vector3(moveTo.x,transform.position.y,moveTo.z));
+    }
+
+    public void SetAnim(Animator anim){
+        this.anim = anim;
     }
 }
