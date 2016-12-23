@@ -8,6 +8,9 @@ public class PlayerCreator : MonoBehaviour {
 
     private Inventory inventory;
 
+    private Vector3 lastPos = Vector3.zero;
+    private Vector3 lastVel = Vector3.zero;
+
     void Awake() {
         View = GetComponent<NetView>();
         inventory = GetComponent<Inventory>();
@@ -26,38 +29,38 @@ public class PlayerCreator : MonoBehaviour {
         View.OnReadInstantiateData += ReadInstantiateData;
     }
 
-    private Vector3 lastPos = Vector3.zero;
-    private Vector2 lastVel = Vector3.zero;
-
     RpcTarget WriteSync(NetStream syncStream) {
         if (lastPos == Vector3.zero) return RpcTarget.None;
 
-        syncStream.WriteFloat(transform.position.x);
-        syncStream.WriteFloat(transform.position.z);
-        syncStream.WriteVector2(lastVel);
+        syncStream.WriteVector3(transform.position);
+        syncStream.WriteVector3(lastVel);
 
         lastPos = Vector3.zero;
 
         return RpcTarget.NonControllers;
     }
 
-    void ReadSync(NetStream syncStream) {
+    private void ReadSync(NetStream syncStream) {
         Vector3 position = syncStream.ReadVector3();
         Quaternion rotation = syncStream.ReadQuaternion();
-        Vector2 velocity = syncStream.ReadVector2();
+        Vector3 velocity = syncStream.ReadVector2();
         lastPos = position;
         lastVel = velocity;
         transform.position = position;
         transform.rotation = rotation;
     }
-    void ReadInstantiateData(NetStream stream) {
+    private void ReadInstantiateData(NetStream stream) {
         transform.position = stream.ReadVector3();
     }
 
-    void WriteInstantiateData(NetStream stream) {
+    private void WriteInstantiateData(NetStream stream) {
+        string s = LoginServer.GetAccount(View.Controllers[0].Endpoint).baseModel;
+        stream.WriteString(s);
         stream.WriteVector3(transform.position);
     }
-    void WriteOwnerData(NetStream stream) {
+    private void WriteOwnerData(NetStream stream) {
+        string s = LoginServer.GetAccount(View.Controllers[0].Endpoint).baseModel;
+        stream.WriteString(s);
         stream.WriteVector3(transform.position);
     }
 

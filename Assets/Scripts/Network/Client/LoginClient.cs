@@ -60,8 +60,7 @@ public class LoginClient : MonoBehaviour {
     private void OnLoginResponse(bool loginSuccess, string msg, NetConnection conn){
         // Check for successful login
         if ( loginSuccess ){
-            socket.Send("SpawnRequest", conn);
-            Destroy(gameObject);
+            SceneManager.LoadScene("characterCreation");
         } else {
             msgText.text = msg;   
         }

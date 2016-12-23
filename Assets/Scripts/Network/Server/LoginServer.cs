@@ -14,6 +14,16 @@ public class LoginServer : MonoBehaviour {
         new Account("ejasan0502@gmail.com", "ejasan0502", "temp123")
     };
 
+    private static LoginServer _instance;
+    public static LoginServer instance {
+        get {
+            if ( _instance == null ){
+                _instance = GameObject.FindObjectOfType<LoginServer>();
+            }
+            return _instance;
+        }
+    }
+
     void Awake(){
         socket = GetComponent<NetSocket>();
 
@@ -37,6 +47,14 @@ public class LoginServer : MonoBehaviour {
         }
         socket.Send("OnLoginResponse", conn, false, "Do not recognize username/email");
     }
+    [NetRPC]
+    private void PlayerCreateRequest(string baseModel, NetConnection conn){
+        if ( sessions.ContainsKey(conn.Endpoint) ){
+            sessions[conn.Endpoint].baseModel = baseModel;
+        } else {
+            Debug.LogError("Session is unavailable.");
+        }
+    }
 
     private void CreateSession(Account acc, NetConnection conn){
         sessions.Add(conn.Endpoint, acc);
@@ -46,5 +64,9 @@ public class LoginServer : MonoBehaviour {
         if ( sessions.ContainsKey(conn.Endpoint) ){
             sessions.Remove(conn.Endpoint);
         }
+    }
+
+    public static Account GetAccount(IPEndPoint key){
+        return instance.sessions.ContainsKey(key) ? instance.sessions[key] : null;
     }
 }

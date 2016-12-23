@@ -14,7 +14,7 @@ public class PlayerInput : MonoBehaviour {
 
     void Awake(){
         cc = GetComponent<CharacterController>();
-        anim = GetComponent<Animator>();
+        anim = GetComponent<Animator>() ?? transform.GetComponentInChildren<Animator>();
         moveTo = transform.position;
     }
     void Start(){
@@ -36,12 +36,13 @@ public class PlayerInput : MonoBehaviour {
         }
 
         cc.SimpleMove( (moveTo-transform.position).normalized*speed*Time.deltaTime );
-        anim.SetFloat("speed", cc.velocity.magnitude);
+        if ( anim != null ) anim.SetFloat("speed", cc.velocity.magnitude);
     }
 
-    [NetRPC]
     private void Move(Vector3 moveTo){
+        Instantiate(Resources.Load("Effects/MovePointer"), moveTo, Quaternion.identity);
+
         this.moveTo = moveTo;
-        transform.rotation = Quaternion.LookRotation(moveTo, Vector3.up);
+        transform.LookAt(new Vector3(moveTo.x,transform.position.y,moveTo.z));
     }
 }

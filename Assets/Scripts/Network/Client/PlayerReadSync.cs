@@ -40,7 +40,7 @@ public class PlayerReadSync : MonoBehaviour {
 
     void ReadSync(NetStream syncStream) {
         Vector3 position = new Vector3(syncStream.ReadFloat(), transform.position.y, syncStream.ReadFloat());
-        Vector2 velocity = syncStream.ReadVector2();
+        Vector3 velocity = syncStream.ReadVector2();
 
         lastPos = position;
         lastVel = new Vector3(velocity.x, 0, velocity.y);

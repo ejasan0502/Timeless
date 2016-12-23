@@ -5,6 +5,8 @@ using System.Collections;
 
 public static class Global {
 
+    public const string PATH_MODELS_HUMANOIDS = "Models/Humanoids/";
+
     public static object Parse(Type type, string val){
         if ( type == typeof(ItemType) ) return Enum.Parse(type, val);
         else if ( type == typeof(EquipType) ) return Enum.Parse(type, val);
