@@ -37,7 +37,7 @@ public class EquipStats {
         string[] args = s.Split('/');
         FieldInfo[] fields = GetType().GetFields();
         for (int i = 0; i < args.Length; i++){
-            fields[i].SetValue(this, float.Parse(s));
+            fields[i].SetValue(this, float.Parse(args[i]));
         }
     }
 

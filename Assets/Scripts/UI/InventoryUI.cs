@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using System.Collections;
 
 public class InventoryUI : MonoBehaviour, UI {
@@ -48,6 +49,7 @@ public class InventoryUI : MonoBehaviour, UI {
             o.transform.SetParent(content);
             o.transform.localScale = Vector3.one;
             o.transform.position = scrollView.position + new Vector3(x,y,0f);
+            o.AddComponent<InventorySlotUI>();
 
             UpdateSlot(i);
 

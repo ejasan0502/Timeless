@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System;
 using System.Net;
+using System.Xml;
 using System.Reflection;
 using System.Collections;
 using MassiveNet;
@@ -51,29 +52,61 @@ public class Item {
         string[] args = s.Split(',');
         FieldInfo[] fields = GetType().GetFields();
         for (int i = 0; i < args.Length; i++){
-            if ( i >= fields.Length ) break;
             fields[i].SetValue(this, Global.Parse(fields[i].FieldType,args[i]));
         }
     }
 
     public static void Serialize(NetStream stream, object instance){
+        string s = "";
+
         Item item = (Item)instance;
-        stream.WriteString(item.ToString());
+        if ( item.itemType == ItemType.equip ){
+            s = item.GetAsEquip().ToString();
+        } else {
+            s = item.ToString();
+        }
+
+        stream.WriteString(s);
     }
     public static object Deserialize(NetStream stream){
-        Item item = new Item(stream.ReadString());
-        return item;
+        string s = stream.ReadString();
+
+        string[] args = s.Split('=');
+        if ( args[0] == "equip" ){
+            return new Equip(args[1]);
+        } else if ( args[0] == "usable" ){
+            return null;
+        } else {
+            return new Item(args[1]);
+        }
     }
 
     public override string ToString(){
         FieldInfo[] fields = GetType().GetFields();
 
         string s = "";
+        if ( itemType == ItemType.equip ){
+            s = "equip";
+        } else if ( itemType == ItemType.usable ){
+            s = "usable";
+        } else {
+            s = "item";
+        }
+        s += "=";
+
         for (int i = 0; i < fields.Length; i++){
             if ( i != 0 )
                 s += ",";
 
-            s += fields[i].GetValue(this);
+            if ( fields[i].FieldType == typeof(EquipType) ){
+                s += ((EquipType)fields[i].GetValue(this)).ToString();
+            } else if ( fields[i].FieldType == typeof(EquipStats) ){
+                s += ((EquipStats)fields[i].GetValue(this)).ToString();
+            } else if ( fields[i].FieldType == typeof(ItemType) ){
+                s += ((ItemType)fields[i].GetValue(this)).ToString();
+            } else {
+                s += fields[i].GetValue(this);
+            }
         }
         return s;
     }
