@@ -20,18 +20,20 @@ public class InventorySlotUI : EventTrigger {
     }
 
     public override void OnBeginDrag(PointerEventData eventData){
-        Debug.Log("OnBeginDrag");
         if ( player != null && int.Parse(name) < player.inventory.items.Count ){
+            transform.SetAsLastSibling();
             canDrag = true;
         }
     }
     public override void OnDrag(PointerEventData eventData){
-        Debug.Log("OnDrag");
-        if ( canDrag )
+        if ( canDrag ){
+            Vector3 newPos = Input.mousePosition;
+            newPos.z = transform.position.z;
             transform.position = Input.mousePosition;
+        }
     }
     public override void OnEndDrag(PointerEventData eventData){
-        Debug.Log("OnEndDrag");
+        transform.SetSiblingIndex(int.Parse(name));
         transform.localPosition = orgLocalPos;
         canDrag = false;
     }
