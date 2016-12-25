@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System.Reflection;
 using System.Collections;
 
 public class InventoryUI : MonoBehaviour, UI {
@@ -9,6 +10,7 @@ public class InventoryUI : MonoBehaviour, UI {
     public RectTransform content;
     public Text currencyText;
     public GameObject infoWindow;
+    public Text infoText;
 
     public PlayerOwner player;
     private RectTransform scrollView;
@@ -84,6 +86,25 @@ public class InventoryUI : MonoBehaviour, UI {
             pos.x += infoRect.rect.width/2.00f;
             pos.y -= infoRect.rect.height/2.00f;
             infoWindow.transform.position = pos;
+
+            Item item = player.inventory.items[index].item;
+            string s = item.name + "\n";
+            if ( item.itemType == ItemType.equip ){
+                Equip e = item.GetAsEquip();
+                s += e.equipType.ToString() + "\n";
+
+                FieldInfo[] fields = e.stats.GetType().GetFields();
+                foreach (FieldInfo fi in fields){
+                    s += fi.Name + ": " + fi.GetValue(e.stats) + "\n";
+                }
+            } else if ( item.itemType == ItemType.usable ){
+                s += "usable\n";
+                s += item.description;
+            } else {
+                s += item.description;
+            }
+
+            infoText.text = s;
         }
     }
     public void HideInfo(){
