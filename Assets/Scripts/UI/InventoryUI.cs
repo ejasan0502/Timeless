@@ -8,6 +8,7 @@ public class InventoryUI : MonoBehaviour, UI {
     public GameObject slotPrefab;
     public RectTransform content;
     public Text currencyText;
+    public GameObject infoWindow;
 
     public PlayerOwner player;
     private RectTransform scrollView;
@@ -73,6 +74,20 @@ public class InventoryUI : MonoBehaviour, UI {
     }
     public void SetDisplay(bool b){
         gameObject.SetActive(b);
+    }
+    public void ShowInfo(int index){
+        if ( player != null && index < player.inventory.items.Count ){
+            infoWindow.SetActive(true);
+
+            RectTransform infoRect = (RectTransform) infoWindow.transform;
+            Vector3 pos = content.GetChild(index).position;
+            pos.x += infoRect.rect.width/2.00f;
+            pos.y -= infoRect.rect.height/2.00f;
+            infoWindow.transform.position = pos;
+        }
+    }
+    public void HideInfo(){
+        infoWindow.SetActive(false);
     }
     
     public void UpdateAll(){

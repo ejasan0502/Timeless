@@ -25,14 +25,17 @@ public class BirdEyeCameraControl : MonoBehaviour {
         // PC input
         #if UNITY_STANDALONE || UNITY_EDITOR || UNITY_WEBPLAYER
         if ( Input.GetMouseButtonDown(1) ){
+            if ( UIManager.instance.InDeadZone(Input.mousePosition) ) return;
             // On mouse begin, save mouse position and player input is true
             prevMousePos = Input.mousePosition;
             rotating = true;
         }
         if ( Input.GetMouseButton(1) ){
             // On mouse hold, have camera rotate around object based on mouse input
-            transform.RotateAround(objectToFollow.position,Vector3.right,-(Input.mousePosition-prevMousePos).normalized.y*sensitivity);
-            transform.RotateAround(objectToFollow.position,Vector3.up,(Input.mousePosition-prevMousePos).normalized.x*sensitivity);
+            if ( rotating ){
+                transform.RotateAround(objectToFollow.position,Vector3.right,-(Input.mousePosition-prevMousePos).normalized.y*sensitivity);
+                transform.RotateAround(objectToFollow.position,Vector3.up,(Input.mousePosition-prevMousePos).normalized.x*sensitivity);
+            }
         }
         if ( Input.GetMouseButtonUp(1) ){
             // On mouse end, save new offset of camera and set player input to false

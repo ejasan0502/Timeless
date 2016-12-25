@@ -21,6 +21,8 @@ public class InventorySlotUI : EventTrigger {
 
     public override void OnBeginDrag(PointerEventData eventData){
         if ( player != null && int.Parse(name) < player.inventory.items.Count ){
+            InventoryUI inventoryUI = (InventoryUI) UIManager.instance.GetUI("InventoryUI").Script;
+            inventoryUI.HideInfo();
             transform.SetAsLastSibling();
             canDrag = true;
         }
@@ -37,5 +39,16 @@ public class InventorySlotUI : EventTrigger {
         transform.localPosition = orgLocalPos;
         canDrag = false;
     }
-
+    public override void OnPointerEnter(PointerEventData eventData){
+        if ( !canDrag ){
+            InventoryUI inventoryUI = (InventoryUI) UIManager.instance.GetUI("InventoryUI").Script;
+            inventoryUI.ShowInfo(int.Parse(name));
+        }
+    }
+    public override void OnPointerExit(PointerEventData eventData){
+        if ( !canDrag ){
+            InventoryUI inventoryUI = (InventoryUI) UIManager.instance.GetUI("InventoryUI").Script;
+            inventoryUI.HideInfo();
+        }
+    }
 }
