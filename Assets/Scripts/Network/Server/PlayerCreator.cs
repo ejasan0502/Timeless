@@ -7,6 +7,7 @@ public class PlayerCreator : MonoBehaviour {
     public NetView View { get; private set; }
 
     private Inventory inventory;
+    private Equipment equipment;
 
     private Vector3 lastPos = Vector3.zero;
     private Vector3 lastVel = Vector3.zero;
@@ -14,9 +15,11 @@ public class PlayerCreator : MonoBehaviour {
     void Awake() {
         View = GetComponent<NetView>();
         inventory = GetComponent<Inventory>();
+        equipment = GetComponent<Equipment>();
 
         inventory.OnItemAdd += OnItemAdded;
         inventory.OnItemRemove += OnItemRemoved;
+        equipment.OnEquip += OnEquipped;
 
         View.OnWriteSync += WriteSync;
         View.OnReadSync += ReadSync;
@@ -69,5 +72,8 @@ public class PlayerCreator : MonoBehaviour {
     }
     private void OnItemRemoved(int index, int amt){
         View.SendReliable("ReceiveRemove", RpcTarget.Controllers, index, amt);
+    }
+    private void OnEquipped(Equip e){
+        View.SendReliable("ReceiveEquip", RpcTarget.Controllers, e);
     }
 }

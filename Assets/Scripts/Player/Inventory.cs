@@ -38,6 +38,9 @@ public class Inventory : MonoBehaviour {
     [NetRPC]
     private void ReceiveRemove(int index, int amt){
         RemoveItem(index,amt);
+
+        InventoryUI inventoryUI = (InventoryUI) UIManager.instance.GetUI("InventoryUI").Script;
+        inventoryUI.UpdateSlot(index);
     }
 
     public void SendAdd(string id, int amt){

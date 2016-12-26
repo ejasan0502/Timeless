@@ -4,12 +4,14 @@ using UnityEngine;
 public class PlayerOwner : MonoBehaviour {
 
     public Inventory inventory;
+    public Equipment equipment;
 
-    private NetView view;
+    public NetView view { get; private set; }
 
     void Awake() {
         view = GetComponent<NetView>();
         inventory = GetComponent<Inventory>();
+        equipment = GetComponent<Equipment>();
 
         tag = "Player";
 
@@ -23,6 +25,7 @@ public class PlayerOwner : MonoBehaviour {
             o.transform.SetParent(transform);
             o.transform.localPosition = new Vector3(0f,-1f,0f);
             GetComponent<PlayerInput>().SetAnim(o.GetComponent<Animator>());
+            GetComponent<Equipment>().SetCharModel(o.GetComponent<CharacterModel>());
         }
 
         Vector3 pos = stream.ReadVector3();

@@ -2,12 +2,14 @@
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections;
+using MassiveNet;
 
 public class InventorySlotUI : EventTrigger {
 
     private Vector3 orgLocalPos;
     private bool canDrag = false;
     private PlayerOwner player;
+    private bool selected = false;
 
     void Awake(){
         orgLocalPos = transform.localPosition;
@@ -49,6 +51,16 @@ public class InventorySlotUI : EventTrigger {
         if ( !canDrag ){
             InventoryUI inventoryUI = (InventoryUI) UIManager.instance.GetUI("InventoryUI").Script;
             inventoryUI.HideInfo();
+        }
+    }
+    public override void OnPointerClick(PointerEventData eventData){
+        if ( selected ){
+            selected = false;
+            if ( player.inventory.items[int.Parse(name)].item.itemType == ItemType.equip ){
+                player.view.SendReliable("EquipRequest", RpcTarget.Server, int.Parse(name));
+            }
+        } else {
+            selected = true;
         }
     }
 }

@@ -11,7 +11,8 @@ public class LoginServer : MonoBehaviour {
     private Dictionary<IPEndPoint, Account> sessions = new Dictionary<IPEndPoint,Account>();
     
     private List<Account> accounts = new List<Account>(){
-        new Account("ejasan0502@gmail.com", "ejasan0502", "temp123")
+        new Account("temp1@gmail.com", "temp1", "1"),
+        new Account("temp2@gmail.com", "temp2", "2")
     };
 
     private static LoginServer _instance;
