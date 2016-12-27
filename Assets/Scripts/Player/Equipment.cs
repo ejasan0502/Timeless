@@ -31,8 +31,12 @@ public class Equipment : MonoBehaviour {
                 Destroy(equipObjs[index]);
             }
 
-            equipObjs[index] = (GameObject) Instantiate(e.Model, charModel.nodes[index]);
+            equipObjs[index] = (GameObject) Instantiate(e.Model);
+
+            Quaternion rot = equipObjs[index].transform.rotation;
+            equipObjs[index].transform.SetParent(charModel.nodes[index]);
             equipObjs[index].transform.localPosition = Vector3.zero;
+            equipObjs[index].transform.localRotation = rot;
         }
     }
 

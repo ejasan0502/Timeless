@@ -22,6 +22,7 @@ public class LoginClient : MonoBehaviour {
 
     void Start() {
         socket = Client.instance.Socket;
+        serverIp = Client.instance.ServerIp;
 
         socket.RegisterRpcListener(this);
         socket.Events.OnConnectedToServer += ConnectedToServer;
