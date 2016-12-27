@@ -30,6 +30,7 @@ public class InventoryUI : MonoBehaviour, UI {
         if ( player == null ){
             player = GameObject.FindWithTag("Player") ? GameObject.FindWithTag("Player").GetComponent<PlayerOwner>() : null;
         }
+
         UpdateAll();
     }
 
@@ -42,24 +43,25 @@ public class InventoryUI : MonoBehaviour, UI {
         if ( player != null && player.inventory.items.Count > maxSlots ){
             maxSlots = Mathf.CeilToInt(player.inventory.items.Count/width)*width;
         }
+        content.sizeDelta = new Vector2(content.sizeDelta.x, (maxSlots/width)*slotRT.rect.height);
 
-        float startX = scrollView.rect.min.x + slotRT.rect.width/2.00f;
+        float startX = slotRT.rect.width/2.00f;
         float x = startX;
-        float y = scrollView.rect.max.y - slotRT.rect.height/2.00f;
+        float y = -slotRT.rect.height/2.00f;
         for (int i = 0; i < maxSlots; i++){
             GameObject o = Instantiate(slotPrefab);
             o.name = i+"";
             o.transform.SetParent(content);
             o.transform.localScale = Vector3.one;
-            o.transform.position = scrollView.position + new Vector3(x,y,0f);
+            o.transform.localPosition = new Vector3(x,y,0f);
             o.AddComponent<InventorySlotUI>();
 
             UpdateSlot(i);
 
-            x += slotRT.rect.width;
+            x += ((RectTransform)o.transform).rect.width;
             if ( i != 0 && (i+1)%width == 0 ){
                 x = startX;
-                y -= slotRT.rect.height;
+                y -= ((RectTransform)o.transform).rect.height;
             }
         }
     }
