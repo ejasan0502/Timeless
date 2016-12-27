@@ -56,6 +56,19 @@ public class Equipment : MonoBehaviour {
             if ( OnEquip != null ) OnEquip(e);
         }
     }
+    public string DataToString(){
+        string s = "";
+        for (int i = 0; i < equips.Length; i++){
+            if ( equips[i] != null ){
+                if ( i != 0 ){
+                    s += ",";
+                } 
+
+                s += i + "-" + equips[i].modelPath;
+            }
+        }
+        return s;
+    }
 
     [NetRPC]
     private void EquipRequest(int slotIndex, NetConnection conn){

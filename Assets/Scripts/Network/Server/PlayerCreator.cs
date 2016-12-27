@@ -59,6 +59,7 @@ public class PlayerCreator : MonoBehaviour {
     private void WriteInstantiateData(NetStream stream) {
         string s = LoginServer.GetAccount(View.Controllers[0].Endpoint).baseModel;
         stream.WriteString(s);
+        stream.WriteString(equipment.DataToString());
         stream.WriteVector3(transform.position);
     }
     private void WriteOwnerData(NetStream stream) {
@@ -75,5 +76,6 @@ public class PlayerCreator : MonoBehaviour {
     }
     private void OnEquipped(Equip e){
         View.SendReliable("ReceiveEquip", RpcTarget.Controllers, e);
+        View.SendReliable("UpdateEquip", RpcTarget.NonControllers, (int)e.equipType, e.modelPath);
     }
 }
