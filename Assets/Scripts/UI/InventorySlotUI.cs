@@ -59,6 +59,9 @@ public class InventorySlotUI : EventTrigger {
             if ( player.inventory.items[int.Parse(name)].item.itemType == ItemType.equip ){
                 player.view.SendReliable("EquipRequest", RpcTarget.Server, int.Parse(name));
             }
+
+            InventoryUI inventoryUI = UIManager.instance.GetUI("InventoryUI").Script as InventoryUI;
+            inventoryUI.HideInfo();
         } else {
             selected = true;
         }

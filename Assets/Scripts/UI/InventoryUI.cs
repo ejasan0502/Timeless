@@ -83,10 +83,7 @@ public class InventoryUI : MonoBehaviour, UI {
         if ( player != null && index < player.inventory.items.Count ){
             infoWindow.SetActive(true);
 
-            RectTransform infoRect = (RectTransform) infoWindow.transform;
             Vector3 pos = content.GetChild(index).position;
-            pos.x += infoRect.rect.width/2.00f;
-            pos.y -= infoRect.rect.height/2.00f;
             infoWindow.transform.position = pos;
 
             Item item = player.inventory.items[index].item;
