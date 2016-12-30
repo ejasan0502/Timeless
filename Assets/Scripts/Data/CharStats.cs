@@ -14,6 +14,7 @@ public class CharStats {
 
     public float acc;           // Percent
     public float eva;           // Percent
+    public float movtSpd;
 
     public CharStats(){
         foreach (FieldInfo fi in GetType().GetFields()){

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Net;
 using System.Collections;
 using MassiveNet;
@@ -9,43 +10,49 @@ public class PlayerInput : MonoBehaviour {
     public float speed = 500f;
     private CharacterController cc;
 
-    private Vector3 moveTo = Vector3.zero;
-    public Animator anim;
+    private Character character;
 
     void Awake(){
         cc = GetComponent<CharacterController>();
-        anim = GetComponent<Animator>() ?? transform.GetComponentInChildren<Animator>();
-        moveTo = transform.position;
+        character = GetComponent<Character>();
     }
     void Start(){
         BirdEyeCameraControl becc = Camera.main.gameObject.AddComponent<BirdEyeCameraControl>();
         becc.SetFollow(transform);
     }
     void Update(){
-        Movement();
-    }
-
-    private void Movement(){
         if ( Input.GetMouseButtonDown(0) ){
             if ( !UIManager.instance.InDeadZone(Input.mousePosition) ){
                 RaycastHit hit;
-                if ( Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 1000f, 1 << LayerMask.NameToLayer("Terrain")) ){
-                    Move(hit.point);
+                if ( Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 1000f) ){
+                    if ( hit.collider.gameObject.layer == LayerMask.NameToLayer("Terrain") ){
+                        character.SetState(CharacterState.idle);
+                        Move(hit.point);
+                    } else if ( hit.collider.gameObject.layer == LayerMask.NameToLayer("Selectable") ){
+                        Select(hit.collider.gameObject);
+                    }
                 }
             }
         }
-
-        cc.SimpleMove( (moveTo-transform.position).normalized*speed*Time.deltaTime );
-        if ( anim != null ) anim.SetFloat("speed", cc.velocity.magnitude);
     }
+
     private void Move(Vector3 moveTo){
         Instantiate(Resources.Load("Effects/MovePointer"), moveTo, Quaternion.identity);
 
-        this.moveTo = moveTo;
-        transform.LookAt(new Vector3(moveTo.x,transform.position.y,moveTo.z));
+        character.Move(moveTo);
     }
+    private void Select(GameObject o){
+        Character c = o.GetComponent<Character>();
+        if ( c != null ){
+            UI targetInfo = UIManager.instance.GetUI("TargetInfoUI");
+            if ( targetInfo != null ){
+                character.SetTarget(c);
+                character.SetState(CharacterState.combat);
 
-    public void SetAnim(Animator anim){
-        this.anim = anim;
+                targetInfo.SetDisplay(true);
+                TargetInfoUI targetInfoUI = (TargetInfoUI) targetInfo;
+                targetInfoUI.SetTarget(c);
+            }
+        }
     }
 }

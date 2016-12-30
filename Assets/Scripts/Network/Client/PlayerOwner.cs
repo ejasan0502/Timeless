@@ -24,8 +24,8 @@ public class PlayerOwner : MonoBehaviour {
             GameObject o = (GameObject) Instantiate(Resources.Load(baseModel));
             o.transform.SetParent(transform);
             o.transform.localPosition = new Vector3(0f,-1f,0f);
-            GetComponent<PlayerInput>().SetAnim(o.GetComponent<Animator>());
             GetComponent<Equipment>().SetCharModel(o.GetComponent<CharacterModel>());
+            GetComponent<Character>().SetAnim(o.GetComponent<Animator>());
         }
 
         Vector3 pos = stream.ReadVector3();
