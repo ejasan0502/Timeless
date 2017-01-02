@@ -38,7 +38,7 @@ public class PlayerInput : MonoBehaviour {
         Instantiate(Resources.Load("Effects/MovePointer"), moveTo, Quaternion.identity);
 
         character.Move(moveTo);
-        view.SendUnreliable("Move", RpcTarget.Server, moveTo);
+        view.SendReliable("MoveInput", RpcTarget.Server, moveTo);
     }
     private void Select(GameObject o){
         Character c = o.GetComponent<Character>();

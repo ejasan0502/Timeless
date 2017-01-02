@@ -57,12 +57,14 @@ public class Character : MonoBehaviour {
     public void SetState(CharacterState cs){
         state = cs;
 
-        if ( state == CharacterState.combat ){
-            anim.SetBool("combat",true);
-        } else if ( state == CharacterState.idle ){
-            anim.SetBool("combat",false);
-        } else if ( state == CharacterState.attacking ){
-            anim.SetBool("attack",true);
+        if ( anim != null ){
+            if ( state == CharacterState.combat ){
+                anim.SetBool("combat",true);
+            } else if ( state == CharacterState.idle ){
+                anim.SetBool("combat",false);
+            } else if ( state == CharacterState.attacking ){
+                anim.SetBool("attack",true);
+            }
         }
     }
     public void SetAnim(Animator a){

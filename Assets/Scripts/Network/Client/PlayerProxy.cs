@@ -22,6 +22,7 @@ public class PlayerProxy : MonoBehaviour {
             o.transform.SetParent(transform);
             o.transform.localPosition = new Vector3(0f,-1f,0f);
             charModel = o.GetComponent<CharacterModel>();
+            GetComponent<Character>().SetAnim(o.GetComponent<Animator>());
 
             if ( equipModels != "" ){
                 string[] args = equipModels.Split(',');

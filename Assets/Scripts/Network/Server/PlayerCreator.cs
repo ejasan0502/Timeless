@@ -10,9 +10,6 @@ public class PlayerCreator : MonoBehaviour {
     private Inventory inventory;
     private Equipment equipment;
 
-    private Vector3 lastPos = Vector3.zero;
-    private Vector3 lastVel = Vector3.zero;
-
     void Awake() {
         View = GetComponent<NetView>();
         inventory = GetComponent<Inventory>();
@@ -22,24 +19,12 @@ public class PlayerCreator : MonoBehaviour {
         inventory.OnItemRemove += OnItemRemoved;
         equipment.OnEquip += OnEquipped;
 
-        View.OnReadSync += ReadSync;
-
         View.OnWriteOwnerData += WriteOwnerData;
         View.OnWriteProxyData += WriteInstantiateData;
         View.OnWritePeerData += WriteInstantiateData;
         View.OnWriteCreatorData += WriteOwnerData;
 
         View.OnReadInstantiateData += ReadInstantiateData;
-    }
-
-    private void ReadSync(NetStream syncStream) {
-        Vector3 position = syncStream.ReadVector3();
-        Quaternion rotation = syncStream.ReadQuaternion();
-        Vector3 velocity = syncStream.ReadVector2();
-        lastPos = position;
-        lastVel = velocity;
-        transform.position = position;
-        transform.rotation = rotation;
     }
 
     private void ReadInstantiateData(NetStream stream) {
