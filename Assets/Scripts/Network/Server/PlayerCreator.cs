@@ -2,6 +2,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+// Server sync
 public class PlayerCreator : MonoBehaviour {
 
     public NetView View { get; private set; }
@@ -21,7 +22,6 @@ public class PlayerCreator : MonoBehaviour {
         inventory.OnItemRemove += OnItemRemoved;
         equipment.OnEquip += OnEquipped;
 
-        View.OnWriteSync += WriteSync;
         View.OnReadSync += ReadSync;
 
         View.OnWriteOwnerData += WriteOwnerData;
@@ -30,17 +30,6 @@ public class PlayerCreator : MonoBehaviour {
         View.OnWriteCreatorData += WriteOwnerData;
 
         View.OnReadInstantiateData += ReadInstantiateData;
-    }
-
-    RpcTarget WriteSync(NetStream syncStream) {
-        if (lastPos == Vector3.zero) return RpcTarget.None;
-
-        syncStream.WriteVector3(transform.position);
-        syncStream.WriteVector3(lastVel);
-
-        lastPos = Vector3.zero;
-
-        return RpcTarget.NonControllers;
     }
 
     private void ReadSync(NetStream syncStream) {
@@ -52,6 +41,7 @@ public class PlayerCreator : MonoBehaviour {
         transform.position = position;
         transform.rotation = rotation;
     }
+
     private void ReadInstantiateData(NetStream stream) {
         transform.position = stream.ReadVector3();
     }

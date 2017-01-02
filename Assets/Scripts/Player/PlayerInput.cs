@@ -7,14 +7,12 @@ using MassiveNet;
 [RequireComponent(typeof(CharacterController))]
 public class PlayerInput : MonoBehaviour {
 
-    public float speed = 500f;
-    private CharacterController cc;
-
     private Character character;
+    private NetView view;
 
     void Awake(){
-        cc = GetComponent<CharacterController>();
         character = GetComponent<Character>();
+        view = GetComponent<NetView>();
     }
     void Start(){
         BirdEyeCameraControl becc = Camera.main.gameObject.AddComponent<BirdEyeCameraControl>();
@@ -40,6 +38,7 @@ public class PlayerInput : MonoBehaviour {
         Instantiate(Resources.Load("Effects/MovePointer"), moveTo, Quaternion.identity);
 
         character.Move(moveTo);
+        view.SendUnreliable("Move", RpcTarget.Server, moveTo);
     }
     private void Select(GameObject o){
         Character c = o.GetComponent<Character>();

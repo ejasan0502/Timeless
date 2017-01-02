@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using MassiveNet;
 
 public class Character : MonoBehaviour {
 
@@ -75,6 +76,8 @@ public class Character : MonoBehaviour {
             Debug.Log("Object is immortal.");
         }
     }
+
+    [NetRPC]
     public void Move(Vector3 moveTo){
         this.moveTo = moveTo;
         transform.LookAt(new Vector3(moveTo.x,transform.position.y,moveTo.z));

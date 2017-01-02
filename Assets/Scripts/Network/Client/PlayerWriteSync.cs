@@ -13,13 +13,15 @@ public class PlayerWriteSync : MonoBehaviour {
         netView.OnWriteSync += WriteSync;
     }
 
-    RpcTarget WriteSync(NetStream syncStream) {
+    private RpcTarget WriteSync(NetStream syncStream) {
         Vector3 velocity = transform.position - lastPos;
+
         syncStream.WriteVector3(transform.position);
         syncStream.WriteQuaternion(transform.rotation);
         syncStream.WriteVector3(velocity);
         lastPos = transform.position;
-        return RpcTarget.Server;
+
+        return RpcTarget.All;
     }
 
 }

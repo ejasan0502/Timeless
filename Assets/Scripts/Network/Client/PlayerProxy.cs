@@ -21,7 +21,6 @@ public class PlayerProxy : MonoBehaviour {
             GameObject o = (GameObject) Instantiate(Resources.Load(baseModel));
             o.transform.SetParent(transform);
             o.transform.localPosition = new Vector3(0f,-1f,0f);
-            GetComponent<PlayerReadSync>().anim = o.GetComponent<Animator>();
             charModel = o.GetComponent<CharacterModel>();
 
             if ( equipModels != "" ){
