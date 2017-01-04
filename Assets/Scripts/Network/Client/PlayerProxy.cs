@@ -16,6 +16,7 @@ public class PlayerProxy : MonoBehaviour {
         string baseModel = stream.ReadString();
         string equipModels = stream.ReadString();
         Vector3 pos = stream.ReadVector3();
+        string id = stream.ReadString();
 
         if ( baseModel != "" ){
             GameObject o = (GameObject) Instantiate(Resources.Load(baseModel));
@@ -23,6 +24,7 @@ public class PlayerProxy : MonoBehaviour {
             o.transform.localPosition = new Vector3(0f,-1f,0f);
             charModel = o.GetComponent<CharacterModel>();
             GetComponent<Character>().SetAnim(o.GetComponent<Animator>());
+            GetComponent<Character>().id = id;
 
             if ( equipModels != "" ){
                 string[] args = equipModels.Split(',');

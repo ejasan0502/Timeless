@@ -24,7 +24,7 @@ public class PlayerInput : MonoBehaviour {
                 RaycastHit hit;
                 if ( Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 1000f) ){
                     if ( hit.collider.gameObject.layer == LayerMask.NameToLayer("Terrain") ){
-                        character.SetState(CharacterState.idle);
+                        character.SetState("idle");
                         Move(hit.point);
                     } else if ( hit.collider.gameObject.layer == LayerMask.NameToLayer("Selectable") ){
                         Select(hit.collider.gameObject);
@@ -46,7 +46,7 @@ public class PlayerInput : MonoBehaviour {
             UI targetInfo = UIManager.instance.GetUI("TargetInfoUI");
             if ( targetInfo != null ){
                 character.SetTarget(c);
-                character.SetState(CharacterState.combat);
+                //view.SendReliable("SetTargetInput", RpcTarget.Server, c.id);
 
                 targetInfo.SetDisplay(true);
                 TargetInfoUI targetInfoUI = (TargetInfoUI) targetInfo;

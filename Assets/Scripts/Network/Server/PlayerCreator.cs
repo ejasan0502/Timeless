@@ -9,11 +9,14 @@ public class PlayerCreator : MonoBehaviour {
 
     private Inventory inventory;
     private Equipment equipment;
+    private Character character;
 
     void Awake() {
         View = GetComponent<NetView>();
         inventory = GetComponent<Inventory>();
         equipment = GetComponent<Equipment>();
+        character = GetComponent<Character>();
+        character.id = IDManager.GenerateId();
 
         inventory.OnItemAdd += OnItemAdded;
         inventory.OnItemRemove += OnItemRemoved;
@@ -36,11 +39,13 @@ public class PlayerCreator : MonoBehaviour {
         stream.WriteString(s);
         stream.WriteString(equipment.DataToString());
         stream.WriteVector3(transform.position);
+        stream.WriteString(character.id);
     }
     private void WriteOwnerData(NetStream stream) {
         string s = LoginServer.GetAccount(View.Controllers[0].Endpoint).baseModel;
         stream.WriteString(s);
         stream.WriteVector3(transform.position);
+        stream.WriteString(character.id);
     }
 
     private void OnItemAdded(Item item, int amt){

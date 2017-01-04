@@ -21,6 +21,11 @@ public class Server : MonoBehaviour {
             return socket;
         }
     }
+    public NetViewManager NetViewManager {
+        get {
+            return netViewManager;
+        }
+    }
 
     private static Server _instance;
     public static Server instance {
