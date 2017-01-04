@@ -22,6 +22,7 @@ public class Character : MonoBehaviour {
 
     private Vector3 moveTo = Vector3.zero;
     private float startAtkTime = 0f;
+    private float noTargetTime = 0f;
 
     private NetView view;
 
@@ -93,6 +94,9 @@ public class Character : MonoBehaviour {
         if ( anim != null ){
             if ( state == CharacterState.combat ){
                 SetAnimState("combat", true);
+                if ( target == null ){
+                    noTargetTime = Time.time;
+                }
             } else if ( state == CharacterState.idle ){
                 SetAnimState("combat", false);
             }
@@ -125,10 +129,8 @@ public class Character : MonoBehaviour {
     private void StateMachine(){
         switch(state){
         case CharacterState.combat:
-        if ( target != null ){
-            if ( Vector3.Distance(transform.position,target.transform.position) > atkRange ){
-                SetState("chase");
-            }
+        if ( target == null && Time.time - noTargetTime > 3f ){
+            SetState("idle");
         }
         break;
         case CharacterState.chase:
@@ -138,7 +140,7 @@ public class Character : MonoBehaviour {
                 SetState("attacking");
             }
         } else {
-            SetState("idle");
+            SetState("combat");
         }
         break;
         case CharacterState.attacking:
@@ -148,7 +150,7 @@ public class Character : MonoBehaviour {
                 SetAnimState("attack", true);
             }
         } else {
-            SetState("idle");
+            SetState("combat");
         }
         break;
         }
