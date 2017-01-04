@@ -46,7 +46,7 @@ public class PlayerInput : MonoBehaviour {
             UI targetInfo = UIManager.instance.GetUI("TargetInfoUI");
             if ( targetInfo != null ){
                 character.SetTarget(c);
-                //view.SendReliable("SetTargetInput", RpcTarget.Server, c.id);
+                view.SendReliable("SetTargetInput", RpcTarget.Server, c.id);
 
                 targetInfo.SetDisplay(true);
                 TargetInfoUI targetInfoUI = (TargetInfoUI) targetInfo;

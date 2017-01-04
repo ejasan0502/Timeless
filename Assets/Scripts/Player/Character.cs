@@ -15,10 +15,10 @@ public class Character : MonoBehaviour {
     public CharStats maxStats;
     public CharStats currentStats;
 
-    public Character target = null;
+    private Character target = null;
     private CharacterController cc;
     private Animator anim;
-    public CharacterState state = CharacterState.idle;
+    private CharacterState state = CharacterState.idle;
 
     private Vector3 moveTo = Vector3.zero;
     private float startAtkTime = 0f;
@@ -162,8 +162,10 @@ public class Character : MonoBehaviour {
             anim.SetFloat(paramName, val);
     }
     private void Movement(){
-        cc.SimpleMove( (moveTo-transform.position).normalized*currentStats.movtSpd*Time.deltaTime );
-        SetAnimState("speed", cc.velocity.magnitude);
+        if ( moveTo != Vector3.zero ){
+            cc.SimpleMove( (moveTo-transform.position).normalized*currentStats.movtSpd*Time.deltaTime );
+            SetAnimState("speed", cc.velocity.magnitude);
+        }
     }
 
 }
