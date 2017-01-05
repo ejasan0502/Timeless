@@ -10,8 +10,7 @@ public class MonsterReadSync : MonoBehaviour {
     void Awake(){
         view = GetComponent<NetView>();
         character = GetComponent<Character>();
-    }
-    void Start(){
+
         view.OnReadInstantiateData += OnReadInstantiate;
         view.OnReadSync += OnReadSync;
     }

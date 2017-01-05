@@ -10,12 +10,23 @@ public class MonsterWriteSync : MonoBehaviour {
     void Awake(){
         view = GetComponent<NetView>();
         character = GetComponent<Character>();
-    }
-    void Start(){
-        view.OnWriteProxyData += OnWriteInstantiate;
-        view.OnWriteSync += OnWriteSync;
-    }
+        character.id = IDManager.GenerateId();
 
+        view.OnWriteProxyData += OnWriteInstantiate;
+        view.OnWriteCreatorData += OnWriteInstantiate;
+        view.OnWritePeerData += OnWriteInstantiate;
+        view.OnWriteSync += OnWriteSync;
+
+        view.OnReadInstantiateData += OnReadInstantiate;
+    }
+    
+    private void OnReadInstantiate(NetStream stream){
+        Vector3 pos = stream.ReadVector3();
+        string id = stream.ReadString();
+
+        transform.position = pos;
+        character.id = id;
+    }
     private void OnWriteInstantiate(NetStream stream){
         stream.WriteVector3(transform.position);
         stream.WriteString(character.id);

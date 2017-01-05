@@ -2,11 +2,15 @@
 using UnityEngine.UI;
 using System.Net;
 using System.Collections;
+using System.Collections.Generic;
 using MassiveNet;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerInput : MonoBehaviour {
 
+    private List<Hotkey> hotkeys = new List<Hotkey>(){
+        new AttackHotkey()
+    };
     private Character character;
     private NetView view;
 
@@ -19,12 +23,12 @@ public class PlayerInput : MonoBehaviour {
         becc.SetFollow(transform);
     }
     void Update(){
+        Hotkeys();
         if ( Input.GetMouseButtonDown(0) ){
             if ( !UIManager.instance.InDeadZone(Input.mousePosition) ){
                 RaycastHit hit;
                 if ( Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 1000f) ){
                     if ( hit.collider.gameObject.layer == LayerMask.NameToLayer("Terrain") ){
-                        character.SetState("idle");
                         Move(hit.point);
                     } else if ( hit.collider.gameObject.layer == LayerMask.NameToLayer("Selectable") ){
                         Select(hit.collider.gameObject);
@@ -51,6 +55,13 @@ public class PlayerInput : MonoBehaviour {
                 targetInfo.SetDisplay(true);
                 TargetInfoUI targetInfoUI = (TargetInfoUI) targetInfo;
                 targetInfoUI.SetTarget(c);
+            }
+        }
+    }
+    private void Hotkeys(){
+        foreach (Hotkey hotkey in hotkeys){
+            if ( Input.GetKeyDown(hotkey.key) ){
+                hotkey.Apply();
             }
         }
     }

@@ -10,17 +10,20 @@ public class Character : MonoBehaviour {
     public string id;
     public bool undying;            // Cannot die
     public bool immortal;           // Cannot be damaged
-    public float atkRange = 1f;
+    public float atkRange = 2f;
     public float atkRate = 1f;
     public CharStats maxStats;
     public CharStats currentStats;
 
+    [SerializeField]
     private Character target = null;
     private CharacterController cc;
     private Animator anim;
+    [SerializeField]
     private CharacterState state = CharacterState.idle;
 
     private Vector3 moveTo = Vector3.zero;
+    private Vector3 lastPos = Vector3.zero;
     private float startAtkTime = 0f;
     private float noTargetTime = 0f;
 
@@ -81,6 +84,13 @@ public class Character : MonoBehaviour {
             Debug.Log("Object is immortal.");
         }
     }
+    public void Chase(){
+        if ( target != null ){
+            SetState("chase");
+            view.SendReliable("StateInput", RpcTarget.Server, "chase");
+        } else
+            Debug.Log("No target");
+    }
 
     [NetRPC]
     public void Move(Vector3 moveTo){
@@ -91,19 +101,18 @@ public class Character : MonoBehaviour {
     public void SetState(string stateName){
         state = (CharacterState)Enum.Parse(typeof(CharacterState),stateName);
 
-        if ( anim != null ){
-            if ( state == CharacterState.combat ){
-                SetAnimState("combat", true);
-                if ( target == null ){
-                    noTargetTime = Time.time;
-                }
-            } else if ( state == CharacterState.idle ){
-                SetAnimState("combat", false);
+        if ( state == CharacterState.combat ){
+            SetAnimState("combat", true);
+            if ( target == null ){
+                noTargetTime = Time.time;
             }
+        } else if ( state == CharacterState.idle ){
+            SetAnimState("combat", false);
         }
     }
     [NetRPC]
     public void SetTarget(string id){
+        Debug.Log("Targetting " + id);
         Character character = null;
         foreach (Character c in GameObject.FindObjectsOfType<Character>()){
             if ( c != null ){
@@ -137,7 +146,10 @@ public class Character : MonoBehaviour {
         if ( target != null ){
             Move(target.transform.position);
             if ( Vector3.Distance(transform.position,target.transform.position) < atkRange ){
-                SetState("attacking");
+                if ( Time.time - startAtkTime > atkRate ){
+                    startAtkTime = Time.time;
+                    SetAnimState("attack", true);
+                }
             }
         } else {
             SetState("combat");
@@ -166,7 +178,8 @@ public class Character : MonoBehaviour {
     private void Movement(){
         if ( moveTo != Vector3.zero ){
             cc.SimpleMove( (moveTo-transform.position).normalized*currentStats.movtSpd*Time.deltaTime );
-            SetAnimState("speed", cc.velocity.magnitude);
+            SetAnimState("speed", (transform.position-lastPos).normalized.magnitude);
+            lastPos = transform.position;
         }
     }
 

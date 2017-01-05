@@ -24,7 +24,5 @@ public class MonsterSpawner : MonoBehaviour {
         Character c = view.GetComponent<Character>();
         view.transform.position = transform.position;
         c.Move(transform.position);
-
-        c.id = IDManager.GenerateId();
     }
 }
