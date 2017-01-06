@@ -1,20 +1,15 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
-public class HotkeyUI : MonoBehaviour, UI {
+public class HotkeyUI : MonoBehaviour {
 
-    public string Id {
-        get {
-            return GetType().ToString();
-        }
-    }
-    public MonoBehaviour Script {
-        get {
-            return this;
-        }
-    }
-    public void SetDisplay(bool b){
-        gameObject.SetActive(b);
-    }
+    public Image icon;
+    public Text text;
+    public Image fill;
 
+    void Awake(){
+        text.text = "";
+        fill.fillAmount = 0f;
+    }
 }

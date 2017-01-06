@@ -8,8 +8,9 @@ using MassiveNet;
 [RequireComponent(typeof(CharacterController))]
 public class PlayerInput : MonoBehaviour {
 
-    private List<Hotkey> hotkeys = new List<Hotkey>(){
-        new AttackHotkey()
+    private Hotkey[] hotkeys = new Hotkey[10]{
+        new AttackHotkey(), null, null, null, null,
+        null, null, null, null, null
     };
     private Character character;
     private NetView view;
@@ -17,6 +18,8 @@ public class PlayerInput : MonoBehaviour {
     void Awake(){
         character = GetComponent<Character>();
         view = GetComponent<NetView>();
+
+        UpdateUI();
     }
     void Start(){
         BirdEyeCameraControl becc = Camera.main.gameObject.AddComponent<BirdEyeCameraControl>();
@@ -60,8 +63,26 @@ public class PlayerInput : MonoBehaviour {
     }
     private void Hotkeys(){
         foreach (Hotkey hotkey in hotkeys){
-            if ( Input.GetKeyDown(hotkey.key) ){
-                hotkey.Apply();
+            if ( hotkey != null ){
+                if ( Input.GetKeyDown(hotkey.key) ){
+                    hotkey.Apply();
+                }
+            }
+        }
+    }
+
+    public void UpdateHotkeyUI(int index){
+        HotkeyUI hotkeyUI = ((HotkeyBarUI)UIManager.instance.GetUI("HotkeyBarUI").Script).hotkeys[index];
+        Hotkey h = hotkeys[index];
+
+        hotkeyUI.icon.sprite = h.Icon;
+        hotkeyUI.fill.fillAmount = 0f;
+        hotkeyUI.text.text = "";
+    }
+    public void UpdateUI(){
+        for (int i = 0; i < hotkeys.Length; i++){
+            if ( hotkeys[i] != null ){
+                UpdateHotkeyUI(i);
             }
         }
     }
