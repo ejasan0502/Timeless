@@ -14,12 +14,12 @@ public class Character : MonoBehaviour {
     public float atkRate = 1f;
     public CharStats maxStats;
     public CharStats currentStats;
+    public EquipStats maxEquipStats;
+    public EquipStats currentEquipStats;
 
-    [SerializeField]
     private Character target = null;
     private CharacterController cc;
     private Animator anim;
-    [SerializeField]
     private CharacterState state = CharacterState.idle;
 
     private Vector3 moveTo = Vector3.zero;
@@ -62,7 +62,10 @@ public class Character : MonoBehaviour {
 
         maxStats = new CharStats(1f);
         currentStats = new CharStats(maxStats);
-        currentStats.movtSpd = 500f;
+        currentStats.movtSpd = 250f;
+
+        maxEquipStats = new EquipStats(1f);
+        currentEquipStats = new EquipStats(maxEquipStats);
     }
     void Update(){
         StateMachine();
@@ -75,14 +78,6 @@ public class Character : MonoBehaviour {
     }
     public void SetAnim(Animator a){
         anim = a;
-    }
-    public void Hit(float rawDmg){
-        if ( !immortal ){
-            currentStats.hp -= rawDmg;
-            CheckDeath();
-        } else {
-            Debug.Log("Object is immortal.");
-        }
     }
     public void Chase(){
         if ( target != null ){
@@ -124,6 +119,23 @@ public class Character : MonoBehaviour {
         }
         SetTarget(character);
     }
+    [NetRPC]
+    public void Hit(float rawDmg){
+        if ( !immortal ){
+            Debug.Log(name + " takes " + rawDmg + " physical dmg");
+            currentStats.hp -= rawDmg;
+            CheckDeath();
+        } else {
+            Debug.Log("Object is immortal.");
+        }
+    }
+    [NetRPC]
+    public void BasicAttack(){
+        if ( target != null ){
+            float rawDmg = UnityEngine.Random.Range(currentEquipStats.minPhysDmg, currentEquipStats.maxPhysDmg);
+            target.Hit(rawDmg);
+        }
+    }
 
     private void CheckDeath(){
         if ( !IsAlive ){
@@ -149,6 +161,8 @@ public class Character : MonoBehaviour {
                 if ( Time.time - startAtkTime > atkRate ){
                     startAtkTime = Time.time;
                     SetAnimState("attack", true);
+                } else {
+                    SetAnimState("attack", false);
                 }
             }
         } else {

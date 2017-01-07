@@ -16,6 +16,7 @@ public class PlayerCreator : MonoBehaviour {
         inventory = GetComponent<Inventory>();
         equipment = GetComponent<Equipment>();
         character = GetComponent<Character>();
+
         character.id = IDManager.GenerateId();
 
         inventory.OnItemAdd += OnItemAdded;
@@ -31,7 +32,8 @@ public class PlayerCreator : MonoBehaviour {
     }
 
     private void ReadInstantiateData(NetStream stream) {
-        transform.position = stream.ReadVector3();
+        Vector3 pos = stream.ReadVector3();
+        transform.position = pos;
     }
 
     private void WriteInstantiateData(NetStream stream) {
