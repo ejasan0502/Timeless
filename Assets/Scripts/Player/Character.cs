@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System;
 using System.Linq;
 using System.Collections;
@@ -23,7 +24,6 @@ public class Character : MonoBehaviour {
     private CharacterState state = CharacterState.idle;
 
     private Vector3 moveTo = Vector3.zero;
-    private Vector3 lastPos = Vector3.zero;
     private float startAtkTime = 0f;
     private float noTargetTime = 0f;
 
@@ -122,8 +122,17 @@ public class Character : MonoBehaviour {
     [NetRPC]
     public void Hit(float rawDmg){
         if ( !immortal ){
-            Debug.Log(name + " takes " + rawDmg + " physical dmg");
             currentStats.hp -= rawDmg;
+
+            if ( Server.instance == null ){
+                GameObject o = (GameObject) Instantiate(Resources.Load("FloatingText"));
+                o.transform.SetParent(transform);
+                o.transform.localPosition = new Vector3(0f,1f,0f);
+                Text text = o.transform.GetChild(0).GetComponent<Text>();
+                text.text = rawDmg+"";
+                text.color = Color.red;
+            }
+
             CheckDeath();
         } else {
             Debug.Log("Object is immortal.");
@@ -192,8 +201,8 @@ public class Character : MonoBehaviour {
     private void Movement(){
         if ( moveTo != Vector3.zero ){
             cc.SimpleMove( (moveTo-transform.position).normalized*currentStats.movtSpd*Time.deltaTime );
-            SetAnimState("speed", (transform.position-lastPos).normalized.magnitude);
-            lastPos = transform.position;
+            if ( anim != null )
+                SetAnimState("speed", Vector3.Distance(transform.position,moveTo) > 1.15f ? 1f : 0f);
         }
     }
 
