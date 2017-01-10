@@ -26,6 +26,14 @@ public class EquipStats {
             fields[i].SetValue(this, val);
         }
     }
+    public EquipStats(params float[] args){
+        FieldInfo[] fields = GetType().GetFields();
+        for (int i = 0; i < args.Length; i++){
+            if ( i < fields.Length ){
+                fields[i].SetValue(this, args[i]);
+            }
+        }
+    }
     public EquipStats(EquipStats es){
         FieldInfo[] fields1 = GetType().GetFields();
         FieldInfo[] fields2 = es.GetType().GetFields();

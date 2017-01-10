@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using System;
 using System.Net;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,16 +15,23 @@ public class PlayerInput : MonoBehaviour {
     };
     private Character character;
     private NetView view;
+    private EventManager eventManager;
+    private Skill castSkill = null;
 
     void Awake(){
         character = GetComponent<Character>();
         view = GetComponent<NetView>();
+        eventManager = EventManager.instance;
 
         UpdateUI();
     }
     void Start(){
         BirdEyeCameraControl becc = Camera.main.gameObject.AddComponent<BirdEyeCameraControl>();
         becc.SetFollow(transform);
+
+        eventManager.AddEventHandler("OnTargetSelect", new System.EventHandler<MyEventArgs>(OnTargetSelect));
+        eventManager.AddEventHandler("OnCastCancel", new System.EventHandler<MyEventArgs>(OnCastCancel));
+        eventManager.AddEventHandler("OnCastEnd", new System.EventHandler<MyEventArgs>(OnCastEnd));
     }
     void Update(){
         Hotkeys();
@@ -33,6 +41,8 @@ public class PlayerInput : MonoBehaviour {
                 if ( Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 1000f) ){
                     if ( hit.collider.gameObject.layer == LayerMask.NameToLayer("Terrain") ){
                         Move(hit.point);
+                    } else if ( castSkill != null ){
+                        Cast(hit);
                     } else if ( hit.collider.gameObject.layer == LayerMask.NameToLayer("Selectable") ){
                         Select(hit.collider.gameObject);
                     }
@@ -70,6 +80,32 @@ public class PlayerInput : MonoBehaviour {
             }
         }
     }
+    private void Cast(RaycastHit hit){
+        switch (castSkill.aoeType){
+        default: Debug.Log("Player input does not implement aoeType, " + castSkill.aoeType.ToString()); break;
+        #region Single Target
+        case AoeType.singleTarget:
+        if ( hit.collider.gameObject.layer == LayerMask.NameToLayer("Selectable") ){
+            Character c = hit.collider.gameObject.GetComponent<Character>();
+            if ( c != null ){
+                if ( !castSkill.friendly && c.tag == "Enemy" || castSkill.friendly && c.tag == "Player" ){
+                    Select(hit.collider.gameObject);
+                    if ( castSkill.IsInstant ){
+                        castSkill.Apply(new List<Character>(){character.Target});
+                    } else {
+                        character.SetAnimState("castAnim", (int)castSkill.castAnim);
+                    }
+                } else {
+                    Debug.Log("Invalid target.");
+                }
+            } else {
+                Debug.Log("Invalid target.");
+            }
+        }
+        break;
+        #endregion;
+        }
+    }
 
     public void UpdateHotkeyUI(int index){
         HotkeyUI hotkeyUI = ((HotkeyBarUI)UIManager.instance.GetUI("HotkeyBarUI").Script).hotkeys[index];
@@ -85,5 +121,19 @@ public class PlayerInput : MonoBehaviour {
                 UpdateHotkeyUI(i);
             }
         }
+    }
+
+    public void OnTargetSelect(object sender, MyEventArgs args){
+        try {
+            castSkill = (Skill)args.args[0];
+        } catch (Exception e){
+            Debug.LogError(e.ToString());
+        }
+    }
+    public void OnCastCancel(object sender, MyEventArgs args){
+        
+    }
+    public void OnCastEnd(object sender, MyEventArgs args){
+        
     }
 }

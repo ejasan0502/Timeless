@@ -17,6 +17,7 @@ public class Character : MonoBehaviour {
     public CharStats currentStats;
     public EquipStats maxEquipStats;
     public EquipStats currentEquipStats;
+    public List<Skill> skills = new List<Skill>();
 
     private Character target = null;
     private CharacterController cc;
@@ -87,6 +88,25 @@ public class Character : MonoBehaviour {
             Debug.Log("No target");
     }
 
+    public void SetAnimState(string paramName, bool val){
+        if ( anim != null )
+            anim.SetBool(paramName, val);
+    }
+    public void SetAnimState(string paramName, float val){
+        if ( anim != null )
+            anim.SetFloat(paramName, val);
+    }
+
+    [NetRPC]
+    public void AddSkill(string id){
+        Skill s = SkillManager.GetSkill(id);
+        if ( s != null ){
+            Skill dupSkill = skills.Where<Skill>(sk => sk.name == s.name).FirstOrDefault();
+            if ( dupSkill == null ){
+                skills.Add(s);
+            }
+        }
+    }
     [NetRPC]
     public void Move(Vector3 moveTo){
         this.moveTo = moveTo;
@@ -189,14 +209,6 @@ public class Character : MonoBehaviour {
         }
         break;
         }
-    }
-    private void SetAnimState(string paramName, bool val){
-        if ( anim != null )
-            anim.SetBool(paramName, val);
-    }
-    private void SetAnimState(string paramName, float val){
-        if ( anim != null )
-            anim.SetFloat(paramName, val);
     }
     private void Movement(){
         if ( moveTo != Vector3.zero ){

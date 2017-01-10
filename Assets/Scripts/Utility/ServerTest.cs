@@ -8,8 +8,12 @@ public class ServerTest : MonoBehaviour {
     public List<string> startItems = new List<string>(){
         "sword-0"
     };
+    public List<string> startSkills = new List<string>(){
+        "1hw-0"
+    };
 
     private Inventory inventory;
+    private RequestHandler reqHandler;
 
     void Awake(){
         inventory = GetComponent<Inventory>();
@@ -17,6 +21,9 @@ public class ServerTest : MonoBehaviour {
     void Start(){
         foreach (string id in startItems){
             inventory.SendAdd(id, 1);
+        }
+        foreach (string s in startSkills){
+            reqHandler.SkillAddRequest(s);
         }
     }
 }
