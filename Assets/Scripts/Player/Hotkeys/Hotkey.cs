@@ -8,13 +8,14 @@ public abstract class Hotkey {
 
     public Sprite Icon {
         get {
-            return Resources.Load<Sprite>(iconPath);
+            return Resources.Load<Sprite>(iconPath) ?? Resources.Load<Sprite>("Icons/default");
         }
     }
-
     
-    public Hotkey(){}
+    public Hotkey(){
+        iconPath = "Icons/default";
+        key = KeyCode.Alpha1;
+    }
     public abstract void Apply();
-
 
 }

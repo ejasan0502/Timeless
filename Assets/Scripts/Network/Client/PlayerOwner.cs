@@ -5,13 +5,25 @@ public class PlayerOwner : MonoBehaviour {
 
     public Inventory inventory;
     public Equipment equipment;
+    public Character character;
 
     public NetView view { get; private set; }
+    
+    private static PlayerOwner _instance;
+    public static PlayerOwner instance {
+        get {
+            if ( _instance == null ){
+                _instance = GameObject.FindObjectOfType<PlayerOwner>();
+            }
+            return _instance;
+        }
+    }
 
     void Awake() {
         view = GetComponent<NetView>();
         inventory = GetComponent<Inventory>();
         equipment = GetComponent<Equipment>();
+        character = GetComponent<Character>();
 
         tag = "Player";
 

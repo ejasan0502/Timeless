@@ -4,12 +4,7 @@ using System.Collections.Generic;
 
 public class SkillManager : MonoBehaviour {
 
-    private Dictionary<string,List<Skill>> skills = new Dictionary<string,List<Skill>>(){
-        { "1hw", new List<Skill>(){
-            new DamageSkill("Heavy Swing", "Deals physical damage to a target.", new EquipStats(1f,3f), ElementType.physical, CastAnim.swing, 0f, 3f, "Icons/default", 1, 2f, AoeType.singleTarget, 0f, 0f, 0f, false)
-            }
-        }
-    };
+    private Dictionary<string,List<Skill>> skills = new Dictionary<string,List<Skill>>();
 
     private static SkillManager _instance;
     public static SkillManager instance {

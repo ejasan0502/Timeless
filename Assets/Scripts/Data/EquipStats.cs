@@ -5,10 +5,11 @@ using System.Collections;
 public class EquipStats {
 
     public float minPhysDmg, maxPhysDmg;
-    public float minMagDmg, maxMagDmg;
     public float minRangeDmg, maxRangeDmg;
+    public float minMagDmg, maxMagDmg;
 
     public float physDef;
+    public float rangeDef;
     public float magDef;
 
     public float critChance;                    // Percent

@@ -3,100 +3,116 @@ using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
 
-public abstract class Skill {
+public class Skill {
 
     public string name;
+    public string id;
     public string description;
-    public EquipStats stats;
+    public SkillType skillType;
     public ElementType elementType;
-    public CastAnim castAnim;
-    public float castTime;              // -1 = toggle, 0 = instant, 1+ = duration
-    public float cooldown;
     public string iconPath;
-
-    public int maxTargets;
-    public float aoeRadius;
-    public AoeType aoeType;
+    public TargetType targetType;
+    public CastAnim castAnim;
+    public float castTime;
+    public float range;
 
     public float hpCost;
     public float mpCost;
     public float staCost;
-
-    public bool friendly;
-
-    protected float startCastTime;
 
     public Sprite Icon {
         get {
             return Resources.Load<Sprite>(iconPath) ?? null;
         }
     }
-    public bool CanCast(Character c){
-        return c.currentStats.hp > hpCost && c.currentStats.mp >= mpCost && c.currentStats.sta > staCost;
-    }
-    public bool InCooldown {
+    public virtual object Self {
         get {
-            return Time.time - startCastTime < cooldown;
-        }
-    }
-    public bool IsToggle {
-        get {
-            return castTime == -1;
-        }
-    }
-    public bool IsInstant {
-        get {
-            return castTime == 0;
+            return this;
         }
     }
 
     public Skill(){
         name = "Untitled";
+        id = "";
         description = "No Description.";
-        stats = new EquipStats();
+        skillType = SkillType.damage;
         elementType = ElementType.physical;
-        castAnim = CastAnim.swing;
-        castTime = 1f;
-        cooldown = 1f;
         iconPath = "Icons/default";
-
-        maxTargets = 1;
-        aoeRadius = 1f;
-        aoeType = AoeType.singleTarget;
+        targetType = TargetType.singleTarget;
+        castAnim = CastAnim.instantMelee;
+        castTime = 0f;
+        range = 0f;
 
         hpCost = 0f;
         mpCost = 0f;
         staCost = 0f;
-
-        friendly = false;
     }
     public Skill(Skill s){
         name = s.name;
+        id = s.id;
         description = s.name;
-        stats = new EquipStats(stats);
+        skillType = s.skillType;
         elementType = s.elementType;
+        iconPath = s.iconPath;
+        targetType = s.targetType;
         castAnim = s.castAnim;
         castTime = s.castTime;
-        cooldown = s.cooldown;
-        iconPath = s.iconPath;
-
-        maxTargets = s.maxTargets;
-        aoeRadius = s.aoeRadius;
-        aoeType = s.aoeType;
+        range = s.range;
 
         hpCost = s.hpCost;
         mpCost = s.mpCost;
         staCost = s.staCost;
-
-        friendly = s.friendly;
     }
-
-    public void Consume(Character caster){
+    
+    protected bool CanCast(Character caster){
+        return caster.currentStats.hp > hpCost && caster.currentStats.mp >= mpCost && caster.currentStats.sta >= staCost;
+    }
+    protected void Consume(Character caster){
         caster.currentStats.hp -= hpCost;
         caster.currentStats.mp -= mpCost;
         caster.currentStats.sta -= staCost;
     }
+    public List<Character> FindTargets(Character caster){
+        List<Character> targets = new List<Character>();
+        GameObject o = null;
 
-    public abstract void Cast(Character caster);
-    public abstract void Apply(List<Character> targets);
+        switch (targetType){
+        case TargetType.aoePoint:
+        break;
+        case TargetType.frontAoe:
+        o = (GameObject) GameObject.Instantiate(Resources.Load("aoeSphere"));
+
+        float size = range*0.5f;
+        o.transform.localScale = new Vector3(size,size,size);
+        o.transform.position = caster.transform.forward*range;
+        break;
+        case TargetType.frontAoeRect:
+        o = (GameObject) GameObject.Instantiate(Resources.Load("aoeCube"));
+        o.transform.position = caster.transform.position;
+        o.transform.rotation = caster.transform.rotation;
+
+        BoxCollider bc = o.GetComponent<BoxCollider>();
+        bc.size = new Vector3(0.25f*range,0.25f*range,range);
+        bc.center = new Vector3(0f,0f,range/2.0f);
+        break;
+        case TargetType.self:
+        targets.Add(caster);
+        break;
+        case TargetType.singleTarget:
+        if ( caster.Target != null ){
+            targets.Add(caster.Target);
+        }
+        break;
+        case TargetType.withinRadius:
+        o = (GameObject) GameObject.Instantiate(Resources.Load("aoeSphere"));
+        o.transform.position = caster.transform.position;
+        o.transform.localScale = new Vector3(range,range,range);
+        break;
+        }
+
+        return targets;
+    }
+
+    public virtual void Cast(Character caster){}
+    public virtual void Apply(Character caster, List<Character> targets){}
 }

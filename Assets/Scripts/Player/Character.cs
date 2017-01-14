@@ -17,11 +17,12 @@ public class Character : MonoBehaviour {
     public CharStats currentStats;
     public EquipStats maxEquipStats;
     public EquipStats currentEquipStats;
-    public List<Skill> skills = new List<Skill>();
 
     private Character target = null;
+    private List<Character> targets = null;
     private CharacterController cc;
     private Animator anim;
+    private SkillLibrary skillLib;
     private CharacterState state = CharacterState.idle;
 
     private Vector3 moveTo = Vector3.zero;
@@ -29,6 +30,7 @@ public class Character : MonoBehaviour {
     private float noTargetTime = 0f;
 
     private NetView view;
+    private Skill castSkill = null;
 
     public bool IsAlive {
         get {
@@ -55,10 +57,16 @@ public class Character : MonoBehaviour {
             return GameObject.FindObjectOfType<PlayerOwner>().GetComponent<Character>();
         }
     }
+    public Skill CastSkill {
+        get {
+            return castSkill;
+        }
+    }
 
     void Awake(){
         cc = GetComponent<CharacterController>();
         anim = GetComponentInChildren<Animator>();
+        skillLib = GetComponent<SkillLibrary>();
         view = GetComponent<NetView>();
 
         maxStats = new CharStats(1f);
@@ -80,13 +88,6 @@ public class Character : MonoBehaviour {
     public void SetAnim(Animator a){
         anim = a;
     }
-    public void Chase(){
-        if ( target != null ){
-            SetState("chase");
-            view.SendReliable("StateInput", RpcTarget.Server, "chase");
-        } else
-            Debug.Log("No target");
-    }
 
     public void SetAnimState(string paramName, bool val){
         if ( anim != null )
@@ -96,17 +97,27 @@ public class Character : MonoBehaviour {
         if ( anim != null )
             anim.SetFloat(paramName, val);
     }
+    public void SetAnimState(string paramName, int val){
+        if ( anim != null )
+            anim.SetInteger(paramName, val);
+    }
 
-    [NetRPC]
-    public void AddSkill(string id){
-        Skill s = SkillManager.GetSkill(id);
-        if ( s != null ){
-            Skill dupSkill = skills.Where<Skill>(sk => sk.name == s.name).FirstOrDefault();
-            if ( dupSkill == null ){
-                skills.Add(s);
-            }
+    public void Chase(){
+        if ( target != null ){
+            SetState("chase");
+            view.SendReliable("StateInput", RpcTarget.Server, "chase");
+        } else
+            Debug.Log("No target");
+    }
+    public void ApplyCast(){
+        SetAnimState("castAnim",-1);
+        if ( castSkill != null ){
+            castSkill.Apply(this, targets == null || targets.Count < 1 ? castSkill.FindTargets(this) : targets);
+            castSkill = null;
+            targets = null;
         }
     }
+
     [NetRPC]
     public void Move(Vector3 moveTo){
         this.moveTo = moveTo;
@@ -123,6 +134,8 @@ public class Character : MonoBehaviour {
             }
         } else if ( state == CharacterState.idle ){
             SetAnimState("combat", false);
+        } else if ( state == CharacterState.casting ){
+            SetAnimState("castAnim", (int)castSkill.castAnim);
         }
     }
     [NetRPC]
@@ -163,6 +176,21 @@ public class Character : MonoBehaviour {
         if ( target != null ){
             float rawDmg = UnityEngine.Random.Range(currentEquipStats.minPhysDmg, currentEquipStats.maxPhysDmg);
             target.Hit(rawDmg);
+        }
+    }
+    [NetRPC]
+    public void SetCastSkill(int index){
+        castSkill = skillLib.skills[index];
+        SetState("casting");
+    }
+    [NetRPC]
+    public void SetTargets(string[] ids){
+        targets = new List<Character>();
+        foreach (string s in ids){
+            Character c = GameObject.FindObjectsOfType<Character>().Where<Character>(ch => ch.id == s).FirstOrDefault();
+            if ( c != null ){
+                targets.Add(c);
+            }
         }
     }
 

@@ -13,7 +13,6 @@ public class ServerTest : MonoBehaviour {
     };
 
     private Inventory inventory;
-    private RequestHandler reqHandler;
 
     void Awake(){
         inventory = GetComponent<Inventory>();
@@ -21,9 +20,6 @@ public class ServerTest : MonoBehaviour {
     void Start(){
         foreach (string id in startItems){
             inventory.SendAdd(id, 1);
-        }
-        foreach (string s in startSkills){
-            reqHandler.SkillAddRequest(s);
         }
     }
 }

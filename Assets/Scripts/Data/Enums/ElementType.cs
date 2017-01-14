@@ -1,5 +1,6 @@
 ﻿public enum ElementType {
-    physical, magical,
+    none,
+    physical, magical, ranged,
     fire, plasma,
     water, ice,
     earth, gravity,
