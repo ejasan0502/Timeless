@@ -31,6 +31,7 @@ public class Character : MonoBehaviour {
 
     private NetView view;
     private Skill castSkill = null;
+    private List<BuffSkill> buffs = new List<BuffSkill>();
 
     public bool IsAlive {
         get {
@@ -116,6 +117,26 @@ public class Character : MonoBehaviour {
             castSkill = null;
             targets = null;
         }
+    }
+    public void ApplyBuffs(){
+        CharStats charStats = new CharStats(0f);
+        EquipStats equipStats = new EquipStats(0f);
+        CharStats charStatsP = new CharStats(1f);
+        EquipStats equipStatsP = new EquipStats(1f);
+        foreach (BuffSkill s in buffs){
+            if ( s.percent ){
+                charStatsP += s.charStats;
+                equipStatsP += s.equipStats;
+            } else {
+                charStats += s.charStats;
+                equipStats += s.equipStats;
+            }
+        }
+
+        this.maxStats += charStats;
+        this.maxEquipStats += equipStats;
+        this.maxStats *= charStatsP;
+        this.maxEquipStats *= equipStatsP;
     }
 
     [NetRPC]

@@ -20,5 +20,6 @@ public class Player : MonoBehaviour {
         character.maxEquipStats = baseEquipStats;
 
         skillLib.ApplyPassives(character);
+        character.ApplyBuffs();
     }
 }
