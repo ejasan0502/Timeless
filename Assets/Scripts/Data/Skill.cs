@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
+using MassiveNet;
 
 public class Skill {
 
@@ -113,6 +114,17 @@ public class Skill {
         return targets;
     }
 
-    public virtual void Cast(Character caster){}
+    public virtual void Cast(Character caster){
+        if ( !CanCast(caster) ) return;
+
+        int skillIndex = caster.GetComponent<SkillLibrary>().GetSkillIndex(this);
+        if ( targetType == TargetType.aoePoint ){
+            EventManager.instance.TriggerEvent("OnSelectAoePoint", new MyEventArgs(new ArrayList(){skillIndex}));
+        } else {
+            if ( targetType == TargetType.singleTarget && caster.Target == null ) return;
+
+            caster.View.SendReliable("CastInput", RpcTarget.Server, skillIndex);
+        }
+    }
     public virtual void Apply(Character caster, List<Character> targets){}
 }

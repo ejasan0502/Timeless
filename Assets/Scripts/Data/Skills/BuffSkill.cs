@@ -10,10 +10,14 @@ public class BuffSkill : Skill {
     public EquipStats equipStats;
 
     public BuffSkill() : base(){
-
+        percent = false;
+        charStats = new CharStats();
+        equipStats = new EquipStats();
     }
     public BuffSkill(BuffSkill s) : base(s){
-
+        percent = s.percent;
+        charStats = new CharStats(s.charStats);
+        equipStats = new EquipStats(s.equipStats);
     }
 
     public override object Self {
@@ -21,21 +25,9 @@ public class BuffSkill : Skill {
             return this;
         }
     }
-    public override void Cast(Character caster){
-        if ( !CanCast(caster) ) return;
-
-        int skillIndex = caster.GetComponent<SkillLibrary>().GetSkillIndex(this);
-        if ( targetType == TargetType.aoePoint ){
-            EventManager.instance.TriggerEvent("OnSelectAoePoint", new MyEventArgs(new ArrayList(){skillIndex}));
-        } else {
-            if ( targetType == TargetType.singleTarget && caster.Target == null ) return;
-
-            caster.View.SendReliable("CastInput", RpcTarget.Server, skillIndex);
-        }
-    }
     public override void Apply(Character caster, List<Character> targets){
         foreach (Character c in targets){
-            
+            c.AddBuff(this);
         }
     }
 }

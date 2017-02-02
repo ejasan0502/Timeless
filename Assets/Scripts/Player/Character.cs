@@ -18,6 +18,9 @@ public class Character : MonoBehaviour {
     public EquipStats maxEquipStats;
     public EquipStats currentEquipStats;
 
+    public bool canMove { get; private set; }
+    public bool canCast { get; private set; }
+
     private Character target = null;
     private List<Character> targets = null;
     private CharacterController cc;
@@ -76,6 +79,9 @@ public class Character : MonoBehaviour {
 
         maxEquipStats = new EquipStats(1f);
         currentEquipStats = new EquipStats(maxEquipStats);
+
+        canMove = true;
+        canCast = true;
     }
     void Update(){
         StateMachine();
@@ -137,6 +143,22 @@ public class Character : MonoBehaviour {
         this.maxEquipStats += equipStats;
         this.maxStats *= charStatsP;
         this.maxEquipStats *= equipStatsP;
+    }
+    public void AddBuff(BuffSkill bs){
+        if ( !buffs.Contains(bs) ){
+            buffs.Add(bs);
+            ApplyBuffs();
+        }
+    }
+    public void SetInputRestrict(bool canMove, bool canCast){
+        this.canMove = canMove;
+        this.canCast = canCast;
+    }
+    public void SetCanMove(bool b){
+        canMove = b;
+    }
+    public void SetCanCast(bool b){
+        canCast = b;
     }
 
     [NetRPC]
