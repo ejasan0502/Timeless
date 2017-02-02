@@ -26,11 +26,20 @@ public class Block {
         vertices.Add(new Vector3( 1, 1,-1)*halfSize);
         vertices.Add(new Vector3( 1,-1,-1)*halfSize);
         vertices.Add(new Vector3(-1,-1,-1)*halfSize);
-
         vertices.Add(new Vector3(-1, 1, 1)*halfSize);
         vertices.Add(new Vector3( 1, 1, 1)*halfSize);
         vertices.Add(new Vector3( 1,-1, 1)*halfSize);
         vertices.Add(new Vector3(-1,-1, 1)*halfSize);
+
+        uvs = new List<Vector2>();
+        uvs.Add(new Vector2(0,1));
+        uvs.Add(new Vector2(1,1));
+        uvs.Add(new Vector2(1,0));
+        uvs.Add(new Vector2(0,0));
+        uvs.Add(new Vector2(1,1));
+        uvs.Add(new Vector2(0,1));
+        uvs.Add(new Vector2(1,0));
+        uvs.Add(new Vector2(0,0));
     }
 
     public void Create(Face face){
@@ -90,6 +99,7 @@ public class Block {
             Mesh m = new Mesh();
             m.vertices = vertices.ToArray();
             m.triangles = triangles.ToArray();
+            m.uv = uvs.ToArray();
 
             return m;
         }

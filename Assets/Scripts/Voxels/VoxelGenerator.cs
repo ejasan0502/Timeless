@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class VoxelGenerator : MonoBehaviour {
 
+    public Texture2D voxelSheet;
     public float blockSize = 1f;
     public int chunkWidth = 10;
     public int chunkHeight = 10;
@@ -21,7 +22,8 @@ public class VoxelGenerator : MonoBehaviour {
         CreateWorld();
         SetupNeighbors();
         //DebugNeighbors();
-        CreateMesh();
+        CreateSingleMesh();
+        //CreateMesh();
     }
 
     private void CreateWorld(){
@@ -213,7 +215,7 @@ public class VoxelGenerator : MonoBehaviour {
                         for (int by = 0; by < bh; by++){
                             for (int bz = 0; bz < bl; bz++){
                                 GameObject o = new GameObject();
-                                o.transform.position = chunks[cx,cy,cz].blocks[bx,by,bz].center;
+                                o.transform.position = chunks[cx,cy,cz].center + chunks[cx,cy,cz].blocks[bx,by,bz].center;
 
                                 MeshFilter mf = o.AddComponent<MeshFilter>();
                                 MeshRenderer mr = o.AddComponent<MeshRenderer>();
@@ -230,5 +232,55 @@ public class VoxelGenerator : MonoBehaviour {
 
         root.AddComponent<CombineMeshes>();
     }
+    private void CreateSingleMesh(){
+        int cW = chunks.GetLength(0);
+        int cH = chunks.GetLength(1);
+        int cL = chunks.GetLength(2);
 
+        for (int cx = 0; cx < cW; cx++){
+            for (int cy = 0; cy < cH; cy++){
+                for (int cz = 0; cz < cL; cz++){
+                    List<Vector3> vertices = new List<Vector3>();
+                    List<Vector2> uvs = new List<Vector2>();
+                    List<int> triangles = new List<int>();
+
+                    int bw = chunks[cx,cy,cz].blocks.GetLength(0);
+                    int bh = chunks[cx,cy,cz].blocks.GetLength(1);
+                    int bl = chunks[cx,cy,cz].blocks.GetLength(2);
+
+                    for (int bx = 0; bx < bw; bx++){
+                        for (int by = 0; by < bh; by++){
+                            for (int bz = 0; bz < bl; bz++){
+                                foreach (int i in chunks[cx,cy,cz].blocks[bx,by,bz].triangles){
+                                    triangles.Add(i+vertices.Count);
+                                }
+                                foreach (Vector3 v in chunks[cx,cy,cz].blocks[bx,by,bz].vertices){
+                                    vertices.Add(v+chunks[cx,cy,cz].blocks[bx,by,bz].center);
+                                }
+
+                                uvs.AddRange(chunks[cx,cy,cz].blocks[bx,by,bz].uvs);
+                            }
+                        }
+                    }
+                    
+                    Mesh m = new Mesh();
+                    m.vertices = vertices.ToArray();
+                    m.triangles = triangles.ToArray();
+                    m.uv = uvs.ToArray();
+        
+                    m.Optimize();
+                    m.RecalculateNormals();
+
+                    GameObject root = new GameObject("Voxels");
+                    root.transform.position = chunks[cx,cy,cz].center;
+
+                    MeshFilter mf = root.AddComponent<MeshFilter>();
+                    MeshRenderer mr = root.AddComponent<MeshRenderer>();
+
+                    mf.sharedMesh = m;
+                    mr.material = new Material(Shader.Find("Particles/Additive"));
+                }
+            }
+        }
+    }
 }

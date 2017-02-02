@@ -18,6 +18,7 @@ public class CombineMeshes : MonoBehaviour {
         }
         transform.GetComponent<MeshFilter>().mesh = new Mesh();
         transform.GetComponent<MeshFilter>().mesh.CombineMeshes(combine);
+        GetComponent<MeshRenderer>().material = new Material(Shader.Find("Particles/Additive"));
         gameObject.SetActive(true);
     }
 
