@@ -31,9 +31,18 @@ public class VoxelGenerator : MonoBehaviour {
         if ( Input.GetMouseButtonDown(0) ){
             RaycastHit hit;
             if ( Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit) ){
-                Debug.Log(hit.point.ToString());
                 string[] args = hit.collider.name.Split(',');
+                Debug.Log(string.Format("Destroying block in chunk ({0},{1},{2})",args[0],args[1],args[2]));
                 chunks[int.Parse(args[0]),int.Parse(args[1]),int.Parse(args[2])].DestroyBlockAt(hit.point);
+                UpdateMesh();
+            }
+        }
+        if ( Input.GetMouseButtonDown(1) ){
+            RaycastHit hit;
+            if ( Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit) ){
+                string[] args = hit.collider.name.Split(',');
+                Debug.Log(string.Format("Creating block in chunk ({0},{1},{2})",args[0],args[1],args[2]));
+                chunks[int.Parse(args[0]),int.Parse(args[1]),int.Parse(args[2])].CreateBlockAt(hit.point);
                 UpdateMesh();
             }
         }
@@ -54,12 +63,12 @@ public class VoxelGenerator : MonoBehaviour {
                 Y = startY + chunkHeight*blockSize*y;
                 for (int z = 0; z < worldLength; z++){
                     Z = startZ + chunkLength*blockSize*z;
-                    chunks[x,y,z] = new Chunk(new Vector3(X,Y,Z),chunkWidth,chunkHeight,chunkLength,blockSize);
+                    chunks[x,y,z] = new Chunk(new Vector3(X,Y,Z),new Vector3(x,y,z),chunkWidth,chunkHeight,chunkLength,blockSize);
                 }
             }
         }
     }
-    private void SetupNeighbors(){
+    public void SetupNeighbors(){
         int cW = chunks.GetLength(0);
         int cH = chunks.GetLength(1);
         int cL = chunks.GetLength(2);
@@ -270,7 +279,7 @@ public class VoxelGenerator : MonoBehaviour {
                                     triangles.Add(i+vertices.Count);
                                 }
                                 foreach (Vector3 v in chunks[cx,cy,cz].blocks[bx,by,bz].vertices){
-                                    vertices.Add(v+chunks[cx,cy,cz].blocks[bx,by,bz].center);
+                                    vertices.Add(v);
                                 }
 
                                 uvs.AddRange(chunks[cx,cy,cz].blocks[bx,by,bz].uvs);
@@ -288,7 +297,7 @@ public class VoxelGenerator : MonoBehaviour {
 
                     GameObject root = new GameObject("Voxels");
                     root.name = string.Format("{0},{1},{2}",cx,cy,cz);
-                    root.transform.position = chunks[cx,cy,cz].center;
+                    //root.transform.position = chunks[cx,cy,cz].center;
 
                     MeshFilter mf = root.AddComponent<MeshFilter>();
                     MeshRenderer mr = root.AddComponent<MeshRenderer>();
@@ -311,5 +320,87 @@ public class VoxelGenerator : MonoBehaviour {
         }
         voxels = new List<GameObject>();
         CreateSingleMesh();
+    }
+
+    public void UpdateBlock(Chunk chunk, Block block){
+        int cx = (int)chunk.posInWorld.x;
+        int cy = (int)chunk.posInWorld.y;
+        int cz = (int)chunk.posInWorld.z;
+        int cW = (int)chunks.GetLength(0);
+        int cH = (int)chunks.GetLength(1);
+        int cL = (int)chunks.GetLength(2);
+
+        int bx = (int)block.posInChunk.x;
+        int by = (int)block.posInChunk.y;
+        int bz = (int)block.posInChunk.z;
+        int bw = (int)chunk.blocks.GetLength(0);
+        int bh = (int)chunk.blocks.GetLength(1);
+        int bl = (int)chunk.blocks.GetLength(2);
+
+        for (int i = 0; i < 6; i++){
+            switch (i){
+            case (int)Face.front: 
+                if ( bz-1 >= 0 ){
+                    chunks[cx,cy,cz].blocks[bx,by,bz].neighbors[i] = chunks[cx,cy,cz].blocks[bx,by,bz-1];
+                } else if ( cz-1 >= 0 ){
+                    chunks[cx,cy,cz].blocks[bx,by,bz].neighbors[i] = chunks[cx,cy,cz-1].blocks[bx,by,bl-1];
+                } else {
+                    chunks[cx,cy,cz].blocks[bx,by,bz].Create(Face.front);
+                }
+                break;
+            case (int)Face.top: 
+                if ( by+1 < bh ){
+                    chunks[cx,cy,cz].blocks[bx,by,bz].neighbors[i] = chunks[cx,cy,cz].blocks[bx,by+1,bz];
+                } else if ( cy+1 < cH ){
+                    chunks[cx,cy,cz].blocks[bx,by,bz].neighbors[i] = chunks[cx,cy+1,cz].blocks[bx,0,bz];
+                } else {
+                    chunks[cx,cy,cz].blocks[bx,by,bz].Create(Face.top);
+                }
+                break;
+            case (int)Face.left: 
+                if ( bx-1 >= 0 ){
+                    chunks[cx,cy,cz].blocks[bx,by,bz].neighbors[i] = chunks[cx,cy,cz].blocks[bx-1,by,bz];
+                } else if ( cx-1 >= 0 ){
+                    chunks[cx,cy,cz].blocks[bx,by,bz].neighbors[i] = chunks[cx-1,cy,cz].blocks[bw-1,by,bz];
+                } else {
+                    chunks[cx,cy,cz].blocks[bx,by,bz].Create(Face.left);
+                }
+                break;
+            case (int)Face.right: 
+                if ( bx+1 < bw ){
+                    chunks[cx,cy,cz].blocks[bx,by,bz].neighbors[i] = chunks[cx,cy,cz].blocks[bx+1,by,bz];
+                } else if ( cx+1 < cW ){
+                    chunks[cx,cy,cz].blocks[bx,by,bz].neighbors[i] = chunks[cx+1,cy,cz].blocks[0,by,bz];
+                } else {
+                    chunks[cx,cy,cz].blocks[bx,by,bz].Create(Face.right);
+                }
+                break;
+            case (int)Face.bottom: 
+                if ( by-1 >= 0 ){
+                    chunks[cx,cy,cz].blocks[bx,by,bz].neighbors[i] = chunks[cx,cy,cz].blocks[bx,by-1,bz];
+                } else if ( cy-1 >= 0 ){
+                    chunks[cx,cy,cz].blocks[bx,by,bz].neighbors[i] = chunks[cx,cy-1,cz].blocks[bx,bh-1,bz];
+                } else {
+                    chunks[cx,cy,cz].blocks[bx,by,bz].Create(Face.bottom);
+                }
+                break;
+            case (int)Face.back: 
+                if ( bz+1 < bl ){
+                    chunks[cx,cy,cz].blocks[bx,by,bz].neighbors[i] = chunks[cx,cy,cz].blocks[bx,by,bz+1];
+                } else if ( cz+1 < cL ){
+                    chunks[cx,cy,cz].blocks[bx,by,bz].neighbors[i] = chunks[cx,cy,cz+1].blocks[bx,by,0];
+                } else {
+                    chunks[cx,cy,cz].blocks[bx,by,bz].Create(Face.back);
+                }
+                break;
+            }
+
+            if ( chunks[cx,cy,cz].blocks[bx,by,bz].neighbors[i] == null ){
+                chunks[cx,cy,cz].blocks[bx,by,bz].Create((Face)System.Enum.GetValues(typeof(Face)).GetValue(i));
+            }
+        }
+    }
+    public void CreateChunk(Vector3 chunk, Face face){
+
     }
 }
