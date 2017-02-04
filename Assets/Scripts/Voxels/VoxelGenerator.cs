@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class VoxelGenerator : MonoBehaviour {
 
-    public Texture2D voxelSheet;
+    public Material voxelSheet;
     public float blockSize = 1f;
     public int chunkWidth = 10;
     public int chunkHeight = 10;
@@ -14,9 +14,11 @@ public class VoxelGenerator : MonoBehaviour {
     public int worldLength = 1;
 
     private Chunk[,,] chunks;
+    private List<GameObject> voxels;
 
     void Awake(){
         chunks = new Chunk[worldWidth,worldHeight,worldLength];
+        voxels = new List<GameObject>();
     }
     void Start(){
         CreateWorld();
@@ -24,6 +26,17 @@ public class VoxelGenerator : MonoBehaviour {
         //DebugNeighbors();
         CreateSingleMesh();
         //CreateMesh();
+    }
+    void Update(){
+        if ( Input.GetMouseButtonDown(0) ){
+            RaycastHit hit;
+            if ( Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit) ){
+                Debug.Log(hit.point.ToString());
+                string[] args = hit.collider.name.Split(',');
+                chunks[int.Parse(args[0]),int.Parse(args[1]),int.Parse(args[2])].DestroyBlockAt(hit.point);
+                UpdateMesh();
+            }
+        }
     }
 
     private void CreateWorld(){
@@ -251,6 +264,8 @@ public class VoxelGenerator : MonoBehaviour {
                     for (int bx = 0; bx < bw; bx++){
                         for (int by = 0; by < bh; by++){
                             for (int bz = 0; bz < bl; bz++){
+                                if ( chunks[cx,cy,cz].blocks[bx,by,bz] == null ) continue;
+
                                 foreach (int i in chunks[cx,cy,cz].blocks[bx,by,bz].triangles){
                                     triangles.Add(i+vertices.Count);
                                 }
@@ -272,15 +287,29 @@ public class VoxelGenerator : MonoBehaviour {
                     m.RecalculateNormals();
 
                     GameObject root = new GameObject("Voxels");
+                    root.name = string.Format("{0},{1},{2}",cx,cy,cz);
                     root.transform.position = chunks[cx,cy,cz].center;
 
                     MeshFilter mf = root.AddComponent<MeshFilter>();
                     MeshRenderer mr = root.AddComponent<MeshRenderer>();
+                    MeshCollider mc = root.AddComponent<MeshCollider>();
 
                     mf.sharedMesh = m;
-                    mr.material = new Material(Shader.Find("Particles/Additive"));
+                    mr.material = voxelSheet;
+                    mc.sharedMesh = m;
+
+                    voxels.Add(root);
                 }
             }
         }
+    }
+    private void UpdateMesh(){
+        if ( voxels.Count > 0 ){
+            for (int i = voxels.Count-1; i >= 0; i--){
+                Destroy(voxels[i]);
+            }
+        }
+        voxels = new List<GameObject>();
+        CreateSingleMesh();
     }
 }

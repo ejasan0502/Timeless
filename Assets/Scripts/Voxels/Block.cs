@@ -12,85 +12,139 @@ public class Block {
     public List<Vector2> uvs;
     public Block[] neighbors;
 
-    public Block(Vector3 center, float size, Vector3 pos){
+    public float tUnitSize;
+    public Vector2 tPos;
+
+    public Block(Vector3 center, float size, Vector3 pos, Vector2 tPos, float tUnitSize){
         neighbors = new Block[6];
         triangles = new List<int>();
 
         this.center = center;
         this.size = size;
         this.posInChunk = pos;
+        this.tPos = tPos;
+        this.tUnitSize = tUnitSize;
 
-        float halfSize = size/2.00f;
         vertices = new List<Vector3>();
-        vertices.Add(new Vector3(-1, 1,-1)*halfSize);
-        vertices.Add(new Vector3( 1, 1,-1)*halfSize);
-        vertices.Add(new Vector3( 1,-1,-1)*halfSize);
-        vertices.Add(new Vector3(-1,-1,-1)*halfSize);
-        vertices.Add(new Vector3(-1, 1, 1)*halfSize);
-        vertices.Add(new Vector3( 1, 1, 1)*halfSize);
-        vertices.Add(new Vector3( 1,-1, 1)*halfSize);
-        vertices.Add(new Vector3(-1,-1, 1)*halfSize);
-
+        vertices.Add(new Vector3(-1, 1,-1)*size/2.00f); // 0
+        vertices.Add(new Vector3( 1, 1,-1)*size/2.00f); // 1
+        vertices.Add(new Vector3( 1,-1,-1)*size/2.00f); // 2
+        vertices.Add(new Vector3(-1,-1,-1)*size/2.00f); // 3
+        vertices.Add(new Vector3(-1, 1, 1)*size/2.00f); // 4
+        vertices.Add(new Vector3( 1, 1, 1)*size/2.00f); // 5
+        vertices.Add(new Vector3( 1,-1, 1)*size/2.00f); // 6
+        vertices.Add(new Vector3(-1,-1, 1)*size/2.00f); // 7
+        
         uvs = new List<Vector2>();
-        uvs.Add(new Vector2(0,1));
-        uvs.Add(new Vector2(1,1));
-        uvs.Add(new Vector2(1,0));
-        uvs.Add(new Vector2(0,0));
-        uvs.Add(new Vector2(1,1));
-        uvs.Add(new Vector2(0,1));
-        uvs.Add(new Vector2(1,0));
-        uvs.Add(new Vector2(0,0));
+        uvs.Add(new Vector2(tUnitSize*tPos.x            ,tUnitSize*tPos.y+tUnitSize));
+        uvs.Add(new Vector2(tUnitSize*tPos.x+tUnitSize  ,tUnitSize*tPos.y+tUnitSize));
+        uvs.Add(new Vector2(tUnitSize*tPos.x+tUnitSize  ,tUnitSize*tPos.y));
+        uvs.Add(new Vector2(tUnitSize*tPos.x            ,tUnitSize*tPos.y));
+
+        uvs.Add(new Vector2(tUnitSize*tPos.x            ,tUnitSize*tPos.y));
+        uvs.Add(new Vector2(tUnitSize*tPos.x+tUnitSize  ,tUnitSize*tPos.y));
+        uvs.Add(new Vector2(tUnitSize*tPos.x+tUnitSize  ,tUnitSize*tPos.y+tUnitSize));
+        uvs.Add(new Vector2(tUnitSize*tPos.x            ,tUnitSize*tPos.y+tUnitSize));
     }
 
     public void Create(Face face){
+        int startVert = vertices.Count;
         switch (face){
         case Face.front:
-            triangles.Add(0);
-            triangles.Add(1);
-            triangles.Add(3);
-            triangles.Add(1);
-            triangles.Add(2);
-            triangles.Add(3); 
+            vertices.Add(new Vector3(-1, 1,-1)*size/2.00f); // 0
+            vertices.Add(new Vector3( 1, 1,-1)*size/2.00f); // 1
+            vertices.Add(new Vector3( 1,-1,-1)*size/2.00f); // 2
+            vertices.Add(new Vector3(-1,-1,-1)*size/2.00f); // 3
+            triangles.Add(startVert+0);
+            triangles.Add(startVert+1);
+            triangles.Add(startVert+3);
+            triangles.Add(startVert+1);
+            triangles.Add(startVert+2);
+            triangles.Add(startVert+3); 
+            uvs.Add(new Vector2(tUnitSize*tPos.x            ,tUnitSize*tPos.y+tUnitSize));
+            uvs.Add(new Vector2(tUnitSize*tPos.x+tUnitSize  ,tUnitSize*tPos.y+tUnitSize));
+            uvs.Add(new Vector2(tUnitSize*tPos.x+tUnitSize  ,tUnitSize*tPos.y));
+            uvs.Add(new Vector2(tUnitSize*tPos.x            ,tUnitSize*tPos.y));
             break;
         case Face.top:
-            triangles.Add(4);
-            triangles.Add(5);
-            triangles.Add(0);
-            triangles.Add(5);
-            triangles.Add(1);
-            triangles.Add(0); 
+            vertices.Add(new Vector3(-1, 1, 1)*size/2.00f); // 4
+            vertices.Add(new Vector3( 1, 1, 1)*size/2.00f); // 5
+            vertices.Add(new Vector3( 1, 1,-1)*size/2.00f); // 1
+            vertices.Add(new Vector3(-1, 1,-1)*size/2.00f); // 0
+            triangles.Add(startVert+0);
+            triangles.Add(startVert+1);
+            triangles.Add(startVert+3);
+            triangles.Add(startVert+1);
+            triangles.Add(startVert+2);
+            triangles.Add(startVert+3); 
+            uvs.Add(new Vector2(tUnitSize*tPos.x            ,tUnitSize*tPos.y+tUnitSize));
+            uvs.Add(new Vector2(tUnitSize*tPos.x+tUnitSize  ,tUnitSize*tPos.y+tUnitSize));
+            uvs.Add(new Vector2(tUnitSize*tPos.x+tUnitSize  ,tUnitSize*tPos.y));
+            uvs.Add(new Vector2(tUnitSize*tPos.x            ,tUnitSize*tPos.y));
             break;
         case Face.bottom:
-            triangles.Add(3);
-            triangles.Add(2);
-            triangles.Add(7);
-            triangles.Add(2);
-            triangles.Add(6);
-            triangles.Add(7); 
+            vertices.Add(new Vector3( 1,-1, 1)*size/2.00f); // 6
+            vertices.Add(new Vector3(-1,-1, 1)*size/2.00f); // 7
+            vertices.Add(new Vector3(-1,-1,-1)*size/2.00f); // 3
+            vertices.Add(new Vector3( 1,-1,-1)*size/2.00f); // 2
+            triangles.Add(startVert+0);
+            triangles.Add(startVert+1);
+            triangles.Add(startVert+3);
+            triangles.Add(startVert+1);
+            triangles.Add(startVert+2);
+            triangles.Add(startVert+3); 
+            uvs.Add(new Vector2(tUnitSize*tPos.x            ,tUnitSize*tPos.y+tUnitSize));
+            uvs.Add(new Vector2(tUnitSize*tPos.x+tUnitSize  ,tUnitSize*tPos.y+tUnitSize));
+            uvs.Add(new Vector2(tUnitSize*tPos.x+tUnitSize  ,tUnitSize*tPos.y));
+            uvs.Add(new Vector2(tUnitSize*tPos.x            ,tUnitSize*tPos.y));
             break;
         case Face.left:
-            triangles.Add(4);
-            triangles.Add(0);
-            triangles.Add(7);
-            triangles.Add(0);
-            triangles.Add(3);
-            triangles.Add(7); 
+            vertices.Add(new Vector3(-1, 1, 1)*size/2.00f); // 4
+            vertices.Add(new Vector3(-1, 1,-1)*size/2.00f); // 0
+            vertices.Add(new Vector3(-1,-1,-1)*size/2.00f); // 3
+            vertices.Add(new Vector3(-1,-1, 1)*size/2.00f); // 7
+            triangles.Add(startVert+0);
+            triangles.Add(startVert+1);
+            triangles.Add(startVert+3);
+            triangles.Add(startVert+1);
+            triangles.Add(startVert+2);
+            triangles.Add(startVert+3); 
+            uvs.Add(new Vector2(tUnitSize*tPos.x            ,tUnitSize*tPos.y+tUnitSize));
+            uvs.Add(new Vector2(tUnitSize*tPos.x+tUnitSize  ,tUnitSize*tPos.y+tUnitSize));
+            uvs.Add(new Vector2(tUnitSize*tPos.x+tUnitSize  ,tUnitSize*tPos.y));
+            uvs.Add(new Vector2(tUnitSize*tPos.x            ,tUnitSize*tPos.y));
             break;
         case Face.right:
-            triangles.Add(1);
-            triangles.Add(5);
-            triangles.Add(2);
-            triangles.Add(5);
-            triangles.Add(6);
-            triangles.Add(2); 
+            vertices.Add(new Vector3( 1, 1,-1)*size/2.00f); // 1
+            vertices.Add(new Vector3( 1, 1, 1)*size/2.00f); // 5
+            vertices.Add(new Vector3( 1,-1, 1)*size/2.00f); // 6
+            vertices.Add(new Vector3( 1,-1,-1)*size/2.00f); // 2
+            triangles.Add(startVert+0);
+            triangles.Add(startVert+1);
+            triangles.Add(startVert+3);
+            triangles.Add(startVert+1);
+            triangles.Add(startVert+2);
+            triangles.Add(startVert+3); 
+            uvs.Add(new Vector2(tUnitSize*tPos.x            ,tUnitSize*tPos.y+tUnitSize));
+            uvs.Add(new Vector2(tUnitSize*tPos.x+tUnitSize  ,tUnitSize*tPos.y+tUnitSize));
+            uvs.Add(new Vector2(tUnitSize*tPos.x+tUnitSize  ,tUnitSize*tPos.y));
+            uvs.Add(new Vector2(tUnitSize*tPos.x            ,tUnitSize*tPos.y));
             break;
         case Face.back:
-            triangles.Add(5);
-            triangles.Add(4);
-            triangles.Add(6);
-            triangles.Add(4);
-            triangles.Add(7);
-            triangles.Add(6); 
+            vertices.Add(new Vector3( 1, 1, 1)*size/2.00f); // 5
+            vertices.Add(new Vector3(-1, 1, 1)*size/2.00f); // 4
+            vertices.Add(new Vector3(-1,-1, 1)*size/2.00f); // 7
+            vertices.Add(new Vector3( 1,-1, 1)*size/2.00f); // 6
+            triangles.Add(startVert+0);
+            triangles.Add(startVert+1);
+            triangles.Add(startVert+3);
+            triangles.Add(startVert+1);
+            triangles.Add(startVert+2);
+            triangles.Add(startVert+3); 
+            uvs.Add(new Vector2(tUnitSize*tPos.x            ,tUnitSize*tPos.y+tUnitSize));
+            uvs.Add(new Vector2(tUnitSize*tPos.x+tUnitSize  ,tUnitSize*tPos.y+tUnitSize));
+            uvs.Add(new Vector2(tUnitSize*tPos.x+tUnitSize  ,tUnitSize*tPos.y));
+            uvs.Add(new Vector2(tUnitSize*tPos.x            ,tUnitSize*tPos.y));
             break;
         }
     }
@@ -103,5 +157,18 @@ public class Block {
 
             return m;
         }
+    }
+    public bool Contains(Vector3 point){
+        Vector3 min = new Vector3(center.x-size/2.00f,center.y-size/2.00f,center.z-size/2.00f);
+        Vector3 max = new Vector3(center.x+size/2.00f,center.y+size/2.00f,center.z+size/2.00f);
+
+        if ( point.x >= min.x && point.x <= max.x && 
+             point.y >= min.y && point.y <= max.y &&
+             point.z >= min.z && point.z <= max.z ){
+
+             return true;
+        }
+
+        return false;
     }
 }
