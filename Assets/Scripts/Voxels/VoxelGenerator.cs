@@ -13,7 +13,7 @@ public class VoxelGenerator : MonoBehaviour {
     public int worldHeight = 1;
     public int worldLength = 1;
 
-    private Chunk[,,] chunks;
+    public Chunk[,,] chunks;
     private List<GameObject> voxels;
 
     void Awake(){
@@ -100,7 +100,7 @@ public class VoxelGenerator : MonoBehaviour {
                             }
                             break;
                         case (int)Face.bottom: 
-                            if ( y-1 >= cH ){
+                            if ( y-1 >= 0 ){
                                 chunks[x,y,z].neighbors[i] = chunks[x,y-1,z];
                             }
                             break;
@@ -262,6 +262,7 @@ public class VoxelGenerator : MonoBehaviour {
         for (int cx = 0; cx < cW; cx++){
             for (int cy = 0; cy < cH; cy++){
                 for (int cz = 0; cz < cL; cz++){
+                    if ( chunks[cx,cy,cz] == null ) continue;
                     List<Vector3> vertices = new List<Vector3>();
                     List<Vector2> uvs = new List<Vector2>();
                     List<int> triangles = new List<int>();
@@ -320,7 +321,7 @@ public class VoxelGenerator : MonoBehaviour {
         }
         voxels = new List<GameObject>();
         CreateSingleMesh();
-    }
+    } 
 
     public void UpdateBlock(Chunk chunk, Block block){
         int cx = (int)chunk.posInWorld.x;
@@ -337,6 +338,11 @@ public class VoxelGenerator : MonoBehaviour {
         int bh = (int)chunk.blocks.GetLength(1);
         int bl = (int)chunk.blocks.GetLength(2);
 
+        if ( chunks[cx,cy,cz] == null ){
+            Debug.LogError(string.Format("Chunk ({0},{1},{2}) is null",cx,cy,cz));
+            return;
+        }
+
         for (int i = 0; i < 6; i++){
             switch (i){
             case (int)Face.front: 
@@ -344,8 +350,6 @@ public class VoxelGenerator : MonoBehaviour {
                     chunks[cx,cy,cz].blocks[bx,by,bz].neighbors[i] = chunks[cx,cy,cz].blocks[bx,by,bz-1];
                 } else if ( cz-1 >= 0 ){
                     chunks[cx,cy,cz].blocks[bx,by,bz].neighbors[i] = chunks[cx,cy,cz-1].blocks[bx,by,bl-1];
-                } else {
-                    chunks[cx,cy,cz].blocks[bx,by,bz].Create(Face.front);
                 }
                 break;
             case (int)Face.top: 
@@ -353,8 +357,6 @@ public class VoxelGenerator : MonoBehaviour {
                     chunks[cx,cy,cz].blocks[bx,by,bz].neighbors[i] = chunks[cx,cy,cz].blocks[bx,by+1,bz];
                 } else if ( cy+1 < cH ){
                     chunks[cx,cy,cz].blocks[bx,by,bz].neighbors[i] = chunks[cx,cy+1,cz].blocks[bx,0,bz];
-                } else {
-                    chunks[cx,cy,cz].blocks[bx,by,bz].Create(Face.top);
                 }
                 break;
             case (int)Face.left: 
@@ -362,8 +364,6 @@ public class VoxelGenerator : MonoBehaviour {
                     chunks[cx,cy,cz].blocks[bx,by,bz].neighbors[i] = chunks[cx,cy,cz].blocks[bx-1,by,bz];
                 } else if ( cx-1 >= 0 ){
                     chunks[cx,cy,cz].blocks[bx,by,bz].neighbors[i] = chunks[cx-1,cy,cz].blocks[bw-1,by,bz];
-                } else {
-                    chunks[cx,cy,cz].blocks[bx,by,bz].Create(Face.left);
                 }
                 break;
             case (int)Face.right: 
@@ -371,8 +371,6 @@ public class VoxelGenerator : MonoBehaviour {
                     chunks[cx,cy,cz].blocks[bx,by,bz].neighbors[i] = chunks[cx,cy,cz].blocks[bx+1,by,bz];
                 } else if ( cx+1 < cW ){
                     chunks[cx,cy,cz].blocks[bx,by,bz].neighbors[i] = chunks[cx+1,cy,cz].blocks[0,by,bz];
-                } else {
-                    chunks[cx,cy,cz].blocks[bx,by,bz].Create(Face.right);
                 }
                 break;
             case (int)Face.bottom: 
@@ -380,8 +378,6 @@ public class VoxelGenerator : MonoBehaviour {
                     chunks[cx,cy,cz].blocks[bx,by,bz].neighbors[i] = chunks[cx,cy,cz].blocks[bx,by-1,bz];
                 } else if ( cy-1 >= 0 ){
                     chunks[cx,cy,cz].blocks[bx,by,bz].neighbors[i] = chunks[cx,cy-1,cz].blocks[bx,bh-1,bz];
-                } else {
-                    chunks[cx,cy,cz].blocks[bx,by,bz].Create(Face.bottom);
                 }
                 break;
             case (int)Face.back: 
@@ -389,8 +385,6 @@ public class VoxelGenerator : MonoBehaviour {
                     chunks[cx,cy,cz].blocks[bx,by,bz].neighbors[i] = chunks[cx,cy,cz].blocks[bx,by,bz+1];
                 } else if ( cz+1 < cL ){
                     chunks[cx,cy,cz].blocks[bx,by,bz].neighbors[i] = chunks[cx,cy,cz+1].blocks[bx,by,0];
-                } else {
-                    chunks[cx,cy,cz].blocks[bx,by,bz].Create(Face.back);
                 }
                 break;
             }
@@ -400,7 +394,82 @@ public class VoxelGenerator : MonoBehaviour {
             }
         }
     }
-    public void CreateChunk(Vector3 chunk, Face face){
+    public void UpdateChunk(int cx, int cy, int cz){
+        for (int x = 0; x < chunks.GetLength(0); x++){
+            for (int y = 0; y < chunks.GetLength(1); y++){
+                for (int z = 0; z < chunks.GetLength(2); z++){
+                    for (int i = 0; i < 6; i++){
+                        switch (i){
+                        case (int)Face.front:
+                            if ( z-1 >= 0 ){
+                                chunks[x,y,z].neighbors[i] = chunks[x,y,z-1];
+                            }
+                            break;
+                        case (int)Face.top: 
+                            if ( y+1 < chunks.GetLength(1) ){
+                                chunks[x,y,z].neighbors[i] = chunks[x,y+1,z];
+                            }
+                            break;
+                        case (int)Face.left: 
+                            if ( x-1 >= 0 ){
+                                chunks[x,y,z].neighbors[i] = chunks[x-1,y,z];
+                            }
+                            break;
+                        case (int)Face.right: 
+                            if ( x+1 < chunks.GetLength(0) ){
+                                chunks[x,y,z].neighbors[i] = chunks[x+1,y,z];
+                            }
+                            break;
+                        case (int)Face.bottom: 
+                            if ( y-1 >= 0 ){
+                                chunks[x,y,z].neighbors[i] = chunks[x,y-1,z];
+                            }
+                            break;
+                        case (int)Face.back: 
+                            if ( z+1 < chunks.GetLength(2) ){
+                                chunks[x,y,z].neighbors[i] = chunks[x,y,z+1];
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    public Chunk CreateChunk(Chunk chunk, Face face){
+        Debug.Log(string.Format("Creating chunk ({0},{1},{2}) in {3}",chunk.posInWorld.x,chunk.posInWorld.y,chunk.posInWorld.z,face.ToString()));
+        if ( face == Face.front || face == Face.back ){
+            // Expand chunks
+            Chunk[,,] newChunks = new Chunk[chunks.GetLength(0),chunks.GetLength(1),chunks.GetLength(2)+1];
 
+            if ( chunk.posInWorld.z-1 < 0 ){
+                // Shift all chunks backward
+                for (int x = 0; x < chunks.GetLength(0); x++){
+                    for (int y = 0; y < chunks.GetLength(1); y++){
+                        for (int z = 0; z < chunks.GetLength(2); z++){
+                            chunks[x,y,z].posInWorld = new Vector3(x,y,z+1);
+                            newChunks[x,y,z+1] = chunks[x,y,z];
+                        }
+                    }
+                }
+            }
+
+            Vector3 posInWorld = new Vector3(chunk.posInWorld.x,chunk.posInWorld.y,chunk.posInWorld.z+(face == Face.front ? -1 : 1));
+            newChunks[(int)posInWorld.x,(int)posInWorld.y,(int)posInWorld.z] = new Chunk();
+            newChunks[(int)posInWorld.x,(int)posInWorld.y,(int)posInWorld.z].EmptyChunk( new Vector3(chunk.center.x,chunk.center.y,chunk.center.z-blockSize*chunkLength),
+                                                                                         posInWorld,
+                                                                                         chunkWidth,
+                                                                                         chunkHeight,
+                                                                                         chunkLength,
+                                                                                         blockSize);
+
+            chunks = newChunks;
+            UpdateChunk((int)posInWorld.x,(int)posInWorld.y,(int)posInWorld.z);
+
+            return newChunks[(int)posInWorld.x,(int)posInWorld.y,(int)posInWorld.z];
+        }
+
+        Debug.Log("Unable to create chunk.");
+        return null;
     }
 }

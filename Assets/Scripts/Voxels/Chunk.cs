@@ -10,6 +10,7 @@ public class Chunk {
 
     private VoxelGenerator vGen;
 
+    public Chunk(){}
     public Chunk(Vector3 c, Vector3 p, int w, int h, int l, float blockSize){
         center = c;
         posInWorld = p;
@@ -35,14 +36,18 @@ public class Chunk {
                 Y = startY + size*y;
                 for (int z = 0; z < maxZ; z++){
                     Z = startZ + size*z;
-                    CreateBlock(center+new Vector3(X,Y,Z),size,new Vector3(x,y,z),new Vector2(0,0),0.25f);
+                    blocks[x,y,z] = new Block(center+new Vector3(X,Y,Z),size,new Vector3(x,y,z),new Vector2(0,0),0.25f);
                 }
             } 
         }
     }
 
-    public void CreateBlock(Vector3 center, float size, Vector3 posInChunk, Vector2 tPos, float tUnit){
-        blocks[(int)posInChunk.x,(int)posInChunk.y,(int)posInChunk.z] = new Block(center,size,posInChunk,tPos,tUnit);
+    public void EmptyChunk(Vector3 center, Vector3 posInWorld, int w, int h, int l, float blockSize){
+        this.center = center;
+        this.posInWorld = posInWorld;
+        blocks = new Block[w,h,l];
+        neighbors = new Chunk[6];
+        vGen = GameObject.FindObjectOfType<VoxelGenerator>();
     }
     public void DestroyBlockAt(Vector3 point){
         for (int x = 0; x < blocks.GetLength(0); x++){
@@ -93,20 +98,37 @@ public class Chunk {
                             if ( neighbors[(int)Face.front] != null ){
                                 if ( neighbors[(int)Face.front].blocks[x,y,blocks.GetLength(2)-1] == null ){
                                     // Create block in neighbor
+                                    Block b = blocks[x,y,z];
+                                    Vector3 c = b.center-new Vector3(0,0,vGen.blockSize);
+                                    neighbors[(int)Face.front].blocks[x,y,blocks.GetLength(2)-1] = new Block(c, vGen.blockSize, new Vector3(x,y,blocks.GetLength(2)-1), b.tPos, b.tUnitSize);
+                                    vGen.UpdateBlock(neighbors[(int)Face.front],neighbors[(int)Face.front].blocks[x,y,blocks.GetLength(2)-1]);
                                 } else {
                                     // That's weird
                                 }
                             } else {
                                 // Create chunk
+                                Chunk chunk = vGen.CreateChunk(this, Face.front);
+                                if ( chunk != null ){
+                                    Debug.Log(string.Format("Created block ({0},{1},{2})",x,y,blocks.GetLength(2)-1));
+                                    chunk.blocks[x,y,blocks.GetLength(2)-1] = new Block(blocks[x,y,z].center-new Vector3(0,0,vGen.blockSize),
+                                                                                        vGen.blockSize,
+                                                                                        new Vector3(x,y,blocks.GetLength(2)-1),
+                                                                                        blocks[x,y,z].tPos,
+                                                                                        blocks[x,y,z].tUnitSize);
+
+                                    vGen.UpdateBlock(chunk,chunk.blocks[x,y,blocks.GetLength(2)-1]);
+                                } else {
+                                    Debug.LogError(string.Format("Chunk ({0},{1},{2}) is null",x,y,blocks.GetLength(2)-1));
+                                }
                             }
                         } else {
                             if ( blocks[x,y,z-1] == null ){
                                 // Create block
-                                CreateBlock(blocks[x,y,z].center-new Vector3(0,0,vGen.blockSize),
-                                            vGen.blockSize,
-                                            new Vector3(x,y,z-1),
-                                            blocks[x,y,z].tPos,
-                                            blocks[x,y,z].tUnitSize);
+                                blocks[x,y,z-1] = new Block(blocks[x,y,z].center-new Vector3(0,0,vGen.blockSize),
+                                                            vGen.blockSize,
+                                                            new Vector3(x,y,z-1),
+                                                            blocks[x,y,z].tPos,
+                                                            blocks[x,y,z].tUnitSize);
                                 Debug.Log(string.Format("Created block ({0},{1},{2})",x,y,z-1));
                                 vGen.UpdateBlock(this,blocks[x,y,z-1]);
                             } else {
