@@ -13,6 +13,11 @@ public class BirdEyeCameraControl : MonoBehaviour {
     private Vector3 offset;             // Offset between the camera and the object
     private bool rotating = false;      // Receiving player input
 
+    void Awake(){
+        if ( objectToFollow != null ){
+            SetFollow(objectToFollow);
+        }
+    }
     void Update(){
         if ( objectToFollow == null ) return;
 
@@ -25,7 +30,7 @@ public class BirdEyeCameraControl : MonoBehaviour {
         // PC input
         #if UNITY_STANDALONE || UNITY_EDITOR || UNITY_WEBPLAYER
         if ( Input.GetMouseButtonDown(1) ){
-            if ( UIManager.instance.InDeadZone(Input.mousePosition) ) return;
+            //if ( UIManager.instance.InDeadZone(Input.mousePosition) ) return;
             // On mouse begin, save mouse position and player input is true
             prevMousePos = Input.mousePosition;
             rotating = true;

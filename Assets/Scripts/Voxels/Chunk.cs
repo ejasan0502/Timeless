@@ -93,6 +93,7 @@ public class Chunk {
                     if ( blocks[x,y,z] == null ) continue;
                     if ( blocks[x,y,z].Contains(point) ){
                         switch(blocks[x,y,z].GetFaceFromPoint(point)){
+                        #region Front
                         case Face.front:
                         if ( z-1 < 0 ){
                             if ( neighbors[(int)Face.front] != null ){
@@ -136,8 +137,52 @@ public class Chunk {
                             }
                         }
                         break;
+                        #endregion
+                        #region Back
                         case Face.back:
+                        if ( z+1 >= blocks.GetLength(2) ){
+                            // Check for other chunk
+                            if ( neighbors[(int)Face.back] != null ){
+                                if ( neighbors[(int)Face.back].blocks[x,y,0] == null ){
+                                    // Create block in neighbor
+                                    Block b = blocks[x,y,z];
+                                    Vector3 c = b.center+new Vector3(0,0,vGen.blockSize);
+                                    neighbors[(int)Face.back].blocks[x,y,0] = new Block(c, vGen.blockSize, new Vector3(x,y,0), b.tPos, b.tUnitSize);
+                                    vGen.UpdateBlock(neighbors[(int)Face.back],neighbors[(int)Face.back].blocks[x,y,0]);
+                                } else {
+                                    // That's weird
+                                }
+                            } else {
+                                // Create chunk
+                                Chunk chunk = vGen.CreateChunk(this, Face.back);
+                                if ( chunk != null ){
+                                    Debug.Log(string.Format("Created block ({0},{1},{2})",x,y,0));
+                                    chunk.blocks[x,y,0] = new Block(blocks[x,y,z].center+new Vector3(0,0,vGen.blockSize),
+                                                                    vGen.blockSize,
+                                                                    new Vector3(x,y,0),
+                                                                    blocks[x,y,z].tPos,
+                                                                    blocks[x,y,z].tUnitSize);
+
+                                    vGen.UpdateBlock(chunk,chunk.blocks[x,y,0]);
+                                }
+                            }
+                        } else {
+                            // Check in current chunk
+                            if ( blocks[x,y,z+1] == null ){
+                                // Create block
+                                blocks[x,y,z+1] = new Block(blocks[x,y,z].center+new Vector3(0,0,vGen.blockSize),
+                                                            vGen.blockSize,
+                                                            new Vector3(x,y,z+1),
+                                                            blocks[x,y,z].tPos,
+                                                            blocks[x,y,z].tUnitSize);
+                                Debug.Log(string.Format("Created block ({0},{1},{2})",x,y,z+1));
+                                vGen.UpdateBlock(this,blocks[x,y,z+1]);
+                            } else {
+                                // That's weird
+                            }
+                        }
                         break;
+                        #endregion
                         case Face.top:
                         break;
                         case Face.bottom:

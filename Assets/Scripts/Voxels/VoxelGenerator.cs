@@ -342,6 +342,18 @@ public class VoxelGenerator : MonoBehaviour {
             Debug.LogError(string.Format("Chunk ({0},{1},{2}) is null",cx,cy,cz));
             return;
         }
+        if ( chunks[cx,cy,cz].blocks[bx,by,bz] == null ){
+            Debug.LogError(string.Format("Block ({0},{1},{2}) is null",bx,by,bz));
+            return;
+        }
+
+        for (int x = 0; x < chunks.GetLength(0); x++){
+            for (int y = 0; y < chunks.GetLength(1); y++){
+                for (int z = 0; z < chunks.GetLength(2); z++){
+                    if ( chunks[x,y,z] == null ) Debug.Log(string.Format("Chunk ({0},{1},{2}) is null",x,y,z));
+                }
+            }
+        }
 
         for (int i = 0; i < 6; i++){
             switch (i){
@@ -398,36 +410,49 @@ public class VoxelGenerator : MonoBehaviour {
         for (int x = 0; x < chunks.GetLength(0); x++){
             for (int y = 0; y < chunks.GetLength(1); y++){
                 for (int z = 0; z < chunks.GetLength(2); z++){
+                    if ( chunks[x,y,z] == null ) continue;
                     for (int i = 0; i < 6; i++){
                         switch (i){
                         case (int)Face.front:
                             if ( z-1 >= 0 ){
                                 chunks[x,y,z].neighbors[i] = chunks[x,y,z-1];
+                            } else {
+                                chunks[x,y,z].neighbors[i] = null;
                             }
                             break;
                         case (int)Face.top: 
                             if ( y+1 < chunks.GetLength(1) ){
                                 chunks[x,y,z].neighbors[i] = chunks[x,y+1,z];
+                            } else {
+                                chunks[x,y,z].neighbors[i] = null;
                             }
                             break;
                         case (int)Face.left: 
                             if ( x-1 >= 0 ){
                                 chunks[x,y,z].neighbors[i] = chunks[x-1,y,z];
+                            } else {
+                                chunks[x,y,z].neighbors[i] = null;
                             }
                             break;
                         case (int)Face.right: 
                             if ( x+1 < chunks.GetLength(0) ){
                                 chunks[x,y,z].neighbors[i] = chunks[x+1,y,z];
+                            } else {
+                                chunks[x,y,z].neighbors[i] = null;
                             }
                             break;
                         case (int)Face.bottom: 
                             if ( y-1 >= 0 ){
                                 chunks[x,y,z].neighbors[i] = chunks[x,y-1,z];
+                            } else {
+                                chunks[x,y,z].neighbors[i] = null;
                             }
                             break;
                         case (int)Face.back: 
                             if ( z+1 < chunks.GetLength(2) ){
                                 chunks[x,y,z].neighbors[i] = chunks[x,y,z+1];
+                            } else {
+                                chunks[x,y,z].neighbors[i] = null;
                             }
                             break;
                         }
@@ -442,13 +467,22 @@ public class VoxelGenerator : MonoBehaviour {
             // Expand chunks
             Chunk[,,] newChunks = new Chunk[chunks.GetLength(0),chunks.GetLength(1),chunks.GetLength(2)+1];
 
-            if ( chunk.posInWorld.z-1 < 0 ){
+            if ( face == Face.front && chunk.posInWorld.z-1 < 0 ){
                 // Shift all chunks backward
                 for (int x = 0; x < chunks.GetLength(0); x++){
                     for (int y = 0; y < chunks.GetLength(1); y++){
                         for (int z = 0; z < chunks.GetLength(2); z++){
                             chunks[x,y,z].posInWorld = new Vector3(x,y,z+1);
                             newChunks[x,y,z+1] = chunks[x,y,z];
+                        }
+                    }
+                }
+            } else {
+                // Keep chunks in same place
+                for (int x = 0; x < chunks.GetLength(0); x++){
+                    for (int y = 0; y < chunks.GetLength(1); y++){
+                        for (int z = 0; z < chunks.GetLength(2); z++){
+                            newChunks[x,y,z] = chunks[x,y,z];
                         }
                     }
                 }
