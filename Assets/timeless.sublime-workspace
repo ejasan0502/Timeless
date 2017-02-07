@@ -1,0 +1,279 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"Lo",
+				"LOGIN"
+			],
+			[
+				"SFSE",
+				"SFSEventType"
+			],
+			[
+				"Login",
+				"LoginEventListener"
+			],
+			[
+				"transform",
+				"Transform.parent"
+			],
+			[
+				"statu",
+				"statusText"
+			],
+			[
+				"in",
+				"inputFieldText"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "timeless",
+			"settings":
+			{
+				"buffer_size": 157,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 392.0,
+		"selected_items":
+		[
+			[
+				"",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 400.0
+	},
+	"console":
+	{
+		"height": 0.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/C/Users/Eric S/Desktop/Projects/Timeless/Assets/timeless",
+		"/C/Users/Eric S/Desktop/Projects/Timeless/Assets/Scripts/_Empty.cs",
+		"/C/Users/Eric S/Desktop/Projects/Base/Assets/Plugins/Android/build.xml",
+		"/C/Users/Eric S/Desktop/Projects/Base/Assets/Plugins/Android/com/LDS/Base/GPS.java",
+		"/C/Users/Eric S/Desktop/Projects/Base/Assets/Plugins/Android/AndroidManifest.xml",
+		"/C/Users/Eric S/workspace/AndroidPlugin/src/com/LDS/androidplugin/GPSManager.java",
+		"/C/Program Files (x86)/Steam/steamapps/common/7 Days To Die/serverconfig.xml",
+		"/C/Users/Eric S/Desktop/Projects/Timeless/Assets/MassiveNet/MassiveNet.dll",
+		"/C/Users/Eric S/Desktop/Projects/Base/Assets/Plugins/Android/GPS.java",
+		"/C/Users/Eric S/Desktop/Projects/Base/Temp/StagingArea/AndroidManifest.xml",
+		"/C/Users/Eric S/Desktop/Projects/Base/Assets/Plugins/Android/com/LDS/GPSTest/GPSTest.java",
+		"/C/Users/Eric S/Desktop/Projects/Base/Assets/Plugins/Android/GPSTest.java",
+		"/C/Program Files (x86)/Steam/steamapps/common/7 Days To Die/Data/Worlds/Random Gen/world.xml",
+		"/C/Program Files (x86)/Steam/steamapps/common/7 Days To Die/Data/Worlds/Random Gen/spawnpoints.xml",
+		"/C/Users/Eric S/AppData/Roaming/7DaysToDie/Saves/serveradmin.xml",
+		"/C/Users/Eric S/AppData/Roaming/7DaysToDie/Saves/Random Gen/LDS/players.xml",
+		"/C/Program Files (x86)/Steam/steamapps/common/7 Days To Die/Data/Worlds/Random Gen/entityspawners.xml",
+		"/C/Program Files (x86)/Steam/steamapps/common/7 Days To Die/Data/Worlds/Random Gen/map_info.xml",
+		"/C/Users/Eric S/Desktop/serverconfig.xml",
+		"/C/Users/Eric S/Desktop/Projects/TOPG/AndroidManifest.xml",
+		"/C/Users/Eric S/AppData/Local/Temp/Rar$DIa0.948/AndroidManifest.xml",
+		"/C/Users/Eric S/Desktop/Projects/TOPG/Assets/Xml Formats/Equips.xml",
+		"/C/Users/Eric S/Desktop/Projects/TOPG/Assets/Xml Formats/Materials.xml",
+		"/C/Users/Eric S/Desktop/Projects/TOPG/Assets/Xml Formats/Usables.xml",
+		"/C/Users/Eric S/Desktop/Projects/Legacy/_XmlSheets/weapons.xml",
+		"/C/xampp/apache/logs/error.log",
+		"/C/xampp/mysql/bin/my.ini",
+		"/C/xampp/apache/conf/httpd.conf",
+		"/C/Users/Eric S/Desktop/Projects/Legacy/Assets/Plugins/sfs-config.xml",
+		"/C/Program Files/SmartFoxServer_2X/SFS2X/config/server.xml",
+		"/C/Program Files/SmartFoxServer_2X/SFS2X/www/sfs2x-ws.xml",
+		"/C/Users/Eric S/Desktop/MMO Docs/RPG Skills Xml Template.xml",
+		"/C/xampp/apache/conf/extra/httpd-xampp.conf",
+		"/C/Users/Eric S/Desktop/RPG Quests Xml Template.xml",
+		"/C/Users/Eric S/Desktop/RPG NPCs Xml Template.xml",
+		"/C/Users/Eric S/Desktop/RPG Monsters Xml Template.xml",
+		"/C/Users/Eric S/Desktop/RPG Skills Xml Template.xml",
+		"/C/Users/Eric S/Desktop/RPG Usables Xml Template.xml",
+		"/C/Users/Eric S/Desktop/RPG Equips Xml Template.xml",
+		"/C/Users/Eric S/Desktop/RPG Items Xml Template.xml",
+		"/C/Users/Eric S/Desktop/RPG Skills Xml.xml",
+		"/C/Users/Eric S/Desktop/RPG Items Xml.xml",
+		"/C/Users/Eric S/Documents/7 Days To Die/Saves/serveradmin.xml",
+		"/C/Program Files (x86)/Steam/steamapps/common/7 Days To Die/Data/Worlds/Random Gen/entities.xml",
+		"/C/Program Files (x86)/Steam/steamapps/common/7 Days To Die/Data/Worlds/Random Gen/prefabs.xml",
+		"/C/Program Files (x86)/Steam/steamapps/common/7 Days To Die/Data/Config/biomes.xml",
+		"/C/Users/Eric S/Documents/7 Days To Die/Saves/Random Gen/RandomWorld1/players.xml",
+		"/C/Program Files (x86)/Steam/steamapps/common/7 Days To Die/Data/Config/blocks.xml",
+		"/C/Program Files (x86)/Steam/steamapps/common/7 Days To Die/Data/Config/items.xml",
+		"/C/Program Files (x86)/Steam/steamapps/common/7 Days To Die/Data/Worlds/Navezgane/map_info.xml",
+		"/C/Program Files/SmartFoxServer_2X/SFS2X/zones/Purgatory.zone.xml",
+		"/C/Program Files/SmartFoxServer_2X/SFS2X/zones/CreateAccount.zone.xml",
+		"/C/Program Files/SmartFoxServer_2X/SFS2X/extensions/pyTest/loginExt.py",
+		"/C/Program Files/SmartFoxServer_2X/SFS2X/extensions/loginExt.py",
+		"/C/Program Files/SmartFoxServer_2X/SFS2X/extensions/pyTest/Simple.py",
+		"/C/Program Files/SmartFoxServer_2X/SFS2X/extensions/mmo/loginExt.java",
+		"/C/Program Files (x86)/SmartFoxServer_2X/SFS2X/extensions/pyTest/Simple.py",
+		"/C/Program Files (x86)/SmartFoxServer_2X/SFS2X/config/server.xml",
+		"/C/Program Files (x86)/SmartFoxServer_2X/SFS2X/zones/BasicExamples.zone.xml",
+		"/C/Program Files (x86)/SmartFoxServerPRO_1.6.6/Server/sfsExtensions/accountCreationExt.as",
+		"/C/Program Files (x86)/SmartFoxServerPRO_1.6.6/Server/sfsExtensions/loginExt.as",
+		"/C/Program Files (x86)/SmartFoxServerPRO_1.6.6/Server/config.xml",
+		"/C/Program Files (x86)/SmartFoxServerPRO_1.6.6/Server/sfsExtensions/databaseExt.as",
+		"/C/Program Files (x86)/SmartFoxServerPRO_1.6.6/Server/sfsExtensions/dbExtensionAdv.as",
+		"/C/Program Files (x86)/SmartFoxServerPRO_1.6.6/Server/sfsExtensions/dbExtension.as",
+		"/C/Program Files (x86)/SmartFoxServerPRO_1.6.6/Server/sfsExtensions/loginExample.as",
+		"/C/Program Files (x86)/SmartFoxServerPRO_1.6.6/Server/sfsExtensions/accountCreationExt",
+		"/C/Program Files (x86)/SmartFoxServerPRO_1.6.6/Server/sfsExtensions/secureLogin.as",
+		"/C/Program Files (x86)/SmartFoxServerPRO_1.6.6/Server/sfsExtensions/dbExtension.py",
+		"/C/Program Files (x86)/SmartFoxServerPRO_1.6.6/Server/sfsExtensions/internalReq.py",
+		"/C/Users/Eric S/Desktop/Projects/Purgatory/Assets/Scripts/Network/Login.cs",
+		"/C/Users/Eric S/Desktop/Projects/Purgatory/Assets/Scripts/_EmptyClass.cs",
+		"/C/Users/Eric S/Desktop/Projects/Purgatory/Assets/Scripts/Console.cs",
+		"/C/Users/Eric S/Desktop/Projects/Purgatory/Assets/stproject.sublime-project",
+		"/C/Users/Eric S/Desktop/Projects/Purgatory/Assets/_EmptyClass.cs",
+		"/C/Users/Eric S/Desktop/Projects/Purgatory/Assets/Scripts/Login.cs",
+		"/C/Users/Eric S/Desktop/Projects/Purgatory/Assets/Scripts/ConnectionGUI.cs"
+	],
+	"find":
+	{
+		"height": 34.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"Material",
+			"Materials",
+			"443",
+			"port",
+			"forest"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": true,
+		"replace_history":
+		[
+			"Usable",
+			"Equip"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "timeless",
+					"settings":
+					{
+						"buffer_size": 157,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								83,
+								83
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 0.0
+	},
+	"input":
+	{
+		"height": 31.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"replace":
+	{
+		"height": 62.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 221.0,
+	"status_bar_visible": true
+}
