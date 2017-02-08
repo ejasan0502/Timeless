@@ -39,12 +39,21 @@ public class PlayerOwner : MonoBehaviour {
             GameObject o = (GameObject) Instantiate(Resources.Load(baseModel));
             o.transform.SetParent(transform);
             o.transform.localPosition = new Vector3(0f,-1f,0f);
+            o.AddComponent<PlayerWriteSync>();
+
+            Animator anim = o.GetComponent<Animator>();
             GetComponent<Equipment>().SetCharModel(o.GetComponent<CharacterModel>());
-            GetComponent<Character>().SetAnim(o.GetComponent<Animator>());
+            GetComponent<Character>().SetAnim(anim);
             GetComponent<Character>().id = id;
 
-            o.AddComponent<FPSMovement>();
-            o.AddComponent<ActionControl>();
+            gameObject.AddComponent<FPSMovement>().anim = anim;
+            gameObject.AddComponent<ActionControl>().anim = anim;
+
+            Camera.main.transform.position = new Vector3(0f,1.7f,-0.164f);
+            Camera.main.gameObject.AddComponent<FPSCameraControl>().Initialize(o.transform);
+
+            CameraFollow limbsCam = GameObject.Find("LimbsCamera").GetComponent<CameraFollow>();
+            limbsCam.Initialize(o.GetComponent<CharacterModel>().spine, o.transform);
         }
 
         if (transform.position != Vector3.zero && Vector3.Distance(transform.position, pos) < 5) return;

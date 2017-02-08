@@ -9,7 +9,7 @@ public class PlayerWriteSync : MonoBehaviour {
     private NetView netView;
 
     void Start() {
-        netView = GetComponent<NetView>();
+        netView = transform.parent.GetComponent<NetView>();
         netView.OnWriteSync += WriteSync;
     }
 
@@ -21,7 +21,7 @@ public class PlayerWriteSync : MonoBehaviour {
         syncStream.WriteVector3(velocity);
         lastPos = transform.position;
 
-        return RpcTarget.All;
+        return RpcTarget.Server;
     }
 
 }

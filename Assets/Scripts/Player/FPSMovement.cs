@@ -1,20 +1,20 @@
 ﻿using UnityEngine;
 using System.Collections;
+using MassiveNet;
 
-[RequireComponent(typeof(CharacterController))]
 public class FPSMovement : MonoBehaviour {
 	
-    public float speed = 10f;
-    public float jumpForce = 100f;
+    public float speed = 5f;
+    public float jumpForce = 5f;
 
-    private Animator anim;
+    public Animator anim;
     private CharacterController cc;
+
     private Vector3 moveTo = Vector3.zero;
     private float velY = 0f;
 
     void Awake(){
-        anim = GetComponent<Animator>();
-        cc = GetComponent<CharacterController>();
+        cc = transform.GetChild(0).GetComponent<CharacterController>();
     }
     void Update(){
         moveTo = new Vector3(Input.GetAxis("Horizontal"),0f,Input.GetAxis("Vertical"));
@@ -33,10 +33,9 @@ public class FPSMovement : MonoBehaviour {
 
         velY += Physics.gravity.y * Time.deltaTime;
         moveTo.y = velY;
-        transform.rotation = Quaternion.LookRotation(new Vector3(Camera.main.transform.forward.x,0f,Camera.main.transform.forward.z));
+        cc.transform.rotation = Quaternion.LookRotation(new Vector3(Camera.main.transform.forward.x,0f,Camera.main.transform.forward.z));
 
-        anim.SetFloat("speed", Input.GetAxis("Vertical"));
+        anim.SetFloat("speed", Mathf.Abs(Input.GetAxis("Vertical")));
         cc.Move(moveTo*Time.deltaTime);
     }
-
 }

@@ -13,12 +13,14 @@ public class FPSCameraControl : MonoBehaviour {
     private Vector3 offset;
 
     void Awake(){
-        offset = transform.position - follow.transform.position;
+        if ( follow != null ) offset = transform.position - follow.transform.position;
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
     void Update(){
+        if ( follow == null ) return;
+
         transform.position = follow.transform.position + offset;
         if ( !Cursor.visible ){
             rotationX += Input.GetAxis("Mouse X") * sensitivity;
@@ -33,5 +35,10 @@ public class FPSCameraControl : MonoBehaviour {
             Cursor.visible = !Cursor.visible;
             if ( !Cursor.visible ) Cursor.lockState = CursorLockMode.None;
         }
+    }
+
+    public void Initialize(Transform follow){
+        this.follow = follow;
+        offset = transform.position - follow.transform.position;
     }
 }

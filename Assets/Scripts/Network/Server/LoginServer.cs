@@ -11,6 +11,7 @@ public class LoginServer : MonoBehaviour {
     private Dictionary<IPEndPoint, Account> sessions = new Dictionary<IPEndPoint,Account>();
     
     private List<Account> accounts = new List<Account>(){
+        new Account("temp@gmail.com", "asdf", "asdf"),
         new Account("temp1@gmail.com", "temp1", "1"),
         new Account("temp2@gmail.com", "temp2", "2")
     };
@@ -49,8 +50,9 @@ public class LoginServer : MonoBehaviour {
         socket.Send("OnLoginResponse", conn, false, "Do not recognize username/email");
     }
     [NetRPC]
-    private void PlayerCreateRequest(string baseModel, NetConnection conn){
+    private void PlayerCreateRequest(string avatarName, string baseModel, NetConnection conn){
         if ( sessions.ContainsKey(conn.Endpoint) ){
+            sessions[conn.Endpoint].avatarName = avatarName;
             sessions[conn.Endpoint].baseModel = baseModel;
         } else {
             Debug.LogError("Session is unavailable.");

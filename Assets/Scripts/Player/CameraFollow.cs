@@ -9,10 +9,22 @@ public class CameraFollow : MonoBehaviour {
     private Vector3 offset;
 
     void Awake(){
-        offset = transform.position - followPos.transform.position;
+        if ( followPos != null ) offset = transform.position - followPos.transform.position;
     }
     void Update(){
+        if ( followPos == null || followRot == null ) return;
+
         transform.position = followPos.transform.position + offset;
         transform.localEulerAngles = followRot.transform.localEulerAngles;
+    }
+
+    public void Initialize(Transform followPos, Transform followRot){
+        transform.position = new Vector3(0.05f,2f,0f);
+        Debug.Log(transform.position.ToString());
+
+        this.followPos = followPos;
+        this.followRot = followRot;
+
+        offset = transform.position - followPos.transform.position;
     }
 }
