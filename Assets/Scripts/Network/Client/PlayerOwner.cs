@@ -42,6 +42,9 @@ public class PlayerOwner : MonoBehaviour {
             GetComponent<Equipment>().SetCharModel(o.GetComponent<CharacterModel>());
             GetComponent<Character>().SetAnim(o.GetComponent<Animator>());
             GetComponent<Character>().id = id;
+
+            o.AddComponent<FPSMovement>();
+            o.AddComponent<ActionControl>();
         }
 
         if (transform.position != Vector3.zero && Vector3.Distance(transform.position, pos) < 5) return;
