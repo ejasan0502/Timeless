@@ -5,7 +5,7 @@ public class FPSCameraControl : MonoBehaviour {
 	
     public Transform follow;
     public float sensitivity = 5f;
-    public float minimumY = -60F;
+    public float minimumY = -30F;
     public float maximumY = 60F;
 
     private float rotationY = 0F;
@@ -13,7 +13,7 @@ public class FPSCameraControl : MonoBehaviour {
     private Vector3 offset;
 
     void Awake(){
-        offset = follow.transform.position - transform.position;
+        offset = transform.position - follow.transform.position;
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
