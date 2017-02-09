@@ -38,12 +38,18 @@ public class FPSMovement : MonoBehaviour {
             if ( !anim.GetBool("crouch") ){
                 anim.SetBool("crouch",true);
                 crouching = true;
+
+                cc.center = new Vector3(0f,0.75f,0f);
+                cc.height = 1.5f;
             }
             moveTo /= 2f;
         }
         if ( Input.GetKeyUp(KeyCode.LeftControl) ){
             anim.SetBool("crouch",false);
             crouching = false;
+
+            cc.center = new Vector3(0f,1f,0f);
+            cc.height = 2f;
         }
 
         if ( cc.isGrounded ){
@@ -60,7 +66,7 @@ public class FPSMovement : MonoBehaviour {
         moveTo.y = velY;
         cc.transform.rotation = Quaternion.LookRotation(new Vector3(Camera.main.transform.forward.x,0f,Camera.main.transform.forward.z));
 
-        anim.SetFloat("speed", Mathf.Abs(moveTo.normalized.x+moveTo.normalized.z));
+        anim.SetFloat("speed", Mathf.Abs(moveTo.normalized.x)+Mathf.Abs(moveTo.normalized.z));
         cc.Move(moveTo*Time.deltaTime);
     }
 }

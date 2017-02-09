@@ -45,7 +45,7 @@ public class PlayerReadSync : MonoBehaviour {
 
         lastTime = Time.time;
         posDif = transform.position - lastPos;
-        if ( anim != null ) anim.SetFloat("speed", Mathf.Abs(vel.normalized.x+vel.normalized.z));
+        if ( anim != null ) anim.SetFloat("speed", Mathf.Abs(vel.normalized.x)+Mathf.Abs(vel.normalized.z));
     }
 
     private void SmoothCorrectPosition(){
