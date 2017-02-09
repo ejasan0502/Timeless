@@ -48,7 +48,6 @@ public class PlayerOwner : MonoBehaviour {
             GetComponent<Character>().id = id;
 
             gameObject.AddComponent<FPSMovement>().anim = anim;
-            gameObject.AddComponent<ActionControl>().anim = anim;
 
             Camera.main.transform.position = new Vector3(0f,1.7f,-0.164f);
             Camera.main.gameObject.AddComponent<FPSCameraControl>().Initialize(o.transform);

@@ -7,6 +7,8 @@ public static class Global {
 
     public const string PATH_MODELS_HUMANOIDS = "Models/Humanoids/";
 
+    public const int MAX_ATK_COUNTER = 4;
+
     public static object Parse(Type type, string val){
         try {
             if ( type == typeof(ItemType) ) return Enum.Parse(type, val);

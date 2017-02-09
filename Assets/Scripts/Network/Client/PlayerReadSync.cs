@@ -11,14 +11,21 @@ public class PlayerReadSync : MonoBehaviour {
     private float lastTime = 0f;
     private Vector3 posDif;
     private Vector3 lastConfirmedPos;
+    private Vector3 localLastPos;
 
     void Awake() {
         view = GetComponent<NetView>();
         view.OnReadSync += ReadSync;
     }
     void Update(){
+        //SmoothCorrectPosition();
+        //transform.position = transform.position + lastVel * Time.deltaTime;
+        if (Time.time - lastTime > 1.2) return;
         SmoothCorrectPosition();
         transform.position = transform.position + lastVel * Time.deltaTime;
+        Vector3 vel = transform.position - localLastPos;
+        if (vel != Vector3.zero) transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(vel), Time.deltaTime * 4);
+        localLastPos = transform.position;
     }
 
     void ReadSync(NetStream syncStream) {
@@ -42,8 +49,9 @@ public class PlayerReadSync : MonoBehaviour {
     }
 
     private void SmoothCorrectPosition(){
+        if (Time.time - lastTime > 0.8f) return;
         float dist = Vector3.Distance(transform.position, lastPos);
-        if (Time.time - lastTime > 0.8f || lastVel.magnitude < 0.2 && dist < 1) return;
-        transform.position = dist > 10 ? lastPos : Vector3.Lerp(transform.position, transform.position - posDif, Time.deltaTime*2f);
+        if (lastVel.magnitude < 0.2 && dist < 0.5) return;
+        transform.position = dist > 10 ? lastPos : Vector3.Lerp(transform.position, transform.position - posDif, Time.deltaTime * 3);
     }
 }

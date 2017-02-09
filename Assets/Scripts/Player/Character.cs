@@ -36,6 +36,8 @@ public class Character : MonoBehaviour {
     private Skill castSkill = null;
     private List<BuffSkill> buffs = new List<BuffSkill>();
 
+    private int atkCounter = 0;
+
     public bool IsAlive {
         get {
             return currentStats.hp > 0;
@@ -161,6 +163,18 @@ public class Character : MonoBehaviour {
         canCast = b;
     }
 
+    [NetRPC]
+    public void Fire(){
+        if ( anim == null ) return;
+
+        if ( !anim.GetBool("combat") ) anim.SetBool("combat",true);
+
+        atkCounter++;
+        if ( atkCounter > Global.MAX_ATK_COUNTER ){
+            atkCounter = 1;
+        }
+        anim.SetInteger("attack",atkCounter);
+    }
     [NetRPC]
     public void Move(Vector3 moveTo){
         this.moveTo = moveTo;

@@ -1,22 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
+using MassiveNet;
 
 public class ActionControl : MonoBehaviour {
 	
-    private const int maxAtkCounter = 4;
+    private NetView view;
 
-    public Animator anim;
-    private int atkCounter = 0;
-
+    void Awake(){
+        view = GetComponent<NetView>();
+    }
     void Update(){
         if ( Input.GetMouseButtonDown(0) ){
-            if ( !anim.GetBool("combat") ) anim.SetBool("combat",true);
-
-            atkCounter++;
-            if ( atkCounter > maxAtkCounter ){
-                atkCounter = 1;
-            }
-            anim.SetInteger("attack",atkCounter);
+            view.SendReliable("AttackInput", RpcTarget.Server);
         }
     }
 
