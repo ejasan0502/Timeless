@@ -42,7 +42,8 @@ public class PlayerOwner : MonoBehaviour {
             o.AddComponent<PlayerWriteSync>();
 
             Animator anim = o.GetComponent<Animator>();
-            GetComponent<Equipment>().SetCharModel(o.GetComponent<CharacterModel>());
+            CharacterModel charModel = o.GetComponent<CharacterModel>();
+            GetComponent<Equipment>().SetCharModel(charModel);
             GetComponent<Character>().SetAnim(anim);
             GetComponent<Character>().id = id;
 
@@ -53,7 +54,12 @@ public class PlayerOwner : MonoBehaviour {
             Camera.main.gameObject.AddComponent<FPSCameraControl>().Initialize(o.transform);
 
             CameraFollow limbsCam = GameObject.Find("LimbsCamera").GetComponent<CameraFollow>();
-            limbsCam.Initialize(o.GetComponent<CharacterModel>().spine, o.transform);
+            limbsCam.Initialize(charModel.spine, o.transform);
+
+            charModel.limbsMesh.layer = LayerMask.NameToLayer("Limbs");
+            foreach (GameObject go in charModel.meshes){
+                go.layer = LayerMask.NameToLayer("Self");
+            }
         }
 
         if (transform.position != Vector3.zero && Vector3.Distance(transform.position, pos) < 5) return;

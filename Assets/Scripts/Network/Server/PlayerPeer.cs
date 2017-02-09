@@ -5,10 +5,6 @@ public class PlayerPeer : MonoBehaviour {
 
     private NetView view;
 
-    void Die() {
-            
-    }
-
     private void Awake() {
         view = GetComponent<NetView>();
         view.OnReadInstantiateData += ReadInstantiateData;

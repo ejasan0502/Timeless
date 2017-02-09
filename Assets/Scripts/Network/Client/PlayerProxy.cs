@@ -25,6 +25,7 @@ public class PlayerProxy : MonoBehaviour {
             charModel = o.GetComponent<CharacterModel>();
             GetComponent<Character>().SetAnim(o.GetComponent<Animator>());
             GetComponent<Character>().id = id;
+            GetComponent<PlayerReadSync>().anim = o.GetComponent<Animator>();
 
             if ( equipModels != "" ){
                 string[] args = equipModels.Split(',');

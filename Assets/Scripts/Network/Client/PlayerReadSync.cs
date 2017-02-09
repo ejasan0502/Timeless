@@ -4,6 +4,7 @@ using UnityEngine;
 // Client sync
 public class PlayerReadSync : MonoBehaviour {
 
+    public Animator anim;
     private NetView view;
     private Vector3 lastPos = Vector3.zero;
     private Vector3 lastVel = Vector3.zero;
@@ -37,6 +38,7 @@ public class PlayerReadSync : MonoBehaviour {
 
         lastTime = Time.time;
         posDif = transform.position - lastPos;
+        if ( anim != null ) anim.SetFloat("speed", Mathf.Abs(vel.normalized.x+vel.normalized.z));
     }
 
     private void SmoothCorrectPosition(){

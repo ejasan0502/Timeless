@@ -26,6 +26,8 @@ public class DebugWindow : MonoBehaviour {
         }
 
         text.text = "";
+
+        DontDestroyOnLoad(this);
     }
     void Update(){
         if ( Input.GetKeyDown(KeyCode.Menu) ){

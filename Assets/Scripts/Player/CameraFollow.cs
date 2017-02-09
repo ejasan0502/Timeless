@@ -20,7 +20,6 @@ public class CameraFollow : MonoBehaviour {
 
     public void Initialize(Transform followPos, Transform followRot){
         transform.position = new Vector3(0.05f,2f,0f);
-        Debug.Log(transform.position.ToString());
 
         this.followPos = followPos;
         this.followRot = followRot;

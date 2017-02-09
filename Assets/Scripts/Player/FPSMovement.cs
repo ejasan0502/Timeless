@@ -19,7 +19,7 @@ public class FPSMovement : MonoBehaviour {
     void Update(){
         moveTo = new Vector3(Input.GetAxis("Horizontal"),0f,Input.GetAxis("Vertical"));
         moveTo = Camera.main.transform.TransformDirection(moveTo);
-        moveTo *= speed;
+        moveTo = moveTo.normalized*speed;
 
         if ( cc.isGrounded ){
             velY = -1;
@@ -35,7 +35,7 @@ public class FPSMovement : MonoBehaviour {
         moveTo.y = velY;
         cc.transform.rotation = Quaternion.LookRotation(new Vector3(Camera.main.transform.forward.x,0f,Camera.main.transform.forward.z));
 
-        anim.SetFloat("speed", Mathf.Abs(Input.GetAxis("Vertical")));
+        anim.SetFloat("speed", Mathf.Abs(moveTo.normalized.x+moveTo.normalized.z));
         cc.Move(moveTo*Time.deltaTime);
     }
 }
