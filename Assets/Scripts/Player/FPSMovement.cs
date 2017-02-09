@@ -12,6 +12,7 @@ public class FPSMovement : MonoBehaviour {
 
     private Vector3 moveTo = Vector3.zero;
     private float velY = 0f;
+    private bool crouching = false;
 
     void Awake(){
         cc = transform.GetChild(0).GetComponent<CharacterController>();
@@ -21,13 +22,28 @@ public class FPSMovement : MonoBehaviour {
         moveTo = Camera.main.transform.TransformDirection(moveTo);
         moveTo = moveTo.normalized*speed;
 
-        if ( Input.GetKey(KeyCode.LeftShift) ){
-            if ( !anim.GetBool("sprint") ){
-                anim.SetBool("sprint",true);
+        if ( !crouching ){
+            if ( Input.GetKey(KeyCode.LeftShift) ){
+                if ( !anim.GetBool("sprint") ){
+                    anim.SetBool("sprint",true);
+                }
+                moveTo *= speed;
+            }
+            if ( Input.GetKeyUp(KeyCode.LeftShift) ){
+                anim.SetBool("sprint",false);
             }
         }
-        if ( Input.GetKeyUp(KeyCode.LeftShift) ){
-            anim.SetBool("sprint",false);
+
+        if ( Input.GetKey(KeyCode.LeftControl) ){
+            if ( !anim.GetBool("crouch") ){
+                anim.SetBool("crouch",true);
+                crouching = true;
+            }
+            moveTo /= 2f;
+        }
+        if ( Input.GetKeyUp(KeyCode.LeftControl) ){
+            anim.SetBool("crouch",false);
+            crouching = false;
         }
 
         if ( cc.isGrounded ){
