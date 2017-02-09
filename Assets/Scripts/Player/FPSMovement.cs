@@ -21,6 +21,15 @@ public class FPSMovement : MonoBehaviour {
         moveTo = Camera.main.transform.TransformDirection(moveTo);
         moveTo = moveTo.normalized*speed;
 
+        if ( Input.GetKey(KeyCode.LeftShift) ){
+            if ( !anim.GetBool("sprint") ){
+                anim.SetBool("sprint",true);
+            }
+        }
+        if ( Input.GetKeyUp(KeyCode.LeftShift) ){
+            anim.SetBool("sprint",false);
+        }
+
         if ( cc.isGrounded ){
             velY = -1;
             if ( Input.GetButtonDown("Jump") ){
