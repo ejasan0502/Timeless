@@ -6,6 +6,7 @@ public class FPSMovement : MonoBehaviour {
 	
     public float speed = 5f;
     public float jumpForce = 5f;
+    public float sprintSpeed = 8f;
 
     public Animator anim;
     private CharacterController cc;
@@ -27,7 +28,7 @@ public class FPSMovement : MonoBehaviour {
                 if ( !anim.GetBool("sprint") ){
                     anim.SetBool("sprint",true);
                 }
-                moveTo *= speed;
+                moveTo = moveTo.normalized*sprintSpeed;
             }
             if ( Input.GetKeyUp(KeyCode.LeftShift) ){
                 anim.SetBool("sprint",false);

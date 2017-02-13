@@ -7,6 +7,7 @@ public class CameraFollow : MonoBehaviour {
     public Transform followRot;
 
     private Vector3 offset;
+    public Vector3 orgOffset { get; private set; }
 
     void Awake(){
         if ( followPos != null ) offset = transform.position - followPos.transform.position;
@@ -25,5 +26,9 @@ public class CameraFollow : MonoBehaviour {
         this.followRot = followRot;
 
         offset = transform.position - followPos.transform.position;
+        orgOffset = offset;
+    }
+    public void SetOffset(Vector3 offset){
+        this.offset = offset;
     }
 }
