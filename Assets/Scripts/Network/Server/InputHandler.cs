@@ -29,11 +29,6 @@ public class InputHandler : MonoBehaviour {
         view.SendReliable("SetTarget", RpcTarget.NonControllers, id);
     }
     [NetRPC]
-    private void CastInput(int index){
-        character.SetCastSkill(index);
-        view.SendReliable("SetCastSkill", RpcTarget.All, index);
-    }
-    [NetRPC]
     private void AttackInput(){
         character.Fire();
         view.SendReliable("Fire", RpcTarget.All);

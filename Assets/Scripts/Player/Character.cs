@@ -25,7 +25,6 @@ public class Character : MonoBehaviour {
     private List<Character> targets = null;
     private CharacterController cc;
     private Animator anim;
-    private SkillLibrary skillLib;
     private CharacterState state = CharacterState.idle;
 
     private Vector3 moveTo = Vector3.zero;
@@ -33,8 +32,6 @@ public class Character : MonoBehaviour {
     private float noTargetTime = 0f;
 
     private NetView view;
-    private Skill castSkill = null;
-    private List<BuffSkill> buffs = new List<BuffSkill>();
 
     private int atkCounter = 0;
 
@@ -63,16 +60,10 @@ public class Character : MonoBehaviour {
             return GameObject.FindObjectOfType<PlayerOwner>().GetComponent<Character>();
         }
     }
-    public Skill CastSkill {
-        get {
-            return castSkill;
-        }
-    }
 
     void Awake(){
         cc = GetComponent<CharacterController>();
         anim = GetComponentInChildren<Animator>();
-        skillLib = GetComponent<SkillLibrary>();
         view = GetComponent<NetView>();
 
         maxStats = new CharStats(1f);
@@ -118,40 +109,6 @@ public class Character : MonoBehaviour {
         } else
             Debug.Log("No target");
     }
-    public void ApplyCast(){
-        SetAnimState("castAnim",-1);
-        if ( castSkill != null ){
-            castSkill.Apply(this, targets == null || targets.Count < 1 ? castSkill.FindTargets(this) : targets);
-            castSkill = null;
-            targets = null;
-        }
-    }
-    public void ApplyBuffs(){
-        CharStats charStats = new CharStats(0f);
-        EquipStats equipStats = new EquipStats(0f);
-        CharStats charStatsP = new CharStats(1f);
-        EquipStats equipStatsP = new EquipStats(1f);
-        foreach (BuffSkill s in buffs){
-            if ( s.percent ){
-                charStatsP += s.charStats;
-                equipStatsP += s.equipStats;
-            } else {
-                charStats += s.charStats;
-                equipStats += s.equipStats;
-            }
-        }
-
-        this.maxStats += charStats;
-        this.maxEquipStats += equipStats;
-        this.maxStats *= charStatsP;
-        this.maxEquipStats *= equipStatsP;
-    }
-    public void AddBuff(BuffSkill bs){
-        if ( !buffs.Contains(bs) ){
-            buffs.Add(bs);
-            ApplyBuffs();
-        }
-    }
     public void SetInputRestrict(bool canMove, bool canCast){
         this.canMove = canMove;
         this.canCast = canCast;
@@ -191,8 +148,6 @@ public class Character : MonoBehaviour {
             }
         } else if ( state == CharacterState.idle ){
             SetAnimState("combat", false);
-        } else if ( state == CharacterState.casting ){
-            SetAnimState("castAnim", (int)castSkill.castAnim);
         }
     }
     [NetRPC]
@@ -234,11 +189,6 @@ public class Character : MonoBehaviour {
             float rawDmg = UnityEngine.Random.Range(currentEquipStats.minPhysDmg, currentEquipStats.maxPhysDmg);
             target.Hit(rawDmg);
         }
-    }
-    [NetRPC]
-    public void SetCastSkill(int index){
-        castSkill = skillLib.skills[index];
-        SetState("casting");
     }
     [NetRPC]
     public void SetTargets(string[] ids){

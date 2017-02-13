@@ -23,6 +23,19 @@ public class FPSMovement : MonoBehaviour {
         moveTo = Camera.main.transform.TransformDirection(moveTo);
         moveTo = moveTo.normalized*speed;
 
+        Sprinting();
+        Crouching();
+        Jumping();
+
+        velY += Physics.gravity.y * Time.deltaTime;
+        moveTo.y = velY;
+        cc.transform.rotation = Quaternion.LookRotation(new Vector3(Camera.main.transform.forward.x,0f,Camera.main.transform.forward.z));
+
+        anim.SetFloat("speed", Mathf.Abs(moveTo.normalized.x)+Mathf.Abs(moveTo.normalized.z));
+        cc.Move(moveTo*Time.deltaTime);
+    }
+
+    private void Sprinting(){
         if ( !crouching ){
             if ( Input.GetKey(KeyCode.LeftShift) ){
                 if ( !anim.GetBool("sprint") ){
@@ -34,7 +47,8 @@ public class FPSMovement : MonoBehaviour {
                 anim.SetBool("sprint",false);
             }
         }
-
+    }
+    private void Crouching(){
         if ( Input.GetKey(KeyCode.LeftControl) ){
             if ( !anim.GetBool("crouch") ){
                 anim.SetBool("crouch",true);
@@ -52,7 +66,8 @@ public class FPSMovement : MonoBehaviour {
             cc.center = new Vector3(0f,1f,0f);
             cc.height = 2f;
         }
-
+    }
+    private void Jumping(){
         if ( cc.isGrounded ){
             velY = -1;
             if ( Input.GetButtonDown("Jump") ){
@@ -62,12 +77,5 @@ public class FPSMovement : MonoBehaviour {
                 anim.SetBool("jump",false);
             }
         }
-
-        velY += Physics.gravity.y * Time.deltaTime;
-        moveTo.y = velY;
-        cc.transform.rotation = Quaternion.LookRotation(new Vector3(Camera.main.transform.forward.x,0f,Camera.main.transform.forward.z));
-
-        anim.SetFloat("speed", Mathf.Abs(moveTo.normalized.x)+Mathf.Abs(moveTo.normalized.z));
-        cc.Move(moveTo*Time.deltaTime);
     }
 }
