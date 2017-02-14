@@ -10,6 +10,7 @@ public class Equip : Item {
     public EquipType equipType;
     public EquipStats stats;
     public string modelPath;
+    public string animPath;
 
     public GameObject Model {
         get {
@@ -30,8 +31,9 @@ public class Equip : Item {
         equipType = EquipType.primary;
         stats = new EquipStats();
         modelPath = "";
+        animPath = "";
     }
-    public Equip(string name, string id, string description, string iconPath, ItemType itemType, EquipType equipType, EquipStats stats, string modelPath){
+    public Equip(string name, string id, string description, string iconPath, ItemType itemType, EquipType equipType, EquipStats stats, string modelPath, string animPath){
         this.name = name;
         this.id = id;
         this.description = description;
@@ -41,6 +43,7 @@ public class Equip : Item {
         this.equipType = equipType;
         this.stats = new EquipStats(stats);
         this.modelPath = modelPath;
+        this.animPath = animPath;
     }
     public Equip(Equip e){
         name = e.name;
@@ -52,6 +55,7 @@ public class Equip : Item {
         equipType = e.equipType;
         stats = new EquipStats(e.stats);
         modelPath = e.modelPath;
+        animPath = e.animPath;
     }
     public Equip(string s){
         string[] args = s.Split(',');

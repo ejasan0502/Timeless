@@ -15,6 +15,7 @@ public class Equipment : MonoBehaviour {
     private GameObject[] equipObjs;
     private CharacterModel charModel = null;
     private Inventory inventory;
+    private Animator anim;
 
     void Awake(){
         equips = new Equip[Enum.GetValues(typeof(EquipType)).Length];
@@ -22,7 +23,7 @@ public class Equipment : MonoBehaviour {
         inventory = GetComponent<Inventory>();
     }
 
-    private void Equip(Equip e){
+    public void Equip(Equip e){
         int index = (int) e.equipType;
         equips[index] = e;
 
@@ -33,10 +34,18 @@ public class Equipment : MonoBehaviour {
 
             equipObjs[index] = (GameObject) Instantiate(e.Model);
 
+            Vector3 pos = equipObjs[index].transform.position;
             Quaternion rot = equipObjs[index].transform.rotation;
-            equipObjs[index].transform.SetParent(charModel.nodes[index]);
-            equipObjs[index].transform.localPosition = Vector3.zero;
+
+            equipObjs[index].transform.SetParent(charModel.nodes[(int)EquipType.primary]);
+            equipObjs[index].transform.localPosition = pos;
             equipObjs[index].transform.localRotation = rot;
+
+            foreach (Transform t in equipObjs[index].transform){
+                t.gameObject.layer = LayerMask.NameToLayer("Limbs");
+            }
+
+            anim.runtimeAnimatorController = (RuntimeAnimatorController) Resources.Load(equips[index].animPath);
         }
     }
 
@@ -47,6 +56,9 @@ public class Equipment : MonoBehaviour {
 
     public void SetCharModel(CharacterModel cm){
         charModel = cm;
+    }
+    public void SetAnim(Animator anim){
+        this.anim = anim;
     }
     public void SendEquip(int slotIndex){
         if ( slotIndex < inventory.items.Count ){

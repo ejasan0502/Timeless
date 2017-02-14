@@ -34,6 +34,7 @@ public class Character : MonoBehaviour {
     private NetView view;
 
     private int atkCounter = 0;
+    private WeaponType primaryWeapType;
 
     public bool IsAlive {
         get {
@@ -75,6 +76,8 @@ public class Character : MonoBehaviour {
 
         canMove = true;
         canCast = true;
+
+        primaryWeapType = WeaponType.unarmed;
     }
     void Update(){
         StateMachine();
@@ -118,6 +121,9 @@ public class Character : MonoBehaviour {
     }
     public void SetCanCast(bool b){
         canCast = b;
+    }
+    public void SetPrimary(WeaponType wt){
+        primaryWeapType = wt;
     }
 
     [NetRPC]

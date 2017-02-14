@@ -10,12 +10,16 @@ public class CameraFollow : MonoBehaviour {
     public Vector3 orgPos { get; private set; }
     public Vector3 orgRot { get; private set; }
 
-    void Awake(){
-        orgParent = transform.parent;
+    public void Initialize(Transform p, Transform wp){
+        orgParent = p;
+        weaponParent = wp;
         orgPos = transform.localPosition;
         orgRot = transform.localEulerAngles;
-    }
 
+        transform.SetParent(orgParent);
+        transform.localPosition = orgPos;
+        transform.localEulerAngles = orgRot;
+    }
     public void Aim(){
         transform.SetParent(weaponParent.GetChild(0));
         transform.localPosition = aimPos;
