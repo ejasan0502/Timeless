@@ -10,7 +10,7 @@ using MassiveNet;
 public class PlayerInput : MonoBehaviour {
 
     private Hotkey[] hotkeys = new Hotkey[10]{
-        new AttackHotkey(), null, null, null, null,
+        null, null, null, null, null,
         null, null, null, null, null
     };
     private Character character;

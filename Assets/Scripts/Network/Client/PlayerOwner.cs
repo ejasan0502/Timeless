@@ -53,7 +53,6 @@ public class PlayerOwner : MonoBehaviour {
             Camera.main.gameObject.AddComponent<FPSCameraControl>().Initialize(o.transform);
 
             CameraFollow limbsCam = GameObject.Find("LimbsCamera").GetComponent<CameraFollow>();
-            limbsCam.Initialize(charModel.spine, o.transform);
 
             charModel.limbsMesh.layer = LayerMask.NameToLayer("Limbs");
             foreach (GameObject go in charModel.meshes){

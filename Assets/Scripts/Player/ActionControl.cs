@@ -21,11 +21,12 @@ public class ActionControl : MonoBehaviour {
             } else
                 view.SendReliable("AttackInput", RpcTarget.Server);
         }
+
         if ( Input.GetMouseButton(1) ){
-            limbsCam.SetOffset(new Vector3(0.163f,limbsCam.orgOffset.y,limbsCam.orgOffset.z));
+            limbsCam.Aim();
         }
         if ( Input.GetMouseButtonUp(1) ){
-            limbsCam.SetOffset(limbsCam.orgOffset);
+            limbsCam.Reset();
         }
     }
 
