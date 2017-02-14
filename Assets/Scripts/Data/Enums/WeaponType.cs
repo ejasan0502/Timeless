@@ -1,7 +1,7 @@
 ﻿public enum WeaponType {
 
     unarmed,
-    firearm,
+    guns,
     melee
 
 }

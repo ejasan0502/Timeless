@@ -46,6 +46,7 @@ public class Equipment : MonoBehaviour {
             }
 
             anim.runtimeAnimatorController = (RuntimeAnimatorController) Resources.Load(equips[index].animPath);
+            GetComponent<Character>().SetPrimary((WeaponType)Enum.Parse(typeof(WeaponType),equips[index].modelPath.Split('/')[3].ToLower()));
         }
     }
 

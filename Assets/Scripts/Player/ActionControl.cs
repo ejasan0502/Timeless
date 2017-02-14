@@ -15,7 +15,7 @@ public class ActionControl : MonoBehaviour {
         limbsCam = GameObject.Find("LimbsCamera").GetComponent<CameraFollow>();
     }
     void Update(){
-        if ( Input.GetMouseButtonDown(0) ){
+        if ( Input.GetMouseButton(0) ){
             if ( testing ){
                 character.Fire();
             } else

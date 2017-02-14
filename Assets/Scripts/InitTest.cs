@@ -17,6 +17,7 @@ public class InitTest : MonoBehaviour {
         GetComponent<Equipment>().SetCharModel(charModel);
         GetComponent<Equipment>().SetAnim(anim);
         GetComponent<Character>().SetAnim(anim);
+        GetComponent<Character>().SetCharModel(charModel);
         GetComponent<Character>().id = id;
 
         gameObject.AddComponent<FPSMovement>().anim = anim;

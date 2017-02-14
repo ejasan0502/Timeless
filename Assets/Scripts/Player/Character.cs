@@ -26,6 +26,7 @@ public class Character : MonoBehaviour {
     private CharacterController cc;
     private Animator anim;
     private CharacterState state = CharacterState.idle;
+    private CharacterModel charModel;
 
     private Vector3 moveTo = Vector3.zero;
     private float startAtkTime = 0f;
@@ -91,6 +92,9 @@ public class Character : MonoBehaviour {
     public void SetAnim(Animator a){
         anim = a;
     }
+    public void SetCharModel(CharacterModel charModel){
+        this.charModel = charModel;
+    }
 
     public void SetAnimState(string paramName, bool val){
         if ( anim != null )
@@ -130,13 +134,17 @@ public class Character : MonoBehaviour {
     public void Fire(){
         if ( anim == null ) return;
 
-        if ( !anim.GetBool("combat") ) anim.SetBool("combat",true);
+        if ( primaryWeapType == WeaponType.unarmed ){
+            if ( !anim.GetBool("combat") ) anim.SetBool("combat",true);
 
-        atkCounter++;
-        if ( atkCounter > Global.MAX_ATK_COUNTER ){
-            atkCounter = 1;
+            atkCounter++;
+            if ( atkCounter > Global.MAX_ATK_COUNTER ){
+                atkCounter = 1;
+            }
+            anim.SetInteger("attack",atkCounter);
+        } else if ( primaryWeapType == WeaponType.guns ){
+            Instantiate(Resources.Load("Effects/muzzleFlash"),charModel.nodes[(int)EquipType.primary].GetChild(0).GetChild(0),false);
         }
-        anim.SetInteger("attack",atkCounter);
     }
     [NetRPC]
     public void Move(Vector3 moveTo){
