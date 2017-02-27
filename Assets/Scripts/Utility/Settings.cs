@@ -7,6 +7,9 @@ public class Settings : MonoBehaviour {
     [Header("-Animator Settings-")]
     public string anim_velocity_x = "velX";
     public string anim_velocity_z = "velZ";
+    public string anim_grounded = "isGrounded";
+    public string anim_jump = "isJumping";
+    public string anim_free_fall = "isFreeFalling";
 
     [Header("-Camera Settings-")]
     public float cam_sensitivity = 5f;
