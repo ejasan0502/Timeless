@@ -19,15 +19,18 @@ public class CharacterMovement : MonoBehaviour {
     private bool jumping = false;
     private bool sprinting = false;
     private bool freefalling = false;
+    private bool dodging = false;
     
 	void Awake() {
-        anim = GetComponentInChildren<Animator>();
+        anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
 
 	    rb.freezeRotation = true;
 	    rb.useGravity = false;
 
         isGrounded = false;
+
+        SetupAnimator();
 	}
 	void Update() {
 	    if ( isGrounded ) {
@@ -46,11 +49,13 @@ public class CharacterMovement : MonoBehaviour {
 	    CheckGround();
 	}
 
+    // Move character based on input or AI
     public void Move(Vector3 v){
 	    targetVelocity = v * (sprinting ? 2f : 1f);
 	    targetVelocity = transform.TransformDirection(targetVelocity);
 	    targetVelocity *= speed;
     }
+    // Have character jump
     public void Jump(){
         if ( !jumping ){
             rb.velocity = new Vector3(rb.velocity.x, CalculateJumpVerticalSpeed(), rb.velocity.z);
@@ -58,27 +63,54 @@ public class CharacterMovement : MonoBehaviour {
             StartCoroutine(FreeFall());
         }
     }
+    // Have character dodge in given direction based on input
+    public void Dodge(KeyCode key){
+        dodging = true;
+        
+        switch (key){
+            case KeyCode.A:
+            Move(Vector3.left*0.35f);
+            break;
+            case KeyCode.D:
+            Move(Vector3.right*0.35f);
+            break;
+            case KeyCode.W:
+            Move(Vector3.forward);
+            break;
+            case KeyCode.S:
+            Move(Vector3.back*0.5f);
+            break;
+        }
+    }
+    // Have character sprint
     public void Sprint(bool b){
         sprinting = b;
     }
+    // Animate character;
     public void Animate(float forward, float strafe){
+        if ( anim == null ) return;
+
         anim.SetFloat(Settings.instance.anim_velocity_x, strafe);
         anim.SetFloat(Settings.instance.anim_velocity_z, sprinting ? forward*2f : forward);
 
         anim.SetBool(Settings.instance.anim_grounded, isGrounded);
         anim.SetBool(Settings.instance.anim_jump, jumping);
         anim.SetBool(Settings.instance.anim_free_fall, freefalling);
+        anim.SetBool(Settings.instance.anim_dodge, dodging);
     }
 
+    // Character is freefalling after a certain duration
     private IEnumerator FreeFall(){
         yield return new WaitForSeconds(freeFallTime);
         freefalling = true;
     }
+    // Smooth jump speed
 	private float CalculateJumpVerticalSpeed() {
 	    // From the jump height and gravity we deduce the upwards speed 
 	    // for the character to reach at the apex.
 	    return Mathf.Sqrt(2 * jumpHeight * -Physics.gravity.y);
 	}
+    // Check if character is grounded
     private void CheckGround(){
         RaycastHit hit;
         if ( Physics.Raycast(transform.position, Vector3.down, out hit, 0.1f) ){
@@ -88,9 +120,23 @@ public class CharacterMovement : MonoBehaviour {
         }
 
         if ( isGrounded ){
+            dodging = false;
             jumping = false;
             freefalling = false;
             StopCoroutine(FreeFall());
+        }
+    }
+    // Grab animators from children and apply them to parent object
+    private void SetupAnimator(){
+        Animator[] animators = GetComponentsInChildren<Animator>();
+        if ( animators.Length > 0 ){
+            for (int i = animators.Length-1; i >= 0; i--){
+                if ( animators[i] != anim ){
+                    anim.runtimeAnimatorController = animators[i].runtimeAnimatorController;
+                    anim.avatar = animators[i].avatar;
+                    Destroy(animators[i]);
+                }
+            }
         }
     }
 }
