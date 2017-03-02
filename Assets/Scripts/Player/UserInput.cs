@@ -8,6 +8,7 @@ public class UserInput : MonoBehaviour {
     public KeyCode lastKeyPressed;
     private float dodgeTime = 0f;
     private bool dodging = false;
+    private bool crouching = false;
 
     void Awake(){
         charMovt = GetComponent<CharacterMovement>();
@@ -16,6 +17,7 @@ public class UserInput : MonoBehaviour {
         Dodging();
         Jumping();
         Sprinting();
+        Crouching();
         Movement();
     }
 
@@ -63,6 +65,19 @@ public class UserInput : MonoBehaviour {
         } else if ( Time.time - dodgeTime >= 1f ){
             lastKeyPressed = KeyCode.None;
             dodging = false;
+        }
+    }
+    // Handle crouching logic
+    private void Crouching(){
+        if ( Input.GetButton("Crouch") ){
+            if ( !crouching ) {
+                crouching = true;
+                charMovt.Crouch(crouching);
+            }
+        }
+        if ( Input.GetButtonUp("Crouch") ){
+            crouching = false;
+            charMovt.Crouch(crouching);
         }
     }
 

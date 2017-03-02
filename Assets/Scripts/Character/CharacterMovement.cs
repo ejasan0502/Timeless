@@ -20,6 +20,7 @@ public class CharacterMovement : MonoBehaviour {
     private bool sprinting = false;
     private bool freefalling = false;
     private bool dodging = false;
+    private bool crouching = false;
     
 	void Awake() {
         anim = GetComponent<Animator>();
@@ -86,6 +87,10 @@ public class CharacterMovement : MonoBehaviour {
     public void Sprint(bool b){
         sprinting = b;
     }
+    // Have character crouch
+    public void Crouch(bool b){
+        crouching = b;
+    }
     // Animate character;
     public void Animate(float forward, float strafe){
         if ( anim == null ) return;
@@ -97,6 +102,7 @@ public class CharacterMovement : MonoBehaviour {
         anim.SetBool(Settings.instance.anim_jump, jumping);
         anim.SetBool(Settings.instance.anim_free_fall, freefalling);
         anim.SetBool(Settings.instance.anim_dodge, dodging);
+        anim.SetBool(Settings.instance.anim_crouch, crouching);
     }
 
     // Character is freefalling after a certain duration
