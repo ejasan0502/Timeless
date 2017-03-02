@@ -21,6 +21,7 @@ public class CharacterMovement : MonoBehaviour {
     private bool freefalling = false;
     private bool dodging = false;
     private bool crouching = false;
+    private bool proning = false;
     
 	void Awake() {
         anim = GetComponent<Animator>();
@@ -52,7 +53,16 @@ public class CharacterMovement : MonoBehaviour {
 
     // Move character based on input or AI
     public void Move(Vector3 v){
-	    targetVelocity = v * (sprinting ? 2f : 1f);
+        float velocityMultipler = 1f;
+        if ( crouching ){
+            velocityMultipler = 0.50f;
+        } else if ( proning ){
+            velocityMultipler = 0.25f;
+        } else if ( sprinting ){
+            velocityMultipler = 2f;
+        }
+
+	    targetVelocity = v * velocityMultipler;
 	    targetVelocity = transform.TransformDirection(targetVelocity);
 	    targetVelocity *= speed;
     }
@@ -91,6 +101,10 @@ public class CharacterMovement : MonoBehaviour {
     public void Crouch(bool b){
         crouching = b;
     }
+    // Have character prone
+    public void Prone(bool b){
+        proning = b;
+    }
     // Animate character;
     public void Animate(float forward, float strafe){
         if ( anim == null ) return;
@@ -103,6 +117,7 @@ public class CharacterMovement : MonoBehaviour {
         anim.SetBool(Settings.instance.anim_free_fall, freefalling);
         anim.SetBool(Settings.instance.anim_dodge, dodging);
         anim.SetBool(Settings.instance.anim_crouch, crouching);
+        anim.SetBool(Settings.instance.anim_prone, proning);
     }
 
     // Character is freefalling after a certain duration

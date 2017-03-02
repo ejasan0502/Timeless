@@ -9,6 +9,7 @@ public class UserInput : MonoBehaviour {
     private float dodgeTime = 0f;
     private bool dodging = false;
     private bool crouching = false;
+    private bool proning = false;
 
     void Awake(){
         charMovt = GetComponent<CharacterMovement>();
@@ -18,6 +19,7 @@ public class UserInput : MonoBehaviour {
         Jumping();
         Sprinting();
         Crouching();
+        Prone();
         Movement();
     }
 
@@ -33,11 +35,21 @@ public class UserInput : MonoBehaviour {
     // Handle jumping logic
     private void Jumping(){
         if ( Input.GetButtonUp("Jump") ){
-            charMovt.Jump();
+            if ( proning ){
+                proning = false;
+                charMovt.Prone(proning);
+            } else if ( crouching ){
+                crouching = false;
+                charMovt.Crouch(crouching);
+            } else {
+                charMovt.Jump();
+            }
         }
     }
     // Handle sprinting logic
     private void Sprinting(){
+        if ( crouching || proning ) return;
+
         if ( charMovt.isGrounded ){
             if ( Input.GetButton("Sprint") ){
                 charMovt.Sprint(true);
@@ -49,6 +61,8 @@ public class UserInput : MonoBehaviour {
     }
     // Handle dodging logic
     private void Dodging(){
+        if ( crouching || proning ) return;
+
         KeyCode currentPressed = GetKeyDown(KeyCode.W, KeyCode.S, KeyCode.A, KeyCode.D);
         if ( currentPressed != KeyCode.None ){
             if ( lastKeyPressed != KeyCode.None ){
@@ -78,6 +92,13 @@ public class UserInput : MonoBehaviour {
         if ( Input.GetButtonUp("Crouch") ){
             crouching = false;
             charMovt.Crouch(crouching);
+        }
+    }
+    // Handle proning logic
+    private void Prone(){
+        if ( Input.GetButtonUp("Prone") ){
+            proning = !proning;
+            charMovt.Prone(proning);
         }
     }
 

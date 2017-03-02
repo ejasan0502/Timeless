@@ -12,6 +12,7 @@ public class Settings : MonoBehaviour {
     public string anim_free_fall = "isFreeFalling";
     public string anim_dodge = "isDodging";
     public string anim_crouch = "isCrouching";
+    public string anim_prone = "isProning";
 
     [Header("-Camera Settings-")]
     public float cam_sensitivity = 5f;
