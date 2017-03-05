@@ -9,7 +9,7 @@ public class CameraUpdate : MonoBehaviour {
 
     void Update(){
         Camera.main.transform.position = transform.position;
-        Camera.main.transform.localRotation = Quaternion.Euler(new Vector3(cameraControlX.transform.localEulerAngles.x, cameraControlY.transform.localEulerAngles.y, 0f));
+        Camera.main.transform.rotation = Quaternion.Euler(new Vector3(cameraControlX.transform.eulerAngles.x, cameraControlY.transform.eulerAngles.y, 0f));
     }
 
 }

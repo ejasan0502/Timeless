@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 // Handles camera movement with user input
 public class CameraControl : MonoBehaviour {
@@ -25,7 +26,7 @@ public class CameraControl : MonoBehaviour {
         }
     }
     void LateUpdate(){
-        transform.localRotation = Quaternion.Euler(new Vector3(-rotX,rotY,0f));
+        transform.eulerAngles = new Vector3(-rotX, rotY, 0f);
     }
 
 }

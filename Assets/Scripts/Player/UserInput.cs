@@ -4,17 +4,25 @@ using System.Collections;
 // Handles input from player other than main camera
 public class UserInput : MonoBehaviour {
 
+    private Animator anim;
+    private WeaponHandler weaponHandler;
     private CharacterMovement charMovt;
-    public KeyCode lastKeyPressed;
+
+    private KeyCode lastKeyPressed;
     private float dodgeTime = 0f;
     private bool dodging = false;
+
     private bool crouching = false;
     private bool proning = false;
+    private bool sprinting = false;
 
     void Awake(){
+        anim = GetComponent<Animator>();
         charMovt = GetComponent<CharacterMovement>();
+        weaponHandler = GetComponent<WeaponHandler>();
     }
     void Update(){
+        Attack();
         Dodging();
         Jumping();
         Sprinting();
@@ -52,10 +60,12 @@ public class UserInput : MonoBehaviour {
 
         if ( charMovt.isGrounded ){
             if ( Input.GetButton("Sprint") ){
-                charMovt.Sprint(true);
+                sprinting = true;
+                charMovt.Sprint(sprinting);
             }
             if ( Input.GetButtonUp("Sprint") ){
-                charMovt.Sprint(false);
+                sprinting = false;
+                charMovt.Sprint(sprinting);
             }
         }
     }
@@ -99,6 +109,24 @@ public class UserInput : MonoBehaviour {
         if ( Input.GetButtonUp("Prone") ){
             proning = !proning;
             charMovt.Prone(proning);
+        }
+    }
+    // Handle attacking logic
+    private void Attack(){
+        if ( dodging || sprinting ) return;
+
+        if ( Input.GetButton("Fire1") ){
+            weaponHandler.PrimaryFire();
+        }
+        if ( Input.GetButtonUp("Fire1") ){
+            anim.SetBool(Settings.instance.anim_primary_attack, false);
+        }
+
+        if ( Input.GetButton("Fire2") ){
+            weaponHandler.SecondaryFire();
+        }
+        if ( Input.GetButtonUp("Fire2") ){
+            anim.SetBool(Settings.instance.anim_secondary_attack, false);
         }
     }
 

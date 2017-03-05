@@ -13,6 +13,10 @@ public class Settings : MonoBehaviour {
     public string anim_dodge = "isDodging";
     public string anim_crouch = "isCrouching";
     public string anim_prone = "isProning";
+    public string anim_weapon_type = "weaponType";
+    public string anim_primary_attack = "primaryFire";
+    public string anim_secondary_attack = "secondaryFire";
+    public string anim_reload = "isReloading";
 
     [Header("-Camera Settings-")]
     public float cam_sensitivity = 5f;
