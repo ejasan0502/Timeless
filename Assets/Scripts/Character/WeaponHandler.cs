@@ -39,7 +39,7 @@ public class WeaponHandler : MonoBehaviour {
     }
     // Handle weapon animation and weapon primary fire
     public void PrimaryFire(){
-        
+        anim.SetBool(Settings.instance.anim_primary_attack, true);
     }
     // Handle weapon animation and weapon secondary fire
     public void SecondaryFire(){
