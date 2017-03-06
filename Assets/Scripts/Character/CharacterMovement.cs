@@ -2,18 +2,20 @@
 using System.Collections;
 
 // Handles movement logic and animation
-[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Rigidbody), typeof(AudioSource))]
 public class CharacterMovement : MonoBehaviour {
 
     public float speed = 5f;
     public float freeFallTime = 1.25f;
 	public float maxVelocityChange = 10.0f;
 	public float jumpHeight = 2.0f;
-    
+    public AudioClip footsteps;
+
     public bool isGrounded { get; private set; }
 
     private Animator anim;
     private Rigidbody rb;
+    private AudioSource audio;
 
     private Vector3 targetVelocity = Vector3.zero;
     private bool jumping = false;
@@ -26,6 +28,7 @@ public class CharacterMovement : MonoBehaviour {
 	void Awake() {
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
+        audio = GetComponent<AudioSource>();
 
 	    rb.freezeRotation = true;
 	    rb.useGravity = false;
@@ -108,6 +111,17 @@ public class CharacterMovement : MonoBehaviour {
     // Animate character;
     public void Animate(float forward, float strafe){
         if ( anim == null ) return;
+
+        // Play footsteps sound
+        if ( forward != 0 || strafe != 0 ){
+            if ( !audio.isPlaying )
+                audio.Play();
+
+            // Increase pitch if sprinting
+            audio.pitch = sprinting ? 2f : 1f;
+        } else {
+            audio.Stop();
+        }
 
         anim.SetFloat(Settings.instance.anim_velocity_x, strafe);
         anim.SetFloat(Settings.instance.anim_velocity_z, sprinting ? forward*2f : forward);
