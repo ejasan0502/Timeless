@@ -27,6 +27,7 @@ public class UserInput : MonoBehaviour {
         SetCursorView();
     }
     void Update(){
+        Reload();
         Attack();
         Dodging();
         Jumping();
@@ -140,6 +141,14 @@ public class UserInput : MonoBehaviour {
         }
         if ( Input.GetButtonUp("Fire2") ){
             weaponHandler.currentWeapon.SecondaryFireEnd();
+        }
+    }
+    // Handle reloading logic
+    private void Reload(){
+        if ( weaponHandler.currentWeapon == null ) return;
+
+        if ( Input.GetButtonDown("Reload") ){
+            weaponHandler.currentWeapon.AltFire();
         }
     }
 

@@ -16,15 +16,24 @@ public class Weapon : MonoBehaviour {
     public Vector3 equipRot;
     public Vector3 unequipPos;
     public Vector3 unequipRot;
-
+    
     private Collider col;
     private Rigidbody rb;
 
     protected Animator anim;
+    protected AudioSource audio;
 
     void Awake(){
         col = GetComponent<Collider>();
         rb = GetComponent<Rigidbody>();
+        audio = GetComponent<AudioSource>();
+    }
+    
+    // Check if weapon is firearm, overrided on firearm script
+    public virtual bool isFirearm {
+        get {
+            return false;
+        }
     }
 
     // Set animator
@@ -68,6 +77,10 @@ public class Weapon : MonoBehaviour {
     // Handle secondary fire end logic (right click up)
     public virtual void SecondaryFireEnd(){
 
+    }
+    // Handle alt fire logic (R)
+    public virtual void AltFire(){
+        
     }
 
 }

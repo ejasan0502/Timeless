@@ -7,10 +7,15 @@ public class Firearm : Weapon {
     [Header("-Firearm Info-")]
     public bool autoFire;
     public float bulletSpread;
+    public int clipSize;
+    public int maxClipSize;
+    public int carryingAmmo;
 
     [Header("-Object References-")]
     public GameObject decalRef;
     public GameObject muzzleFlashRef;
+    public AudioClip fireSound;
+    public AudioClip reloadSound;
 
     [Header("-Positions-")]
     public Transform bulletSpawn;
@@ -21,31 +26,68 @@ public class Firearm : Weapon {
     private Vector3 camPos;
     private Transform headTrans;
 
-    // Override logic for single click fire
+    // Override bool to true since weapon is firearm
+    public override bool isFirearm {
+        get {
+            return true;
+        }
+    }
+
+    // Single fire on button down
     public override void SinglePrimaryFire(){
-        if ( autoFire ) return;
+        if ( autoFire || anim.GetBool(Settings.instance.anim_reload) ) return;
 
         anim.Play("shooting",1);
         Fire();
     }
-    // Override logic for hold click fire
+    // Hold fire on button held
     public override void PrimaryFire(){
-        if ( !autoFire ) return;
+        if ( !autoFire || anim.GetBool(Settings.instance.anim_reload) ) return;
 
         anim.SetBool(Settings.instance.anim_primary_attack, true);
         Fire();
     }
-    // Override logic for hold click secondary
+    // Aiming
     public override void SecondaryFire(){
+        if ( anim.GetBool(Settings.instance.anim_reload) ) return;
+
         Aim(true);
     }
+    // Aiming end
     public override void SecondaryFireEnd(){
         Aim(false);
+    }
+    // Reloading
+    public override void AltFire(){
+        if ( anim )
+            anim.SetBool(Settings.instance.anim_reload, true);
+        
+        if ( audio ){
+            audio.clip = reloadSound;
+            audio.Play();
+        }
+    }
+    // Performs reloading logic
+    public void Reload(){
+        int desiredAmmoUsed = maxClipSize - clipSize;
+        if ( desiredAmmoUsed <= carryingAmmo ){
+            carryingAmmo -= desiredAmmoUsed;
+            clipSize = maxClipSize;
+        } else {
+            clipSize = carryingAmmo;
+            carryingAmmo = 0;
+        }
     }
 
     // Perform bullet logic
     private void Fire(){
         if ( !bulletSpawn ) return;
+
+        // Sound
+        if ( audio ){
+            audio.clip = fireSound;
+            audio.Play();
+        }
 
         // Recoil
         Vector3 direction = bulletSpawn.forward + (Vector3)Random.insideUnitCircle*bulletSpread;
@@ -53,6 +95,14 @@ public class Firearm : Weapon {
         RaycastHit hit;
         if ( Physics.Raycast(bulletSpawn.position, direction, out hit, atkRange) ){
             if ( debug ) Debug.DrawRay(bulletSpawn.position, hit.point-bulletSpawn.position, Color.red, 1f);
+
+            // Ammo
+            if ( clipSize > 0 ){
+                clipSize--;
+            } else {
+                anim.SetBool(Settings.instance.anim_reload, true);
+                return;
+            }
 
             // Decal
             if ( decalRef ){
