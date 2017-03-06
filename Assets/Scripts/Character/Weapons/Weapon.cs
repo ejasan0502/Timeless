@@ -65,5 +65,9 @@ public class Weapon : MonoBehaviour {
     public virtual void SecondaryFire(){
 
     }
+    // Handle secondary fire end logic (right click up)
+    public virtual void SecondaryFireEnd(){
+
+    }
 
 }

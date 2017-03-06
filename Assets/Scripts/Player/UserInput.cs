@@ -139,7 +139,7 @@ public class UserInput : MonoBehaviour {
             weaponHandler.currentWeapon.SecondaryFire();
         }
         if ( Input.GetButtonUp("Fire2") ){
-            weaponHandler.currentWeapon.SecondaryFire();
+            weaponHandler.currentWeapon.SecondaryFireEnd();
         }
     }
 
