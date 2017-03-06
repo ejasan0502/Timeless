@@ -16,10 +16,15 @@ public class UserInput : MonoBehaviour {
     private bool proning = false;
     private bool sprinting = false;
 
+    private bool hideMouse = true;
+
     void Awake(){
         charMovt = GetComponent<CharacterMovement>();
         weaponHandler = GetComponent<WeaponHandler>();
         anim = GetComponent<Animator>();
+    }
+    void Start(){
+        SetCursorView();
     }
     void Update(){
         Attack();
@@ -28,7 +33,10 @@ public class UserInput : MonoBehaviour {
         Sprinting();
         Crouching();
         Prone();
+
         Movement();
+
+        HideViewCursor();
     }
 
     // Handles movement logic
@@ -124,6 +132,19 @@ public class UserInput : MonoBehaviour {
         if ( Input.GetButtonUp("Fire1") ){
             anim.SetBool(Settings.instance.anim_primary_attack, false);
         }
+    }
+    // Hide/View cursor input
+    private void HideViewCursor(){
+        if ( Input.GetKeyDown(KeyCode.Escape) ){
+            hideMouse = !hideMouse;
+
+            SetCursorView();
+        }
+    }
+
+    private void SetCursorView(){
+        Cursor.visible = !hideMouse;
+        Cursor.lockState = hideMouse ? CursorLockMode.Locked : CursorLockMode.None;
     }
 
     // Detect if either these keys are pressed

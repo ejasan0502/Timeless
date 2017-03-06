@@ -29,6 +29,7 @@ public class Firearm : Weapon {
         Fire();
     }
 
+    // Perform bullet logic
     private void Fire(){
         if ( !bulletSpawn ) return;
 

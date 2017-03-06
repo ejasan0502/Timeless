@@ -27,6 +27,7 @@ public class Weapon : MonoBehaviour {
         rb = GetComponent<Rigidbody>();
     }
 
+    // Set animator
     public void SetAnim(Animator anim){
         this.anim = anim;
     }

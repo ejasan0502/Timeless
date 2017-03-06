@@ -17,6 +17,8 @@ public class CameraControl : MonoBehaviour {
         maxX = Settings.instance.cam_maxRotX;
     }
     void Update(){
+        if ( Cursor.visible ) return;
+
         if ( rotYAxis ){
             rotY += Input.GetAxis("Mouse X") * sensitivity;
         }
