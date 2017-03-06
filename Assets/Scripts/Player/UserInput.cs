@@ -4,9 +4,9 @@ using System.Collections;
 // Handles input from player other than main camera
 public class UserInput : MonoBehaviour {
 
-    private Animator anim;
-    private WeaponHandler weaponHandler;
     private CharacterMovement charMovt;
+    private WeaponHandler weaponHandler;
+    private Animator anim;
 
     private KeyCode lastKeyPressed;
     private float dodgeTime = 0f;
@@ -17,9 +17,9 @@ public class UserInput : MonoBehaviour {
     private bool sprinting = false;
 
     void Awake(){
-        anim = GetComponent<Animator>();
         charMovt = GetComponent<CharacterMovement>();
         weaponHandler = GetComponent<WeaponHandler>();
+        anim = GetComponent<Animator>();
     }
     void Update(){
         Attack();
@@ -113,20 +113,16 @@ public class UserInput : MonoBehaviour {
     }
     // Handle attacking logic
     private void Attack(){
-        if ( dodging || sprinting ) return;
+        if ( dodging || sprinting || weaponHandler.currentWeapon == null ) return;
 
+        if ( Input.GetButtonDown("Fire1") ){
+            weaponHandler.currentWeapon.SinglePrimaryFire();
+        }
         if ( Input.GetButton("Fire1") ){
-            weaponHandler.PrimaryFire();
+            weaponHandler.currentWeapon.PrimaryFire();
         }
         if ( Input.GetButtonUp("Fire1") ){
             anim.SetBool(Settings.instance.anim_primary_attack, false);
-        }
-
-        if ( Input.GetButton("Fire2") ){
-            weaponHandler.SecondaryFire();
-        }
-        if ( Input.GetButtonUp("Fire2") ){
-            anim.SetBool(Settings.instance.anim_secondary_attack, false);
         }
     }
 

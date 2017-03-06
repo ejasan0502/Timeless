@@ -6,6 +6,7 @@ using System.Collections;
 public class Weapon : MonoBehaviour {
 
     [Header("-Weapon Info-")]
+    public bool debug;
     public WeaponType weaponType;
     public float atkRate;
     public float atkRange;
@@ -19,9 +20,15 @@ public class Weapon : MonoBehaviour {
     private Collider col;
     private Rigidbody rb;
 
+    protected Animator anim;
+
     void Awake(){
         col = GetComponent<Collider>();
         rb = GetComponent<Rigidbody>();
+    }
+
+    public void SetAnim(Animator anim){
+        this.anim = anim;
     }
 
     // Equip current weapon object to hand transform
@@ -45,13 +52,17 @@ public class Weapon : MonoBehaviour {
         col.enabled = dropItem;
     }
 
-    // Handle generic primary fire (left click)
-    public virtual void PrimaryFire(){
-        Debug.Log("Primary Fire");
+    // Handle single primary fire logic (single left click)
+    public virtual void SinglePrimaryFire(){
+
     }
-    // Handle generic secondary fire (right click)
+    // Handle primary fire logic (left click)
+    public virtual void PrimaryFire(){
+
+    }
+    // Handle secondary fire logic (right click)
     public virtual void SecondaryFire(){
-        Debug.Log("Secondary Fire");
+
     }
 
 }

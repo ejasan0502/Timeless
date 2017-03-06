@@ -35,15 +35,8 @@ public class WeaponHandler : MonoBehaviour {
         weapon.Equip(charModel.rightHand);
 
         currentWeapon = weapon;
+        currentWeapon.SetAnim(anim);
         anim.SetInteger(Settings.instance.anim_weapon_type, (int)currentWeapon.weaponType);
-    }
-    // Handle weapon animation and weapon primary fire
-    public void PrimaryFire(){
-        anim.SetBool(Settings.instance.anim_primary_attack, true);
-    }
-    // Handle weapon animation and weapon secondary fire
-    public void SecondaryFire(){
-
     }
 
 }
