@@ -113,7 +113,7 @@ public class CharacterMovement : MonoBehaviour {
         if ( anim == null ) return;
 
         // Play footsteps sound
-        if ( forward != 0 || strafe != 0 ){
+        if ( isGrounded && (forward != 0 || strafe != 0) ){
             if ( !audio.isPlaying )
                 audio.Play();
 
@@ -152,6 +152,8 @@ public class CharacterMovement : MonoBehaviour {
             if ( hit.collider.gameObject.isStatic ){
                 isGrounded = true;
             }
+        } else {
+            isGrounded = false;
         }
 
         if ( isGrounded ){
