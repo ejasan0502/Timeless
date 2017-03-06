@@ -123,6 +123,7 @@ public class UserInput : MonoBehaviour {
     private void Attack(){
         if ( dodging || sprinting || weaponHandler.currentWeapon == null ) return;
 
+        // Primary Fire
         if ( Input.GetButtonDown("Fire1") ){
             weaponHandler.currentWeapon.SinglePrimaryFire();
         }
@@ -132,7 +133,16 @@ public class UserInput : MonoBehaviour {
         if ( Input.GetButtonUp("Fire1") ){
             anim.SetBool(Settings.instance.anim_primary_attack, false);
         }
+
+        // Secondary Fire
+        if ( Input.GetButtonDown("Fire2") ){
+            weaponHandler.currentWeapon.SecondaryFire();
+        }
+        if ( Input.GetButtonUp("Fire2") ){
+            weaponHandler.currentWeapon.SecondaryFire();
+        }
     }
+
     // Hide/View cursor input
     private void HideViewCursor(){
         if ( Input.GetKeyDown(KeyCode.Escape) ){
@@ -141,7 +151,7 @@ public class UserInput : MonoBehaviour {
             SetCursorView();
         }
     }
-
+    // Hide.View cursor
     private void SetCursorView(){
         Cursor.visible = !hideMouse;
         Cursor.lockState = hideMouse ? CursorLockMode.Locked : CursorLockMode.None;
