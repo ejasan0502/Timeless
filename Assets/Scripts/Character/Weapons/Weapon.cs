@@ -21,12 +21,12 @@ public class Weapon : MonoBehaviour {
     private Rigidbody rb;
 
     protected Animator anim;
-    protected AudioSource audio;
+    protected AudioSource audioSource;
 
     void Awake(){
         col = GetComponent<Collider>();
         rb = GetComponent<Rigidbody>();
-        audio = GetComponent<AudioSource>();
+        audioSource = GetComponent<AudioSource>();
     }
     
     // Check if weapon is firearm, overrided on firearm script

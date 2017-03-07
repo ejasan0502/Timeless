@@ -33,6 +33,12 @@ public class Firearm : Weapon {
         }
     }
 
+    void Start(){
+        camTrans = Camera.main.transform;
+        headTrans = camTrans.parent;
+        camPos = camTrans.localPosition;
+    }
+
     // Single fire on button down
     public override void SinglePrimaryFire(){
         if ( autoFire || anim.GetBool(Settings.instance.anim_reload) ) return;
@@ -59,12 +65,16 @@ public class Firearm : Weapon {
     }
     // Reloading
     public override void AltFire(){
+        if ( clipSize == maxClipSize || carryingAmmo <= 0 ) return;
+
+        Aim(false);
+
         if ( anim )
             anim.SetBool(Settings.instance.anim_reload, true);
         
-        if ( audio ){
-            audio.clip = reloadSound;
-            audio.Play();
+        if ( audioSource ){
+            audioSource.clip = reloadSound;
+            audioSource.Play();
         }
     }
     // Performs reloading logic
@@ -84,13 +94,13 @@ public class Firearm : Weapon {
         if ( !bulletSpawn ) return;
 
         // Sound
-        if ( audio ){
-            audio.clip = fireSound;
-            audio.Play();
+        if ( audioSource ){
+            audioSource.clip = fireSound;
+            audioSource.Play();
         }
 
         // Recoil
-        Vector3 direction = bulletSpawn.forward + (Vector3)Random.insideUnitCircle*bulletSpread;
+        Vector3 direction = bulletSpawn.forward + (Vector3)Random.insideUnitCircle*(aiming ? bulletSpread*0.5f : bulletSpread);
 
         RaycastHit hit;
         if ( Physics.Raycast(bulletSpawn.position, direction, out hit, atkRange) ){
@@ -100,6 +110,10 @@ public class Firearm : Weapon {
             if ( clipSize > 0 ){
                 clipSize--;
             } else {
+                Aim(false);
+
+                audioSource.clip = reloadSound;
+                audioSource.Play();
                 anim.SetBool(Settings.instance.anim_reload, true);
                 return;
             }
@@ -119,13 +133,6 @@ public class Firearm : Weapon {
     }
     // Perform aiming logic
     private void Aim(bool b){
-        // Initialize
-        if ( !camTrans ){
-            camTrans = GameObject.FindObjectOfType<CameraUpdate>().transform;
-            headTrans = camTrans.parent;
-            camPos = camTrans.localPosition;
-        }
-
         // Reverse aiming
         aiming = b;
 

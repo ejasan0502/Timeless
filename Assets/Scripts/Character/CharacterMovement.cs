@@ -15,7 +15,7 @@ public class CharacterMovement : MonoBehaviour {
 
     private Animator anim;
     private Rigidbody rb;
-    private AudioSource audio;
+    private AudioSource audioSource;
 
     private Vector3 targetVelocity = Vector3.zero;
     private bool jumping = false;
@@ -28,7 +28,7 @@ public class CharacterMovement : MonoBehaviour {
 	void Awake() {
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
-        audio = GetComponent<AudioSource>();
+        audioSource = GetComponent<AudioSource>();
 
 	    rb.freezeRotation = true;
 	    rb.useGravity = false;
@@ -114,13 +114,13 @@ public class CharacterMovement : MonoBehaviour {
 
         // Play footsteps sound
         if ( isGrounded && (forward != 0 || strafe != 0) ){
-            if ( !audio.isPlaying )
-                audio.Play();
+            if ( !audioSource.isPlaying )
+                audioSource.Play();
 
             // Increase pitch if sprinting
-            audio.pitch = sprinting ? 2f : 1f;
+            audioSource.pitch = sprinting ? 2f : 1f;
         } else {
-            audio.Stop();
+            audioSource.Stop();
         }
 
         anim.SetFloat(Settings.instance.anim_velocity_x, strafe);
