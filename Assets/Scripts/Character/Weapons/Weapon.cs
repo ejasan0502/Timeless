@@ -12,13 +12,14 @@ public class Weapon : MonoBehaviour {
     public float atkRange;
 
     [Header("-Equip Settings-")]
+    public Vector3 equipCamPos;
     public Vector3 equipPos;
     public Vector3 equipRot;
     public Vector3 unequipPos;
     public Vector3 unequipRot;
     
-    private Collider col;
-    private Rigidbody rb;
+    protected Collider col;
+    protected Rigidbody rb;
 
     protected Animator anim;
     protected AudioSource audioSource;
@@ -31,6 +32,12 @@ public class Weapon : MonoBehaviour {
     
     // Check if weapon is firearm, overrided on firearm script
     public virtual bool isFirearm {
+        get {
+            return false;
+        }
+    }
+    // Check if weapon is melee, override on melee script
+    public virtual bool isMelee {
         get {
             return false;
         }
@@ -48,6 +55,8 @@ public class Weapon : MonoBehaviour {
         transform.SetParent(hand);
         transform.localPosition = equipPos;
         transform.localEulerAngles = equipRot;
+
+        Camera.main.transform.localPosition = equipCamPos;
     }
     // Unequip current weapon object to holster transform
     public void Unequip(Transform holster){
@@ -60,6 +69,11 @@ public class Weapon : MonoBehaviour {
         rb.isKinematic = !dropItem;
         rb.useGravity = dropItem;
         col.enabled = dropItem;
+    }
+    // Play a sound from weapon
+    public void PlaySound(AudioClip sound){
+        audioSource.clip = sound;
+        audioSource.Play();
     }
 
     // Handle single primary fire logic (single left click)

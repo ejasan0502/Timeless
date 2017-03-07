@@ -50,7 +50,7 @@ public class Firearm : Weapon {
     public override void PrimaryFire(){
         if ( !autoFire || anim.GetBool(Settings.instance.anim_reload) ) return;
 
-        anim.SetBool(Settings.instance.anim_primary_attack, true);
+        anim.SetInteger(Settings.instance.anim_attack, 1);
         Fire();
     }
     // Aiming

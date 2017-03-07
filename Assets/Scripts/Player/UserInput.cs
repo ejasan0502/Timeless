@@ -132,7 +132,7 @@ public class UserInput : MonoBehaviour {
             weaponHandler.currentWeapon.PrimaryFire();
         }
         if ( Input.GetButtonUp("Fire1") ){
-            anim.SetBool(Settings.instance.anim_primary_attack, false);
+            anim.SetInteger(Settings.instance.anim_attack, 0);
         }
 
         // Secondary Fire

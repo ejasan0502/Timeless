@@ -17,11 +17,12 @@ public class WeaponHandler : MonoBehaviour {
         anim = GetComponent<Animator>();
     }
     void Start(){
-        Equip();
+        Equip("Models/Weapons/Swords/Morfus");
+        //Equip("Models/Weapons/Pistols/Handgun");
     }
 
     // Instantiate and place weapon object to hands, Update animator
-    public void Equip(){
+    public void Equip(string path){
         if ( charModel == null ) return;
 
         // Remove previous equip
@@ -29,7 +30,7 @@ public class WeaponHandler : MonoBehaviour {
             Destroy(currentWeapon.gameObject);
         }
 
-        GameObject o = (GameObject) Instantiate(Resources.Load("Models/Weapons/Pistols/Handgun"));
+        GameObject o = (GameObject) Instantiate(Resources.Load(path));
 
         Weapon weapon = o.GetComponent<Weapon>();
         weapon.Equip(charModel.rightHand);
