@@ -21,6 +21,14 @@ public class Melee : Weapon {
     public override void SinglePrimaryFire(){
         Attack();
     }
+    // Blocking
+    public override void SecondaryFire(){
+        anim.SetInteger(Settings.instance.anim_attack, -1);
+    }
+    // Stop blocking
+    public override void SecondaryFireEnd(){
+        anim.SetInteger(Settings.instance.anim_attack, 0);
+    }
 
     // Perform attacking logic
     private void Attack(){

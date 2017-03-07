@@ -29,7 +29,6 @@ public class UserInput : MonoBehaviour {
     void Update(){
         Reload();
         Attack();
-        Dodging();
         Jumping();
         Sprinting();
         Crouching();
