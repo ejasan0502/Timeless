@@ -13,6 +13,11 @@ public class CharStats {
     public float mana;
     public float stamina;
 
+    public float hpRecov;
+    public float shldRecov;
+    public float mpRecov;
+    public float staRecov;
+
     public CharStats(){
         FieldInfo[] fields = GetType().GetFields();
         for (int i = 0; i < fields.Length; i++){

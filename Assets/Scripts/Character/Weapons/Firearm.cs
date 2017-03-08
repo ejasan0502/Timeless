@@ -23,7 +23,6 @@ public class Firearm : Weapon {
 
     private bool aiming = false;
     private Transform camTrans;
-    private Vector3 camPos;
     private Transform headTrans;
 
     // Override bool to true since weapon is firearm
@@ -36,7 +35,6 @@ public class Firearm : Weapon {
     void Start(){
         camTrans = Camera.main.transform;
         headTrans = camTrans.parent;
-        camPos = camTrans.localPosition;
     }
 
     // Single fire on button down
@@ -142,7 +140,8 @@ public class Firearm : Weapon {
             camTrans.localPosition = aimPos;
         } else {
             camTrans.SetParent(headTrans);
-            camTrans.localPosition = camPos;
+            camTrans.localPosition = equipCamPos;
+            camTrans.localEulerAngles = Vector3.zero;
         }
     }
 }
