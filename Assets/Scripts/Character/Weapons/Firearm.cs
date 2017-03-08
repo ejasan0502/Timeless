@@ -22,6 +22,7 @@ public class Firearm : Weapon {
     public Vector3 aimPos;
 
     private bool aiming = false;
+    private bool canFire = true;
     private Transform camTrans;
     private Transform headTrans;
 
@@ -41,7 +42,6 @@ public class Firearm : Weapon {
     public override void SinglePrimaryFire(){
         if ( autoFire || anim.GetBool(Settings.instance.anim_reload) ) return;
 
-        anim.Play("shooting",1);
         Fire();
     }
     // Hold fire on button held
@@ -89,7 +89,7 @@ public class Firearm : Weapon {
 
     // Perform bullet logic
     private void Fire(){
-        if ( !bulletSpawn ) return;
+        if ( !bulletSpawn || !canFire ) return;
 
         // Sound
         if ( audioSource ){
@@ -128,6 +128,10 @@ public class Firearm : Weapon {
                 Destroy(muzzleFlash, 0.2f);
             }
         }
+
+        // Fire delay
+        canFire = false;
+        StartCoroutine(FireDelay());
     }
     // Perform aiming logic
     private void Aim(bool b){
@@ -143,5 +147,10 @@ public class Firearm : Weapon {
             camTrans.localPosition = equipCamPos;
             camTrans.localEulerAngles = Vector3.zero;
         }
+    }
+    // Apply fire delay
+    private IEnumerator FireDelay(){
+        yield return new WaitForSeconds(atkRate);
+        canFire = true;
     }
 }

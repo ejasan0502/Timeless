@@ -118,7 +118,7 @@ public class CharacterMovement : MonoBehaviour {
                 audioSource.Play();
 
             // Increase pitch if sprinting
-            audioSource.pitch = sprinting ? 2f : 1f;
+            audioSource.pitch = sprinting ? 2f : crouching ? 0.5f : 1f;
         } else {
             audioSource.Stop();
         }
