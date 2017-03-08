@@ -4,7 +4,7 @@ using System.Collections;
 // Handles melee weapon logic
 public class Melee : Weapon {
 
-    [Header("-Audio-")]
+    public float staminaCost;
     public AudioClip atkSound;
 
     private int atkCounter = 0;
@@ -33,6 +33,12 @@ public class Melee : Weapon {
 
     // Perform attacking logic
     private void Attack(){
+        if ( character.currentCharStats.stamina >= staminaCost ){
+            character.currentCharStats.stamina -= staminaCost;
+        } else {
+            return;
+        }
+
         atkCounter++;
         if ( atkCounter > 3 ){
             atkCounter = 1;

@@ -5,5 +5,8 @@ using System.Collections;
 public class CharacterModel : MonoBehaviour {
 
     public Transform rightHand;
+    public Transform leftHolster;
+    public Transform rightHolster;
+    public Transform backHolster;
 
 }

@@ -17,12 +17,14 @@ public class Weapon : MonoBehaviour {
     public Vector3 equipRot;
     public Vector3 unequipPos;
     public Vector3 unequipRot;
+    public HolsterType holster;
     
     protected Collider col;
     protected Rigidbody rb;
 
     protected Animator anim;
     protected AudioSource audioSource;
+    protected Character character;
 
     void Awake(){
         col = GetComponent<Collider>();
@@ -46,6 +48,7 @@ public class Weapon : MonoBehaviour {
     // Set animator
     public void SetAnim(Animator anim){
         this.anim = anim;
+        character = anim.GetComponent<Character>();
     }
 
     // Equip current weapon object to hand transform
@@ -63,6 +66,8 @@ public class Weapon : MonoBehaviour {
         transform.SetParent(holster);
         transform.localPosition = unequipPos;
         transform.localEulerAngles = unequipRot;
+
+        col.enabled = false;
     }
     // Drop weapon object
     public void Drop(bool dropItem){

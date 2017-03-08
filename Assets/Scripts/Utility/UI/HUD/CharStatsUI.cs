@@ -26,11 +26,11 @@ public class CharStatsUI : UI {
     }
     void FixedUpdate(){
         if ( player ){
-            if ( healthText ) healthText.text = "Health: " + (showAsPercentages ? Mathf.Round(player.currentCharStats.health/player.maxCharStats.health)*100f+"%" : player.currentCharStats.health + " / " + player.maxCharStats.health);
-            if ( armorText ) armorText.text = "Armor: " + (showAsPercentages ? Mathf.Round(player.currentCharStats.armor/player.maxCharStats.armor)*100f+"%" : player.currentCharStats.armor + " / " + player.maxCharStats.armor);
-            if ( shieldsText ) shieldsText.text = "Shields: " + (showAsPercentages ? Mathf.Round(player.currentCharStats.shields/player.maxCharStats.shields)*100f+"%" : player.currentCharStats.shields + " / " + player.maxCharStats.shields);
-            if ( manaText ) manaText.text = "Mana: " + (showAsPercentages ? Mathf.Round(player.currentCharStats.mana/player.maxCharStats.mana)*100f+"%" : player.currentCharStats.mana + " / " + player.maxCharStats.mana);
-            if ( staminaText ) staminaText.text = "Stamina: " + (showAsPercentages ? Mathf.Round(player.currentCharStats.stamina/player.maxCharStats.stamina)*100f+"%" : player.currentCharStats.stamina + " / " + player.maxCharStats.stamina);
+            if ( healthText ) healthText.text = "Health: " + (showAsPercentages ? (player.currentCharStats.health/player.maxCharStats.health)*100f+"%" : player.currentCharStats.health + " / " + player.maxCharStats.health);
+            if ( armorText ) armorText.text = "Armor: " + (showAsPercentages ? (player.currentCharStats.armor/player.maxCharStats.armor)*100f+"%" : player.currentCharStats.armor + " / " + player.maxCharStats.armor);
+            if ( shieldsText ) shieldsText.text = "Shields: " + (showAsPercentages ? (player.currentCharStats.shields/player.maxCharStats.shields)*100f+"%" : player.currentCharStats.shields + " / " + player.maxCharStats.shields);
+            if ( manaText ) manaText.text = "Mana: " + (showAsPercentages ? (player.currentCharStats.mana/player.maxCharStats.mana)*100f+"%" : player.currentCharStats.mana + " / " + player.maxCharStats.mana);
+            if ( staminaText ) staminaText.text = "Stamina: " + (showAsPercentages ? (player.currentCharStats.stamina/player.maxCharStats.stamina)*100f+"%" : player.currentCharStats.stamina + " / " + player.maxCharStats.stamina);
 
             HideTexts();
         }
