@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+// Handles melee weapon logic
 public class Melee : Weapon {
 
     [Header("-Audio-")]
