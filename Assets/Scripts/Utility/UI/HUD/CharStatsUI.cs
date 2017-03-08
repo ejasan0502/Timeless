@@ -12,6 +12,7 @@ public class CharStatsUI : UI {
     public Text shieldsText;
     public Text manaText;
     public Text staminaText;
+    public Text ammoText;
 
     public float healthThreshold;
     public float armorThreshold;
@@ -20,9 +21,11 @@ public class CharStatsUI : UI {
     public float staminaThreshold;
 
     private Character player;
+    private WeaponHandler weaponHandler;
 
     void Start(){
         player = GameObject.FindWithTag("Player").GetComponent<Character>();
+        weaponHandler = player ? player.GetComponent<WeaponHandler>() : null;
     }
     void FixedUpdate(){
         if ( player ){
@@ -33,6 +36,17 @@ public class CharStatsUI : UI {
             if ( staminaText ) staminaText.text = "Stamina: " + (showAsPercentages ? (player.currentCharStats.stamina/player.maxCharStats.stamina)*100f+"%" : player.currentCharStats.stamina + " / " + player.maxCharStats.stamina);
 
             HideTexts();
+
+            if ( ammoText && weaponHandler && weaponHandler.currentWeapon && weaponHandler.currentWeapon.isFirearm ){
+                if ( !ammoText.gameObject.activeSelf ){
+                    ammoText.gameObject.SetActive(true);
+                }
+
+                Firearm weapon = weaponHandler.currentWeapon as Firearm;
+                ammoText.text = weapon.clipSize + " | " + weapon.carryingAmmo;
+            } else if ( ammoText.gameObject.activeSelf ){
+                ammoText.gameObject.SetActive(false);
+            }
         }
     }
 
