@@ -37,6 +37,7 @@ public class UserInput : MonoBehaviour {
         Movement();
 
         HideViewCursor();
+        WeaponSwitch();
     }
 
     // Handles movement logic
@@ -148,6 +149,28 @@ public class UserInput : MonoBehaviour {
 
         if ( Input.GetButtonDown("Reload") ){
             weaponHandler.currentWeapon.AltFire();
+        }
+    }
+    // Handle weapon switching
+    private void WeaponSwitch(){
+        if ( !weaponHandler ) return;
+
+        KeyCode keyPressed = GetKeyDown(KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4);
+        if ( keyPressed != KeyCode.None ){
+            switch (keyPressed){
+            case KeyCode.Alpha1:
+            weaponHandler.Equip(0);
+            break;
+            case KeyCode.Alpha2:
+            weaponHandler.Equip(1);
+            break;
+            case KeyCode.Alpha3:
+            weaponHandler.Equip(2);
+            break;
+            case KeyCode.Alpha4:
+            weaponHandler.Equip(3);
+            break;
+            }
         }
     }
 

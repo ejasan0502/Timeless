@@ -5,12 +5,17 @@ using System.Collections.Generic;
 // Handles all weapon objects to character object
 public class WeaponHandler : MonoBehaviour {
 
-    public Weapon currentWeapon { get; private set; }
+    public Weapon currentWeapon {
+        get {
+            return weaponIndex < weapons.Count ? weapons[weaponIndex] : null;
+        }
+    }
 
     private List<Weapon> weapons = new List<Weapon>();
 
     private CharacterModel charModel;
     private Animator anim;
+    private int weaponIndex = -1;
 
     void Awake(){
         charModel = GetComponentInChildren<CharacterModel>();
@@ -22,18 +27,18 @@ public class WeaponHandler : MonoBehaviour {
     }
 
     // Instantiate and place weapon object to hands, Update animator
-    public void Equip(int weaponIndex){
-        if ( charModel == null ) return;
+    public void Equip(int index){
+        if ( charModel == null && weaponIndex < weapons.Count ) return;
 
-        // Remove previous equip
-        if ( currentWeapon != null ){
-            Destroy(currentWeapon.gameObject);
+        if ( weaponIndex != -1 ){
+            currentWeapon.Unequip(charModel);
         }
+
+        weaponIndex = index;
 
         Weapon weapon = weapons[weaponIndex];
         weapon.Equip(charModel.rightHand);
 
-        currentWeapon = weapon;
         anim.SetInteger(Settings.instance.anim_weapon_type, (int)currentWeapon.weaponType);
     }
     // Add weapon to list
@@ -42,7 +47,11 @@ public class WeaponHandler : MonoBehaviour {
 
         Weapon weapon = o.GetComponent<Weapon>();
         weapon.SetAnim(anim);
-        weapon.Unequip(weapon.holster == HolsterType.left ? charModel.leftHolster : weapon.holster == HolsterType.right ? charModel.rightHolster : charModel.backHolster);
+        weapon.Unequip(charModel);
         weapons.Add(weapon);
+
+        if ( weaponIndex == -1 ){
+            Equip(0);
+        }
     }
 }
