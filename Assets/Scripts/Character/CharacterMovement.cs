@@ -2,22 +2,27 @@
 using System.Collections;
 
 // Handles movement logic and animation
-[RequireComponent(typeof(Rigidbody), typeof(AudioSource))]
+[RequireComponent(typeof(CharacterController), typeof(AudioSource))]
 public class CharacterMovement : MonoBehaviour {
 
     public float speed = 5f;
     public float freeFallTime = 1.25f;
-	public float maxVelocityChange = 10.0f;
 	public float jumpHeight = 2.0f;
     public AudioClip footsteps;
 
-    public bool isGrounded { get; private set; }
+    public bool IsGrounded {
+        get {
+            return cc.isGrounded;
+        }
+    }
 
     private Animator anim;
-    private Rigidbody rb;
+    private CharacterController cc;
     private AudioSource audioSource;
 
-    private Vector3 targetVelocity = Vector3.zero;
+    private float velY = 0f;
+    private Vector3 velocity = Vector3.zero;
+
     private bool jumping = false;
     private bool sprinting = false;
     private bool freefalling = false;
@@ -27,29 +32,17 @@ public class CharacterMovement : MonoBehaviour {
     
 	void Awake() {
         anim = GetComponent<Animator>();
-        rb = GetComponent<Rigidbody>();
+        cc = GetComponent<CharacterController>();
         audioSource = GetComponent<AudioSource>();
-
-	    rb.freezeRotation = true;
-	    rb.useGravity = false;
-
-        isGrounded = false;
 
         SetupAnimator();
 	}
 	void Update() {
-	    if ( isGrounded ) {
-	        // Apply a force that attempts to reach our target velocity
-	        Vector3 velocity = rb.velocity;
-	        Vector3 velocityChange = (targetVelocity - velocity);
-	        velocityChange.x = Mathf.Clamp(velocityChange.x, -maxVelocityChange, maxVelocityChange);
-	        velocityChange.z = Mathf.Clamp(velocityChange.z, -maxVelocityChange, maxVelocityChange);
-	        velocityChange.y = 0;
-	        rb.AddForce(velocityChange, ForceMode.VelocityChange);
-	    }
- 
 	    // We apply gravity manually for more tuning control
-	    rb.AddForce(new Vector3 (0, Physics.gravity.y * rb.mass, 0));
+	    velY += Physics.gravity.y * Time.deltaTime;
+        velocity.y = velY;
+
+        cc.Move(velocity*Time.deltaTime);
  
 	    CheckGround();
 	}
@@ -65,14 +58,14 @@ public class CharacterMovement : MonoBehaviour {
             velocityMultipler = 2f;
         }
 
-	    targetVelocity = v * velocityMultipler;
-	    targetVelocity = transform.TransformDirection(targetVelocity);
-	    targetVelocity *= speed;
+	    velocity = v * velocityMultipler;
+	    velocity = transform.TransformDirection(velocity);
+	    velocity *= speed;
     }
     // Have character jump
     public void Jump(){
-        if ( !jumping ){
-            rb.velocity = new Vector3(rb.velocity.x, CalculateJumpVerticalSpeed(), rb.velocity.z);
+        if ( cc.isGrounded && !jumping ){
+            velY = jumpHeight;
             jumping = true;
             StartCoroutine(FreeFall());
         }
@@ -113,7 +106,7 @@ public class CharacterMovement : MonoBehaviour {
         if ( anim == null ) return;
 
         // Play footsteps sound
-        if ( isGrounded && (forward != 0 || strafe != 0) ){
+        if ( cc.isGrounded && (forward != 0 || strafe != 0) ){
             if ( !audioSource.isPlaying )
                 audioSource.Play();
 
@@ -126,7 +119,7 @@ public class CharacterMovement : MonoBehaviour {
         anim.SetFloat(Settings.instance.anim_velocity_x, strafe);
         anim.SetFloat(Settings.instance.anim_velocity_z, sprinting ? forward*2f : forward);
 
-        anim.SetBool(Settings.instance.anim_grounded, isGrounded);
+        anim.SetBool(Settings.instance.anim_grounded, cc.isGrounded);
         anim.SetBool(Settings.instance.anim_jump, jumping);
         anim.SetBool(Settings.instance.anim_free_fall, freefalling);
         anim.SetBool(Settings.instance.anim_dodge, dodging);
@@ -139,24 +132,9 @@ public class CharacterMovement : MonoBehaviour {
         yield return new WaitForSeconds(freeFallTime);
         freefalling = true;
     }
-    // Smooth jump speed
-	private float CalculateJumpVerticalSpeed() {
-	    // From the jump height and gravity we deduce the upwards speed 
-	    // for the character to reach at the apex.
-	    return Mathf.Sqrt(2 * jumpHeight * -Physics.gravity.y);
-	}
     // Check if character is grounded
     private void CheckGround(){
-        RaycastHit hit;
-        if ( Physics.Raycast(transform.position, Vector3.down, out hit, 0.1f) ){
-            if ( hit.collider.gameObject.isStatic ){
-                isGrounded = true;
-            }
-        } else {
-            isGrounded = false;
-        }
-
-        if ( isGrounded ){
+        if ( cc.isGrounded ){
             dodging = false;
             jumping = false;
             freefalling = false;

@@ -27,17 +27,17 @@ public class UserInput : MonoBehaviour {
         SetCursorView();
     }
     void Update(){
-        Reload();
-        Attack();
+        //Reload();
+        //Attack();
         Jumping();
-        Sprinting();
-        Crouching();
-        Prone();
+        //Sprinting();
+        //Crouching();
+        //Prone();
 
         Movement();
 
         HideViewCursor();
-        WeaponSwitch();
+        //WeaponSwitch();
     }
 
     // Handles movement logic
@@ -67,7 +67,7 @@ public class UserInput : MonoBehaviour {
     private void Sprinting(){
         if ( crouching || proning ) return;
 
-        if ( charMovt.isGrounded ){
+        if ( charMovt.IsGrounded ){
             if ( Input.GetButton("Sprint") ){
                 sprinting = true;
                 charMovt.Sprint(sprinting);
@@ -122,7 +122,7 @@ public class UserInput : MonoBehaviour {
     }
     // Handle attacking logic
     private void Attack(){
-        if ( dodging || sprinting || weaponHandler.currentWeapon == null ) return;
+        if ( dodging || sprinting || weaponHandler && weaponHandler.currentWeapon == null ) return;
 
         // Primary Fire
         if ( Input.GetButtonDown("Fire1") ){
@@ -145,7 +145,7 @@ public class UserInput : MonoBehaviour {
     }
     // Handle reloading logic
     private void Reload(){
-        if ( weaponHandler.currentWeapon == null ) return;
+        if ( weaponHandler && weaponHandler.currentWeapon == null ) return;
 
         if ( Input.GetButtonDown("Reload") ){
             weaponHandler.currentWeapon.AltFire();

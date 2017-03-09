@@ -29,7 +29,7 @@ public class WeaponHandler : MonoBehaviour {
 
     // Instantiate and place weapon object to hands, Update animator
     public void Equip(int index){
-        if ( charModel == null && weaponIndex < weapons.Count ) return;
+        if ( charModel == null && weaponIndex >= weapons.Count ) return;
 
         if ( weaponIndex != -1 ){
             currentWeapon.Unequip(charModel);

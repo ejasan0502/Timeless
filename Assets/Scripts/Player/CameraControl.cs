@@ -17,7 +17,7 @@ public class CameraControl : MonoBehaviour {
         maxX = Settings.instance.cam_maxRotX;
     }
     void Update(){
-        if ( Cursor.visible ) return;
+        //if ( Cursor.visible ) return;
 
         if ( rotYAxis ){
             rotY += Input.GetAxis("Mouse X") * sensitivity;
@@ -28,7 +28,7 @@ public class CameraControl : MonoBehaviour {
         }
     }
     void LateUpdate(){
-        transform.eulerAngles = new Vector3(-rotX, rotY, 0f);
+        transform.localEulerAngles = new Vector3(-rotX, rotY, 0f);
     }
 
 }
