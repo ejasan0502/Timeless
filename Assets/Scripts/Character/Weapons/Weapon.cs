@@ -12,7 +12,8 @@ public class Weapon : MonoBehaviour {
     public float atkRange;
 
     [Header("-Equip Settings-")]
-    public Vector3 equipCamPos;
+    public Vector3 camPosOffset;
+    public Vector3 camRotOffset;
     public Vector3 equipPos;
     public Vector3 equipRot;
     public Vector3 unequipPos;
@@ -25,6 +26,7 @@ public class Weapon : MonoBehaviour {
     protected Animator anim;
     protected AudioSource audioSource;
     protected Character character;
+    protected CharacterModel charModel;
 
     void Awake(){
         col = GetComponent<Collider>();
@@ -49,6 +51,7 @@ public class Weapon : MonoBehaviour {
     public void SetAnim(Animator anim){
         this.anim = anim;
         character = anim.GetComponent<Character>();
+        charModel = anim.GetComponent<WeaponHandler>().charModel;
     }
 
     // Equip current weapon object to hand transform
@@ -59,7 +62,9 @@ public class Weapon : MonoBehaviour {
         transform.localPosition = equipPos;
         transform.localEulerAngles = equipRot;
 
-        Camera.main.transform.localPosition = equipCamPos;
+        // Update charModel
+        charModel.transform.localPosition = camPosOffset;
+        charModel.transform.localEulerAngles = camRotOffset;
     }
     // Unequip current weapon object to holster transform
     public void Unequip(CharacterModel charModel){
@@ -70,6 +75,9 @@ public class Weapon : MonoBehaviour {
         transform.localEulerAngles = unequipRot;
 
         col.enabled = false;
+
+        //charModel.transform.localPosition = charModel.originalPos;
+        //charModel.transform.localEulerAngles = charModel.originalRot;
     }
     // Drop weapon object
     public void Drop(bool dropItem){

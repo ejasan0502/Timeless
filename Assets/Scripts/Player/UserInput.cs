@@ -27,8 +27,8 @@ public class UserInput : MonoBehaviour {
         SetCursorView();
     }
     void Update(){
-        //Reload();
-        //Attack();
+        Reload();
+        Attack();
         Jumping();
         Sprinting();
         Crouching();

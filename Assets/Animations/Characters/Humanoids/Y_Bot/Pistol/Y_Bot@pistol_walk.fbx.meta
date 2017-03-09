@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 2045bd203aef94f46b8fb49f1bae6985
-timeCreated: 1489045888
+guid: d5dc0b0fa7728f44a85fb45a1ce42724
+timeCreated: 1489045889
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
@@ -141,7 +141,7 @@ ModelImporter:
     400130: mixamorig:Spine1
     400132: mixamorig:Spine2
     400134: //RootNode
-    7400000: shooting
+    7400000: pistol_walk
     9500000: //RootNode
   materials:
     importMaterials: 1
@@ -168,18 +168,18 @@ ModelImporter:
     extraExposedTransformPaths: []
     clipAnimations:
     - serializedVersion: 16
-      name: shooting
+      name: pistol_walk
       takeName: mixamo.com
       firstFrame: 0
-      lastFrame: 35
+      lastFrame: 24
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
-      loopBlend: 0
+      loopTime: 1
+      loopBlend: 1
       loopBlendOrientation: 1
       loopBlendPositionY: 1
       loopBlendPositionXZ: 0

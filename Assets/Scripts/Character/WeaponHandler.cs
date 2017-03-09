@@ -10,10 +10,10 @@ public class WeaponHandler : MonoBehaviour {
             return weaponIndex < weapons.Count ? weapons[weaponIndex] : null;
         }
     }
+    public CharacterModel charModel { get; private set; }
 
     private List<Weapon> weapons = new List<Weapon>();
 
-    private CharacterModel charModel;
     private Animator anim;
     private int weaponIndex = -1;
 
@@ -22,8 +22,8 @@ public class WeaponHandler : MonoBehaviour {
         anim = GetComponent<Animator>();
     }
     void Start(){
-        AddWeapon("Models/Weapons/Rifles/AK12");
-        AddWeapon("Models/Weapons/Swords/Morfus");
+        //AddWeapon("Models/Weapons/Rifles/AK12");
+        //AddWeapon("Models/Weapons/Swords/Morfus");
         AddWeapon("Models/Weapons/Pistols/Handgun");
     }
 

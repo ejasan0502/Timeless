@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 2045bd203aef94f46b8fb49f1bae6985
+guid: a81ba0c01ede4614bb4f236c9e9264a3
 timeCreated: 1489045888
 licenseType: Free
 ModelImporter:
@@ -141,7 +141,7 @@ ModelImporter:
     400130: mixamorig:Spine1
     400132: mixamorig:Spine2
     400134: //RootNode
-    7400000: shooting
+    7400000: pistol_jump
     9500000: //RootNode
   materials:
     importMaterials: 1
@@ -168,10 +168,10 @@ ModelImporter:
     extraExposedTransformPaths: []
     clipAnimations:
     - serializedVersion: 16
-      name: shooting
+      name: pistol_jump
       takeName: mixamo.com
       firstFrame: 0
-      lastFrame: 35
+      lastFrame: 24
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

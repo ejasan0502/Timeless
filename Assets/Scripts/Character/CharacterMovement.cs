@@ -18,7 +18,6 @@ public class CharacterMovement : MonoBehaviour {
 
     private Animator anim;
     private CharacterController cc;
-    private CharacterModel charModel;
     private AudioSource audioSource;
 
     private float velY = 0f;
@@ -35,7 +34,6 @@ public class CharacterMovement : MonoBehaviour {
         anim = GetComponent<Animator>();
         cc = GetComponent<CharacterController>();
         audioSource = GetComponent<AudioSource>();
-        charModel = GetComponentInChildren<CharacterModel>();
 
         SetupAnimator();
 	}

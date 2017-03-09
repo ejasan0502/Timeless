@@ -100,32 +100,32 @@ public class Firearm : Weapon {
         // Recoil
         Vector3 direction = bulletSpawn.forward + (Vector3)Random.insideUnitCircle*(aiming ? bulletSpread*0.5f : bulletSpread);
 
+        // Ammo
+        if ( clipSize > 0 ){
+            clipSize--;
+        } else {
+            Aim(false);
+
+            audioSource.clip = reloadSound;
+            audioSource.Play();
+            anim.SetBool(Settings.instance.anim_reload, true);
+            return;
+        }
+        
+        // Muzzle Flash
+        if ( muzzleFlashRef ){
+            GameObject muzzleFlash = Instantiate(muzzleFlashRef, bulletSpawn.position, Quaternion.identity, bulletSpawn) as GameObject;
+            Destroy(muzzleFlash, 0.2f);
+        }
+
         RaycastHit hit;
         if ( Physics.Raycast(bulletSpawn.position, direction, out hit, atkRange) ){
             if ( debug ) Debug.DrawRay(bulletSpawn.position, hit.point-bulletSpawn.position, Color.red, 1f);
-
-            // Ammo
-            if ( clipSize > 0 ){
-                clipSize--;
-            } else {
-                Aim(false);
-
-                audioSource.clip = reloadSound;
-                audioSource.Play();
-                anim.SetBool(Settings.instance.anim_reload, true);
-                return;
-            }
 
             // Decal
             if ( decalRef ){
                 GameObject decal = Instantiate(decalRef, hit.point, Quaternion.LookRotation(hit.normal)) as GameObject;
                 Destroy(decal, 2f);
-            }
-
-            // Muzzle Flash
-            if ( muzzleFlashRef ){
-                GameObject muzzleFlash = Instantiate(muzzleFlashRef, bulletSpawn.position, Quaternion.identity, bulletSpawn) as GameObject;
-                Destroy(muzzleFlash, 0.2f);
             }
         }
 
@@ -144,7 +144,6 @@ public class Firearm : Weapon {
             camTrans.localPosition = aimPos;
         } else {
             camTrans.SetParent(headTrans);
-            camTrans.localPosition = equipCamPos;
             camTrans.localEulerAngles = Vector3.zero;
         }
     }
