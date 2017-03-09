@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: cf8cccabbff10f0449cfa3e30113defc
+guid: 6082f0ff40fca3d40b1e70ed68104e5a
 timeCreated: 1489054348
 licenseType: Free
 ModelImporter:
@@ -141,7 +141,7 @@ ModelImporter:
     400130: mixamorig:Spine1
     400132: mixamorig:Spine2
     400134: //RootNode
-    7400000: firing_rifle
+    7400000: walk_crouching_right
     9500000: //RootNode
   materials:
     importMaterials: 1
@@ -168,18 +168,18 @@ ModelImporter:
     extraExposedTransformPaths: []
     clipAnimations:
     - serializedVersion: 16
-      name: firing_rifle
+      name: walk_crouching_right
       takeName: mixamo.com
       firstFrame: 0
-      lastFrame: 35
+      lastFrame: 30
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
-      loopBlend: 0
+      loopTime: 1
+      loopBlend: 1
       loopBlendOrientation: 1
       loopBlendPositionY: 1
       loopBlendPositionXZ: 0

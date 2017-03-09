@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: cf8cccabbff10f0449cfa3e30113defc
-timeCreated: 1489054348
+guid: c4b26bee626ca554b83b9ed4d7471a95
+timeCreated: 1489055153
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
@@ -141,7 +141,7 @@ ModelImporter:
     400130: mixamorig:Spine1
     400132: mixamorig:Spine2
     400134: //RootNode
-    7400000: firing_rifle
+    7400000: rifle_jump
     9500000: //RootNode
   materials:
     importMaterials: 1
@@ -168,10 +168,10 @@ ModelImporter:
     extraExposedTransformPaths: []
     clipAnimations:
     - serializedVersion: 16
-      name: firing_rifle
+      name: rifle_jump
       takeName: mixamo.com
       firstFrame: 0
-      lastFrame: 35
+      lastFrame: 18
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
