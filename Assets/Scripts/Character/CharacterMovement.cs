@@ -58,6 +58,11 @@ public class CharacterMovement : MonoBehaviour {
             velocityMultipler = 2f;
         }
 
+        if ( audioSource && !audioSource.isPlaying ){
+            audioSource.clip = footsteps;
+            audioSource.Play();
+        }
+
 	    velocity = v * velocityMultipler;
 	    velocity = transform.TransformDirection(velocity);
 	    velocity *= speed;
