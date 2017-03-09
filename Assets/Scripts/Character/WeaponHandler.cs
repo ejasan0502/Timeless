@@ -7,15 +7,15 @@ public class WeaponHandler : MonoBehaviour {
 
     public Weapon currentWeapon {
         get {
-            return weaponIndex < weapons.Count ? weapons[weaponIndex] : null;
+            return weaponIndex < weapons.Count && weaponIndex >= 0 ? weapons[weaponIndex] : null;
         }
     }
     public CharacterModel charModel { get; private set; }
 
-    private List<Weapon> weapons = new List<Weapon>();
+    public List<Weapon> weapons = new List<Weapon>();
 
     private Animator anim;
-    private int weaponIndex = -1;
+    public int weaponIndex = -1;
 
     void Awake(){
         charModel = GetComponentInChildren<CharacterModel>();
@@ -29,13 +29,14 @@ public class WeaponHandler : MonoBehaviour {
 
     // Instantiate and place weapon object to hands, Update animator
     public void Equip(int index){
-        if ( charModel == null && weaponIndex >= weapons.Count ) return;
+        if ( charModel == null ) return;
 
         if ( weaponIndex != -1 ){
             currentWeapon.Unequip(charModel);
         }
 
         weaponIndex = index;
+        if ( weaponIndex >= weapons.Count ) weaponIndex = 0;
 
         Weapon weapon = weapons[weaponIndex];
         weapon.Equip(charModel.rightHand);

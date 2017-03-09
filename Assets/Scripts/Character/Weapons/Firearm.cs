@@ -24,19 +24,12 @@ public class Firearm : Weapon {
 
     private bool aiming = false;
     private bool canFire = true;
-    private Transform camTrans;
-    private Transform headTrans;
 
     // Override bool to true since weapon is firearm
     public override bool isFirearm {
         get {
             return true;
         }
-    }
-
-    void Start(){
-        camTrans = Camera.main.transform;
-        headTrans = camTrans.parent;
     }
 
     // Single fire on button down
