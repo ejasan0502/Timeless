@@ -33,10 +33,12 @@ public class Melee : Weapon {
 
     // Perform attacking logic
     private void Attack(){
-        if ( character.currentCharStats.stamina >= staminaCost ){
-            character.currentCharStats.stamina -= staminaCost;
-        } else {
-            return;
+        if ( character ){
+            if ( character.currentCharStats.stamina >= staminaCost ){
+                character.currentCharStats.stamina -= staminaCost;
+            } else {
+                return;
+            }
         }
 
         atkCounter++;

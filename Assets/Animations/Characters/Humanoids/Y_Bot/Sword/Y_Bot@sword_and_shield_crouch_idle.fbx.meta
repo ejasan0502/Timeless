@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: a664d96743da5ec48847f08da3f16e60
-timeCreated: 1488923483
+guid: c927282a97482874182b503e49016f68
+timeCreated: 1489050937
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
@@ -141,7 +141,7 @@ ModelImporter:
     400130: mixamorig:Spine1
     400132: mixamorig:Spine2
     400134: //RootNode
-    7400000: stabbing
+    7400000: sword_and_shield_crouch_idle
     9500000: //RootNode
   materials:
     importMaterials: 1
@@ -168,25 +168,25 @@ ModelImporter:
     extraExposedTransformPaths: []
     clipAnimations:
     - serializedVersion: 16
-      name: stabbing
+      name: sword_and_shield_crouch_idle
       takeName: mixamo.com
       firstFrame: 0
-      lastFrame: 30
+      lastFrame: 73
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
-      loopBlend: 0
+      loopTime: 1
+      loopBlend: 1
       loopBlendOrientation: 1
-      loopBlendPositionY: 0
+      loopBlendPositionY: 1
       loopBlendPositionXZ: 0
       keepOriginalOrientation: 1
       keepOriginalPositionY: 0
       keepOriginalPositionXZ: 0
-      heightFromFeet: 0
+      heightFromFeet: 1
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []

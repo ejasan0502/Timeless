@@ -23,7 +23,7 @@ public class WeaponHandler : MonoBehaviour {
     }
     void Start(){
         //AddWeapon("Models/Weapons/Rifles/AK12");
-        //AddWeapon("Models/Weapons/Swords/Morfus");
+        AddWeapon("Models/Weapons/Swords/Morfus");
         AddWeapon("Models/Weapons/Pistols/Handgun");
     }
 

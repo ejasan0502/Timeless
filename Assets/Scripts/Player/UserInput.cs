@@ -37,7 +37,7 @@ public class UserInput : MonoBehaviour {
         Movement();
 
         HideViewCursor();
-        //WeaponSwitch();
+        WeaponSwitch();
     }
 
     // Handles movement logic

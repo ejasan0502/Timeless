@@ -28,6 +28,12 @@ public class Weapon : MonoBehaviour {
     protected Character character;
     protected CharacterModel charModel;
 
+    public CharacterModel CharModel {
+        get {
+            return charModel;
+        }
+    }
+
     void Awake(){
         col = GetComponent<Collider>();
         rb = GetComponent<Rigidbody>();
