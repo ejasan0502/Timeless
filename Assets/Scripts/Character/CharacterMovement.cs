@@ -18,6 +18,7 @@ public class CharacterMovement : MonoBehaviour {
 
     private Animator anim;
     private CharacterController cc;
+    private CharacterModel charModel;
     private AudioSource audioSource;
 
     private float velY = 0f;
@@ -34,6 +35,7 @@ public class CharacterMovement : MonoBehaviour {
         anim = GetComponent<Animator>();
         cc = GetComponent<CharacterController>();
         audioSource = GetComponent<AudioSource>();
+        charModel = GetComponentInChildren<CharacterModel>();
 
         SetupAnimator();
 	}
@@ -98,9 +100,9 @@ public class CharacterMovement : MonoBehaviour {
         crouching = b;
 
         if ( crouching ){
-            cc.height *= 3.00f/4.00f;
+            cc.height *= 1.00f/2.00f;
         } else {
-            cc.height *= 4.00f/3.00f;
+            cc.height *= 2.00f;
         }
     }
     // Have character prone
