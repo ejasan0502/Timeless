@@ -20,6 +20,7 @@ public class Settings : MonoBehaviour {
     [Header("-Camera Settings-")]
     public float cam_sensitivity = 5f;
     public float cam_minRotX = -75f, cam_maxRotX = 90f;
+    public float defaultFov = 60f;
 
     private static Settings _instance;
     public static Settings instance {

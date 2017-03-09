@@ -20,6 +20,7 @@ public class Firearm : Weapon {
     [Header("-Positions-")]
     public Transform bulletSpawn;
     public Vector3 aimPos;
+    public Vector3 aimRot;
 
     private bool aiming = false;
     private bool canFire = true;
@@ -98,7 +99,7 @@ public class Firearm : Weapon {
         }
 
         // Recoil
-        Vector3 direction = bulletSpawn.forward + (Vector3)Random.insideUnitCircle*(aiming ? bulletSpread*0.5f : bulletSpread);
+        Vector3 direction = bulletSpawn.forward + (Vector3)Random.insideUnitCircle*(aiming ? bulletSpread*0.1f : bulletSpread);
 
         // Ammo
         if ( clipSize > 0 ){
@@ -135,16 +136,16 @@ public class Firearm : Weapon {
     }
     // Perform aiming logic
     private void Aim(bool b){
-        // Reverse aiming
         aiming = b;
 
-        // Adjust transforms
         if ( aiming ){
-            camTrans.SetParent(transform);
-            camTrans.localPosition = aimPos;
+            Camera.main.fieldOfView = Settings.instance.defaultFov/2.00f;
+            charModel.transform.localPosition = aimPos;
+            charModel.transform.localEulerAngles = aimRot;
         } else {
-            camTrans.SetParent(headTrans);
-            camTrans.localEulerAngles = Vector3.zero;
+            Camera.main.fieldOfView = Settings.instance.defaultFov;
+            charModel.transform.localPosition = camPosOffset;
+            charModel.transform.localEulerAngles = camRotOffset;
         }
     }
     // Apply fire delay
