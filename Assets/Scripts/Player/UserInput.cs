@@ -30,9 +30,9 @@ public class UserInput : MonoBehaviour {
         //Reload();
         //Attack();
         Jumping();
-        //Sprinting();
-        //Crouching();
-        //Prone();
+        Sprinting();
+        Crouching();
+        Prone();
 
         Movement();
 

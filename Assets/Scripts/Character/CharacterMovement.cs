@@ -96,6 +96,12 @@ public class CharacterMovement : MonoBehaviour {
     // Have character crouch
     public void Crouch(bool b){
         crouching = b;
+
+        if ( crouching ){
+            cc.height *= 3.00f/4.00f;
+        } else {
+            cc.height *= 4.00f/3.00f;
+        }
     }
     // Have character prone
     public void Prone(bool b){
