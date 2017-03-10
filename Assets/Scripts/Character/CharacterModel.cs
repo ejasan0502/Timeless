@@ -6,6 +6,7 @@ public class CharacterModel : MonoBehaviour {
 
     public Transform rightHand;
 
+    public Transform holster;       // Used to place weapons for self
     public Transform leftHolster;
     public Transform rightHolster;
     public Transform backHolster;

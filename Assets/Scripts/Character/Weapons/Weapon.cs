@@ -76,14 +76,17 @@ public class Weapon : MonoBehaviour {
     public void Unequip(CharacterModel charModel){
         Transform holsterTrans = holster == HolsterType.left ? charModel.leftHolster : holster == HolsterType.right ? charModel.rightHolster : charModel.backHolster;
 
-        transform.SetParent(holsterTrans);
-        transform.localPosition = unequipPos;
-        transform.localEulerAngles = unequipRot;
+        if ( holsterTrans == null && charModel.holster ){
+            transform.SetParent(charModel.holster);
+            transform.localPosition = Vector3.zero;
+            transform.localEulerAngles = Vector3.zero;
+        } else {
+            transform.SetParent(holsterTrans);
+            transform.localPosition = unequipPos;
+            transform.localEulerAngles = unequipRot;
+        }
 
         col.enabled = false;
-
-        //charModel.transform.localPosition = charModel.originalPos;
-        //charModel.transform.localEulerAngles = charModel.originalRot;
     }
     // Drop weapon object
     public void Drop(bool dropItem){
