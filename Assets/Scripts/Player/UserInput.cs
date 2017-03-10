@@ -49,9 +49,9 @@ public class UserInput : MonoBehaviour {
 
         charMovt.Animate(Input.GetAxis("Vertical"),Input.GetAxis("Horizontal"));
     }
-    // Handle jumping logic
+    // Handle jumping/jetpack logic
     private void Jumping(){
-        if ( Input.GetButtonUp("Jump") ){
+        if ( Input.GetButtonDown("Jump") ){
             if ( proning ){
                 proning = false;
                 charMovt.Prone(proning);
@@ -61,6 +61,12 @@ public class UserInput : MonoBehaviour {
             } else {
                 charMovt.Jump();
             }
+        }
+        if ( Input.GetButton("Jump") ){
+            charMovt.OnJetPackHold();
+        }
+        if ( Input.GetButtonUp("Jump") ){
+            charMovt.OnJetPackEnd();
         }
     }
     // Handle sprinting logic

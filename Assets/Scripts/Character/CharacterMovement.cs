@@ -8,6 +8,8 @@ public class CharacterMovement : MonoBehaviour {
     public float speed = 5f;
     public float freeFallTime = 1.25f;
 	public float jumpHeight = 2.0f;
+    public float jetPackRefuelRate = 3f;
+    public float jetPackConsumeRate = 1f;
     public AudioClip footsteps;
 
     public bool IsGrounded {
@@ -29,6 +31,11 @@ public class CharacterMovement : MonoBehaviour {
     private bool dodging = false;
     private bool crouching = false;
     private bool proning = false;
+
+    private bool canJetPack = false;
+    private bool jetPacking = false;
+    private float jetPackFuel = 0f;
+    private float maxJetPackFuel = 100f;
     
 	void Awake() {
         anim = GetComponent<Animator>();
@@ -36,10 +43,12 @@ public class CharacterMovement : MonoBehaviour {
         audioSource = GetComponent<AudioSource>();
 
         SetupAnimator();
+
+        jetPackFuel = maxJetPackFuel;
 	}
 	void Update() {
 	    // We apply gravity manually for more tuning control
-	    velY += Physics.gravity.y * Time.deltaTime;
+	    if ( !jetPacking ) velY += Physics.gravity.y * Time.deltaTime;
         velocity.y = velY;
 
         cc.Move(velocity*Time.deltaTime);
@@ -73,7 +82,20 @@ public class CharacterMovement : MonoBehaviour {
             velY = jumpHeight;
             jumping = true;
             StartCoroutine(FreeFall());
+        } else if ( canJetPack ){
+            jetPacking = true;
         }
+    }
+    // Have character use jet pack
+    public void OnJetPackHold(){
+        if ( jetPacking ){
+            jetPackFuel -= jetPackConsumeRate*Time.deltaTime;
+            velY += jumpHeight*Time.deltaTime;
+        }
+    }
+    // Have character stop using jet pack
+    public void OnJetPackEnd(){
+        jetPacking = false;
     }
     // Have character dodge in given direction based on input
     public void Dodge(KeyCode key){
@@ -133,6 +155,7 @@ public class CharacterMovement : MonoBehaviour {
         anim.SetBool(Settings.instance.anim_grounded, cc.isGrounded);
         anim.SetBool(Settings.instance.anim_jump, jumping);
         anim.SetBool(Settings.instance.anim_free_fall, freefalling);
+        anim.SetBool(Settings.instance.anim_free_fall, jetPacking);
         anim.SetBool(Settings.instance.anim_dodge, dodging);
         anim.SetBool(Settings.instance.anim_crouch, crouching);
         anim.SetBool(Settings.instance.anim_prone, proning);
@@ -146,10 +169,20 @@ public class CharacterMovement : MonoBehaviour {
     // Check if character is grounded
     private void CheckGround(){
         if ( cc.isGrounded ){
+            velY = 0f;
             dodging = false;
             jumping = false;
             freefalling = false;
+            canJetPack = true;
             StopCoroutine(FreeFall());
+
+            // Increase jet pack fuel over time
+            if ( jetPackFuel < maxJetPackFuel ){
+                jetPackFuel += jetPackRefuelRate*Time.deltaTime;
+                if ( jetPackFuel > maxJetPackFuel ){
+                    jetPackFuel = maxJetPackFuel;
+                }
+            }
         }
     }
     // Grab animators from children and apply them to parent object
