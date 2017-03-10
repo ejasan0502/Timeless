@@ -19,6 +19,7 @@ public class Character : MonoBehaviour {
         StartCoroutine(RecoveryRate());
     }
 
+    // Apply recovery on stats every 3 seconds
     private IEnumerator RecoveryRate(){
         while ( IsAlive ){
             yield return new WaitForSeconds(3f);

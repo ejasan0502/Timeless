@@ -18,6 +18,9 @@ public class CharStats {
     public float mpRecov;
     public float staRecov;
 
+    public float jetpack;
+    public float jetpackRecov;
+
     public CharStats(){
         FieldInfo[] fields = GetType().GetFields();
         for (int i = 0; i < fields.Length; i++){

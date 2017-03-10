@@ -8,9 +8,9 @@ public class CharacterMovement : MonoBehaviour {
     public float speed = 5f;
     public float freeFallTime = 1.25f;
 	public float jumpHeight = 2.0f;
-    public float jetPackRefuelRate = 3f;
-    public float jetPackConsumeRate = 1f;
+    public float jetPackConsumeRate = 5f;
     public AudioClip footsteps;
+    public AudioClip jetpack;
 
     public bool IsGrounded {
         get {
@@ -21,6 +21,7 @@ public class CharacterMovement : MonoBehaviour {
     private Animator anim;
     private CharacterController cc;
     private AudioSource audioSource;
+    private Character character;
 
     private float velY = 0f;
     private Vector3 velocity = Vector3.zero;
@@ -34,17 +35,14 @@ public class CharacterMovement : MonoBehaviour {
 
     private bool canJetPack = false;
     private bool jetPacking = false;
-    private float jetPackFuel = 0f;
-    private float maxJetPackFuel = 100f;
     
 	void Awake() {
         anim = GetComponent<Animator>();
         cc = GetComponent<CharacterController>();
         audioSource = GetComponent<AudioSource>();
+        character = GetComponent<Character>();
 
         SetupAnimator();
-
-        jetPackFuel = maxJetPackFuel;
 	}
 	void Update() {
 	    // We apply gravity manually for more tuning control
@@ -54,6 +52,7 @@ public class CharacterMovement : MonoBehaviour {
         cc.Move(velocity*Time.deltaTime);
  
 	    CheckGround();
+        JetpackRecov();
 	}
 
     // Move character based on input or AI
@@ -89,8 +88,14 @@ public class CharacterMovement : MonoBehaviour {
     // Have character use jet pack
     public void OnJetPackHold(){
         if ( jetPacking ){
-            jetPackFuel -= jetPackConsumeRate*Time.deltaTime;
-            velY += jumpHeight*Time.deltaTime;
+            if ( character ) {
+                if ( character.currentCharStats.jetpack > 0 ){
+                    character.currentCharStats.jetpack -= jetPackConsumeRate*Time.deltaTime;
+                    velY += jumpHeight*Time.deltaTime;
+                } else {
+                    jetPacking = false;
+                }
+            }
         }
     }
     // Have character stop using jet pack
@@ -140,11 +145,22 @@ public class CharacterMovement : MonoBehaviour {
 
         // Play footsteps sound
         if ( cc.isGrounded && (forward != 0 || strafe != 0) ){
-            if ( !audioSource.isPlaying )
+            if ( audioSource.clip != footsteps ){
+                audioSource.clip = footsteps;
+            }
+            if ( !audioSource.isPlaying ){
                 audioSource.Play();
+            }
 
             // Increase pitch if sprinting
             audioSource.pitch = sprinting ? 2f : crouching ? 0.5f : 1f;
+        } else if ( jetPacking ){
+            if ( audioSource.clip != jetpack ){
+                audioSource.clip = jetpack;
+            }
+            if ( !audioSource.isPlaying ){
+                audioSource.Play();
+            }
         } else {
             audioSource.Stop();
         }
@@ -175,12 +191,18 @@ public class CharacterMovement : MonoBehaviour {
             freefalling = false;
             canJetPack = true;
             StopCoroutine(FreeFall());
+        }
+    }
+    // Apply jetpack recovery
+    private void JetpackRecov(){
+        if ( jetPacking ) return;
 
-            // Increase jet pack fuel over time
-            if ( jetPackFuel < maxJetPackFuel ){
-                jetPackFuel += jetPackRefuelRate*Time.deltaTime;
-                if ( jetPackFuel > maxJetPackFuel ){
-                    jetPackFuel = maxJetPackFuel;
+        // Increase jet pack fuel over time
+        if ( character ){
+            if ( character.currentCharStats.jetpack < character.maxCharStats.jetpack ){
+                character.currentCharStats.jetpack += character.currentCharStats.jetpackRecov*Time.deltaTime;
+                if ( character.currentCharStats.jetpack > character.maxCharStats.jetpack ){
+                    character.currentCharStats.jetpack = character.maxCharStats.jetpack;
                 }
             }
         }

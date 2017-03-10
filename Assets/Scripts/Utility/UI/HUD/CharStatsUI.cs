@@ -55,6 +55,10 @@ public class CharStatsUI : UI {
                     current = player.currentCharStats.stamina;
                     max = player.maxCharStats.stamina;
                     break;
+                case 5:
+                    current = player.currentCharStats.jetpack;
+                    max = player.maxCharStats.jetpack;
+                    break;
                 }
 
                 UpdateUI(statUIs[i], current, max);
@@ -96,6 +100,11 @@ public class CharStatsUI : UI {
             statUI.statObj = t.gameObject;
             statUI.fill = t.GetChild(1).GetComponent<Image>();
             statUI.text = t.GetChild(2).GetComponent<Text>();
+
+            if ( t == transform.GetChild(transform.childCount-1) ){
+                statUI.threshold = 0.99f;
+            }
+
             statUIs.Add(statUI);
         }
     }
