@@ -1,115 +1,112 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 
 // Specfically handles the text used to update charStats
 public class CharStatsUI : UI {
 
+    public bool ignoreThreshold;
+    public bool displayTexts;
     public bool showAsPercentages;
-
-    public Text healthText;
-    public Text armorText;
-    public Text shieldsText;
-    public Text manaText;
-    public Text staminaText;
-    public Text ammoText;
-
-    public float healthThreshold;
-    public float armorThreshold;
-    public float shieldsThreshold;
-    public float manaThreshold;
-    public float staminaThreshold;
+    
+    [System.Serializable]
+    public class StatUI {
+        public GameObject statObj;
+        public Text text;
+        public Image fill;
+        public float threshold = 0.15f;
+    }
+    [SerializeField]
+    public List<StatUI> statUIs = new List<StatUI>();
 
     private Character player;
-    private WeaponHandler weaponHandler;
+    private List<StatUI> displayedUIs = new List<StatUI>();
 
     void Start(){
+        SetupUIS();
+
         player = GameObject.FindWithTag("Player").GetComponent<Character>();
-        weaponHandler = player ? player.GetComponent<WeaponHandler>() : null;
     }
     void FixedUpdate(){
         if ( player ){
-            if ( healthText ) healthText.text = "Health: " + (showAsPercentages ? (player.currentCharStats.health/player.maxCharStats.health)*100f+"%" : player.currentCharStats.health + " / " + player.maxCharStats.health);
-            if ( armorText ) armorText.text = "Armor: " + (showAsPercentages ? (player.currentCharStats.armor/player.maxCharStats.armor)*100f+"%" : player.currentCharStats.armor + " / " + player.maxCharStats.armor);
-            if ( shieldsText ) shieldsText.text = "Shields: " + (showAsPercentages ? (player.currentCharStats.shields/player.maxCharStats.shields)*100f+"%" : player.currentCharStats.shields + " / " + player.maxCharStats.shields);
-            if ( manaText ) manaText.text = "Mana: " + (showAsPercentages ? (player.currentCharStats.mana/player.maxCharStats.mana)*100f+"%" : player.currentCharStats.mana + " / " + player.maxCharStats.mana);
-            if ( staminaText ) staminaText.text = "Stamina: " + (showAsPercentages ? (player.currentCharStats.stamina/player.maxCharStats.stamina)*100f+"%" : player.currentCharStats.stamina + " / " + player.maxCharStats.stamina);
+            for (int i = 0; i < statUIs.Count; i++){
+                float current = 0f;
+                float max = 1f;
 
-            HideTexts();
-
-            if ( ammoText && weaponHandler && weaponHandler.currentWeapon && weaponHandler.currentWeapon.isFirearm ){
-                if ( !ammoText.gameObject.activeSelf ){
-                    ammoText.gameObject.SetActive(true);
+                switch (i){
+                case 0:
+                    current = player.currentCharStats.health;
+                    max = player.maxCharStats.health;
+                    break;
+                case 1:
+                    current = player.currentCharStats.armor;
+                    max = player.maxCharStats.armor;
+                    break;
+                case 2:
+                    current = player.currentCharStats.shields;
+                    max = player.maxCharStats.shields;
+                    break;
+                case 3:
+                    current = player.currentCharStats.mana;
+                    max = player.maxCharStats.mana;
+                    break;
+                case 4:
+                    current = player.currentCharStats.stamina;
+                    max = player.maxCharStats.stamina;
+                    break;
                 }
 
-                Firearm weapon = weaponHandler.currentWeapon as Firearm;
-                ammoText.text = weapon.clipSize + " | " + weapon.carryingAmmo;
-            } else if ( ammoText.gameObject.activeSelf ){
-                ammoText.gameObject.SetActive(false);
+                UpdateUI(statUIs[i], current, max);
             }
         }
     }
 
-    // Hide irrelevant texts
-    private void HideTexts(){
-        if ( healthText ){
-            if ( player.currentCharStats.health/player.maxCharStats.health <= healthThreshold ){
-                if ( !healthText.IsActive() ){
-                    healthText.gameObject.SetActive(true);
+    // Update stat display, fill, and texts
+    private void UpdateUI(StatUI statUI, float current, float max){
+        if ( current/max <= statUI.threshold || ignoreThreshold ){
+            if ( !statUI.statObj.activeSelf ){
+                statUI.statObj.SetActive(true);
+                if ( !displayedUIs.Contains(statUI) ){
+                    displayedUIs.Add(statUI);
+                    UpdateDisplayedUIs();
                 }
-            } else {
-                if ( healthText.IsActive() ){
-                    healthText.gameObject.SetActive(false);
+            }
+
+            if ( displayTexts && statUI.text ){
+                statUI.text.text = showAsPercentages ? (Mathf.RoundToInt((current/max)*100f)+"%") : (Mathf.RoundToInt(current) + "/" + Mathf.RoundToInt(max));
+            }
+            if ( statUI.fill ){
+                statUI.fill.fillAmount = current/max;
+            }
+        } else {
+            if ( statUI.statObj.activeSelf ){
+                statUI.statObj.SetActive(false);
+                if ( displayedUIs.Contains(statUI) ){
+                    displayedUIs.Remove(statUI);
+                    UpdateDisplayedUIs();
                 }
             }
         }
-
-        if ( armorText ){
-            if ( player.currentCharStats.armor/player.maxCharStats.armor <= armorThreshold ){
-                if ( !armorText.IsActive() ){
-                    armorText.gameObject.SetActive(true);
-                }
-            } else {
-                if ( armorText.IsActive() ){
-                    armorText.gameObject.SetActive(false);
-                }
-            }
+    }
+    // Setup UIs from children transforms
+    private void SetupUIS(){
+        foreach (Transform t in transform){
+            StatUI statUI = new StatUI();
+            statUI.statObj = t.gameObject;
+            statUI.fill = t.GetChild(1).GetComponent<Image>();
+            statUI.text = t.GetChild(2).GetComponent<Text>();
+            statUIs.Add(statUI);
         }
+    }
+    // Update ui positions according to which uis is display
+    private void UpdateDisplayedUIs(){
+        if ( displayedUIs.Count < 1 ) return;
 
-        if ( shieldsText ){
-            if ( player.currentCharStats.shields/player.maxCharStats.shields <= shieldsThreshold ){
-                if ( !shieldsText.IsActive() ){
-                    shieldsText.gameObject.SetActive(true);
-                }
-            } else {
-                if ( shieldsText.IsActive() ){
-                    shieldsText.gameObject.SetActive(false);
-                }
-            }
-        }
+        float size = ((RectTransform)displayedUIs[0].statObj.transform).rect.width;
 
-        if ( manaText ){
-            if ( player.currentCharStats.mana/player.maxCharStats.mana <= manaThreshold ){
-                if ( !manaText.IsActive() ){
-                    manaText.gameObject.SetActive(true);
-                }
-            } else {
-                if ( manaText.IsActive() ){
-                    manaText.gameObject.SetActive(false);
-                }
-            }
-        }
-
-        if ( staminaText ){
-            if ( player.currentCharStats.stamina/player.maxCharStats.stamina <= staminaThreshold ){
-                if ( !staminaText.IsActive() ){
-                    staminaText.gameObject.SetActive(true);
-                }
-            } else {
-                if ( staminaText.IsActive() ){
-                    staminaText.gameObject.SetActive(false);
-                }
-            }
+        for (int i = 0; i < displayedUIs.Count; i++){
+            displayedUIs[i].statObj.transform.localPosition = new Vector3(0f, i*size, 0f);
         }
     }
 }
