@@ -72,7 +72,6 @@ public class CharacterMovement : MonoBehaviour {
         }
 
 	    velocity = v * velocityMultipler;
-	    velocity = transform.TransformDirection(velocity);
 	    velocity *= speed;
     }
     // Have character jump
