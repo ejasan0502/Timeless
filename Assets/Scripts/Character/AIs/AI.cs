@@ -110,13 +110,6 @@ public class AI : Character {
         velocity = Vector3.zero;
         charMovt.Move(velocity);
     }
-    // Play a sound
-    public void PlaySound(AudioClip sound){
-        if ( audioSource ){
-            audioSource.clip = sound;
-            audioSource.Play();
-        }
-    }
 
     // Set current AI state to
     protected void SetState(AIState state){
@@ -138,5 +131,21 @@ public class AI : Character {
     // Set attack animation
     public void SetAtkCounter(int x){
         atkCounter = x;
+    }
+    // Play a sound
+    public void PlaySound(AudioClip sound){
+        if ( audioSource ){
+            audioSource.clip = sound;
+            audioSource.Play();
+        }
+    }
+    // Apply inflict damage to target
+    public void ApplyDamage(){
+        if ( attack ){
+            if ( target != null && Vector3.Distance(transform.position, target.transform.position) < currentCombatStats.atkRange ){
+                target.Hit(this, MeleeDamage, InflictType.melee);
+            }
+            attack = false;
+        }
     }
 }

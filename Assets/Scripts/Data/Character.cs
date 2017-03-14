@@ -94,6 +94,7 @@ public class Character : MonoBehaviour {
     public void Hit(Character atker, float rawDmg, InflictType inflictType){
         if ( !IsAlive ) return;
 
+
         float inflict = rawDmg;
         if ( inflictType == InflictType.melee || inflictType == InflictType.range ){
             inflict -= currentCombatStats.physDef;
@@ -101,6 +102,7 @@ public class Character : MonoBehaviour {
             inflict -= currentCombatStats.magicDef;
         }
         
+        Debug.Log(string.Format("{0} receives {1} {2} damage from {3}", name, inflict, inflictType, atker.name));
         currentCharStats.health -= inflict;
 
         // If AI and has no target, set target to atker
@@ -112,7 +114,6 @@ public class Character : MonoBehaviour {
         }
 
         // Add blood effect if health threshold is reached
-        Debug.Log((bloodyTextureIndex+1)*(100f/bloodyTextures.Count+1) + " " + (100-100f*(currentCharStats.health/maxCharStats.health)));
         if ( bloodyTextureIndex < bloodyTextures.Count && (bloodyTextureIndex+1)*(100f/bloodyTextures.Count+1) < 100f-100f*(currentCharStats.health/maxCharStats.health) ){
             bloodyTextureIndex++;
             ShowBlood();

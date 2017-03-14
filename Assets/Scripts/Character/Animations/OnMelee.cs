@@ -16,6 +16,7 @@ public class OnMelee : StateMachineBehaviour {
         animator.SetInteger(Settings.instance.anim_attack, 0);
         if ( m != null ){
             m.GetComponent<AudioSource>().Stop();
+            m.ApplyDamage();
         }
     }
 
