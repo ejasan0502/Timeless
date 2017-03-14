@@ -10,19 +10,24 @@ public class AI : Character {
     protected CharacterMovement charMovt;
     protected AIRadius aiRadius;
     protected Animator anim;
+    protected AudioSource audioSource;
 
     private Vector3 moveToPosition = Vector3.zero;
     private Vector3 velocity = Vector3.zero;
 
     private bool move = false;
     protected bool attack = false;
+    protected int atkCounter = 0;
 
     protected Character target = null;
 
-    void Awake(){
+    protected override void Awake(){
+        base.Awake();
+
         charMovt = GetComponent<CharacterMovement>();
         aiRadius = GetComponentInChildren<AIRadius>();
         anim = GetComponent<Animator>();
+        audioSource = GetComponent<AudioSource>();
 
         moveToPosition = transform.position;
     }
@@ -71,7 +76,7 @@ public class AI : Character {
     private void Animate(){
         Vector3 direction = transform.TransformDirection(velocity);
         anim.SetFloat(Settings.instance.anim_velocity_z, Mathf.Abs(direction.z));
-        anim.SetInteger(Settings.instance.anim_attack, attack ? Random.Range(1,3) : 0);
+        anim.SetInteger(Settings.instance.anim_attack, atkCounter);
     }
 
     // Logic when AI has no target
@@ -92,13 +97,25 @@ public class AI : Character {
         velocity = Vector3.zero;
         charMovt.Move(velocity);
     }
+    // Play a sound
+    public void PlaySound(AudioClip sound){
+        if ( audioSource ){
+            audioSource.clip = sound;
+            audioSource.Play();
+        }
+    }
 
     // Set current AI state to
     protected void SetState(AIState state){
         aiState = state;
     }
+
     // Set desired target
     public void SetTarget(Character c){
         target = c;
+    }
+    // Set attack animation
+    public void SetAtkCounter(int x){
+        atkCounter = x;
     }
 }

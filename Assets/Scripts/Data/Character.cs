@@ -4,8 +4,12 @@ using System.Collections;
 // Handles character object logic
 public class Character : MonoBehaviour {
 
+    [Header("-Character Info-")]
     public CharStats currentCharStats;
+    public CombatStats currentCombatStats;
+
     public CharStats maxCharStats;
+    public CombatStats maxCombatStats;
 
     public bool IsAlive {
         get {
@@ -13,8 +17,9 @@ public class Character : MonoBehaviour {
         }
     }
 
-    void Start(){
+    protected virtual void Awake(){
         currentCharStats = new CharStats(maxCharStats);
+        currentCombatStats = new CombatStats(maxCombatStats);
 
         StartCoroutine(RecoveryRate());
     }

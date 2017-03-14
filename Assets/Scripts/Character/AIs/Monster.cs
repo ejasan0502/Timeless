@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 // Handles monster type AIs
 public class Monster : AI {
@@ -9,8 +10,9 @@ public class Monster : AI {
     public float wanderDelay = 10f;
     public float wanderDistance = 10f;
     public float viewField = 0.5f;      // -1 to 1 where 1 is front and -1 is behind
-    public float attackRange = 2f;
-    public float attackRate = 3f;
+
+    [Header("-Audio-")]
+    public List<AudioClip> atkSounds;
 
     [Header("-Debugging-")]
     public bool disableWandering = false;
@@ -32,7 +34,7 @@ public class Monster : AI {
     protected override void Combat(){
         if ( target != null && target.IsAlive ){
             if ( showRays ) Debug.DrawLine(transform.position, target.transform.position, Color.red);
-            if ( Vector3.Distance(transform.position, target.transform.position) < attackRange ){
+            if ( Vector3.Distance(transform.position, target.transform.position) < currentCombatStats.atkRange ){
                 Attack();
             } else {
                 Chase();
@@ -80,6 +82,8 @@ public class Monster : AI {
     private void Attack(){
         Stop();
         if ( canAttack ){
+            atkCounter = Random.Range(1,atkSounds.Count);
+
             attack = true;
             canAttack = false;
             StartCoroutine(AttackDelay());
@@ -87,7 +91,7 @@ public class Monster : AI {
     }
     // Delay for attacking the target
     private IEnumerator AttackDelay(){
-        yield return new WaitForSeconds(attackRate);
+        yield return new WaitForSeconds(currentCombatStats.atkRate);
         canAttack = true;
     }
     // Have AI chase the target
