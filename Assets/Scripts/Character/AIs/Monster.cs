@@ -9,13 +9,16 @@ public class Monster : AI {
     public float wanderDelay = 10f;
     public float wanderDistance = 10f;
     public float viewField = 0.5f;      // -1 to 1 where 1 is front and -1 is behind
+    public float attackRange = 2f;
+    public float attackRate = 3f;
 
     [Header("-Debugging-")]
+    public bool disableWandering = false;
     public bool disableTargetting = false;
     public bool showRays = false;
 
-    private Character target = null;
     private bool canWander = true;
+    private bool canAttack = true;
 
     void Start(){
         wanderStartPos = transform.position;
@@ -25,9 +28,24 @@ public class Monster : AI {
     protected override void Idle(){
         Wander();
     }
+    // Have AI move towards target until target is within attack range
+    protected override void Combat(){
+        if ( target != null && target.IsAlive ){
+            if ( showRays ) Debug.DrawLine(transform.position, target.transform.position, Color.red);
+            if ( Vector3.Distance(transform.position, target.transform.position) < attackRange ){
+                Attack();
+            } else {
+                Chase();
+            }
+        } else {
+            SetState(AIState.idle);
+        }
+    }
 
     // Move randomly around the area
     private void Wander(){
+        if ( disableWandering ) return;
+
         if ( target == null ){
             if ( canWander ){
                 Vector3 moveTo = Random.insideUnitCircle*wanderDistance;
@@ -38,7 +56,7 @@ public class Monster : AI {
                 RaycastHit hit;
                 Vector3 startRayPos = new Vector3(moveTo.x, 1000f, moveTo.z);
                 if ( Physics.Raycast(startRayPos, Vector3.down, out hit, 2000f, 1 << LayerMask.NameToLayer("Environment")) ){
-                    if ( showRays ) Debug.DrawLine(transform.position, hit.point, Color.red, wanderDelay);
+                    if ( showRays ) Debug.DrawLine(transform.position, hit.point, Color.blue, 1f);
                     if ( hit.collider.gameObject.isStatic ){
                         MoveTo(hit.point);
 
@@ -49,12 +67,32 @@ public class Monster : AI {
             }
 
             LookForTarget();
+        } else {
+            SetState(AIState.combat);
         }
     }
     // Delay for selecting new point of interest
     private IEnumerator WanderDelay(){
         yield return new WaitForSeconds(wanderDelay);
         canWander = true;
+    }
+    // Have AI attack the target
+    private void Attack(){
+        Stop();
+        if ( canAttack ){
+            attack = true;
+            canAttack = false;
+            StartCoroutine(AttackDelay());
+        }
+    }
+    // Delay for attacking the target
+    private IEnumerator AttackDelay(){
+        yield return new WaitForSeconds(attackRate);
+        canAttack = true;
+    }
+    // Have AI chase the target
+    private void Chase(){
+        MoveTo(target.transform.position);
     }
     // Looks for a desired target
     private void LookForTarget(){
@@ -69,7 +107,7 @@ public class Monster : AI {
                 float dot = Vector3.Dot(direction.normalized, transform.forward);
 
                 // Check if in view
-                if ( dot < viewField ){
+                if ( dot > viewField ){
                     // Look for closest
                     float d = Vector3.Distance(transform.position, c.transform.position);
                     if ( d < distance ){
@@ -82,13 +120,4 @@ public class Monster : AI {
             
         SetTarget(desiredTarget);
     } 
-
-    // Set desired target
-    public void SetTarget(Character c){
-        target = c;
-
-        if ( target != null ){
-            Debug.Log("Target found!");
-        }
-    }
 }

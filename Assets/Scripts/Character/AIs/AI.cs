@@ -9,14 +9,20 @@ public class AI : Character {
 
     protected CharacterMovement charMovt;
     protected AIRadius aiRadius;
+    protected Animator anim;
 
     private Vector3 moveToPosition = Vector3.zero;
     private Vector3 velocity = Vector3.zero;
+
     private bool move = false;
+    protected bool attack = false;
+
+    protected Character target = null;
 
     void Awake(){
         charMovt = GetComponent<CharacterMovement>();
         aiRadius = GetComponentInChildren<AIRadius>();
+        anim = GetComponent<Animator>();
 
         moveToPosition = transform.position;
     }
@@ -33,11 +39,8 @@ public class AI : Character {
         case AIState.idle:
             Idle();
             break;
-        case AIState.chase:
-            Chase();
-            break;
-        case AIState.attack:
-            Attack();
+        case AIState.combat:
+            Combat();
             break;
         case AIState.cast:
             Cast();
@@ -53,26 +56,28 @@ public class AI : Character {
             charMovt.Move(velocity);
 
             Quaternion rot = Quaternion.LookRotation(velocity);
+            rot.x = 0f;
+            rot.z = 0f;
             transform.rotation = Quaternion.Lerp(transform.rotation, rot, 5f*Time.deltaTime);
 
             if ( Vector3.Distance(transform.position, moveToPosition) < 1f ){
-                move = false;
-                Debug.Log("Stop Movement");
-                velocity = Vector3.zero;
-                charMovt.Move(velocity);
+                Stop();
             }
         }
 
+        Animate();
+    }
+    // Handles animations
+    private void Animate(){
         Vector3 direction = transform.TransformDirection(velocity);
-        charMovt.Animate(Mathf.Abs(direction.z), direction.x);
+        anim.SetFloat(Settings.instance.anim_velocity_z, Mathf.Abs(direction.z));
+        anim.SetInteger(Settings.instance.anim_attack, attack ? Random.Range(1,3) : 0);
     }
 
     // Logic when AI has no target
     protected virtual void Idle(){}
-    // Logic when AI has a target but is outside attack range
-    protected virtual void Chase(){}
-    // Logic when AI has a target and within attack range
-    protected virtual void Attack(){}
+    // Logic when AI has a target
+    protected virtual void Combat(){}
     // Logic when AI is casting
     protected virtual void Cast(){}
     
@@ -80,7 +85,20 @@ public class AI : Character {
     protected void MoveTo(Vector3 position){
         moveToPosition = position;
         move = true;
+    }
+    // Have AI stop moving
+    protected void Stop(){
+        move = false;
+        velocity = Vector3.zero;
+        charMovt.Move(velocity);
+    }
 
-        Debug.Log("Moving to " + position);
+    // Set current AI state to
+    protected void SetState(AIState state){
+        aiState = state;
+    }
+    // Set desired target
+    public void SetTarget(Character c){
+        target = c;
     }
 }

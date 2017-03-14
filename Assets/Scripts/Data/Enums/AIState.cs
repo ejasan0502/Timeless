@@ -1,8 +1,7 @@
 ﻿public enum AIState {
     
     idle,
-    chase,
-    attack,
+    combat,
     cast
 
 }
