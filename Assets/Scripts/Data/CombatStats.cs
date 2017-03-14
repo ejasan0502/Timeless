@@ -6,6 +6,16 @@ using System.Collections;
 [System.Serializable]
 public class CombatStats {
     
+    public float minMeleeDmg;
+    public float maxMeleeDmg;
+    public float minMagicDmg;
+    public float maxMagicDmg;
+    public float minRangeDmg;
+    public float maxRangeDmg;
+
+    public float physDef;
+    public float magicDef;
+
     public float atkRange;
     public float atkRate;
     

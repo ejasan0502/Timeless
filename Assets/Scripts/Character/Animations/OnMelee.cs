@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+// Handle melee attacks
 public class OnMelee : StateMachineBehaviour {
 
     private Monster m = null;

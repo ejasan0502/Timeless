@@ -9,24 +9,29 @@ public class AI : Character {
 
     protected CharacterMovement charMovt;
     protected AIRadius aiRadius;
-    protected Animator anim;
     protected AudioSource audioSource;
 
     private Vector3 moveToPosition = Vector3.zero;
     private Vector3 velocity = Vector3.zero;
 
     private bool move = false;
+    private bool combat = false;
     protected bool attack = false;
     protected int atkCounter = 0;
 
     protected Character target = null;
+
+    public bool HasTarget {
+        get {
+            return target != null;
+        }
+    }
 
     protected override void Awake(){
         base.Awake();
 
         charMovt = GetComponent<CharacterMovement>();
         aiRadius = GetComponentInChildren<AIRadius>();
-        anim = GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();
 
         moveToPosition = transform.position;
@@ -40,6 +45,8 @@ public class AI : Character {
 
     // Handle AI states logic
     private void StateMachine(){
+        if ( !IsAlive ) return;
+
         switch (aiState){
         case AIState.idle:
             Idle();
@@ -74,8 +81,7 @@ public class AI : Character {
     }
     // Handles animations
     private void Animate(){
-        Vector3 direction = transform.TransformDirection(velocity);
-        anim.SetFloat(Settings.instance.anim_velocity_z, Mathf.Abs(direction.z));
+        anim.SetFloat(Settings.instance.anim_velocity_z, Mathf.Abs(velocity.z)*(combat ? 2f : 1f));
         anim.SetInteger(Settings.instance.anim_attack, atkCounter);
     }
 
@@ -86,6 +92,12 @@ public class AI : Character {
     // Logic when AI is casting
     protected virtual void Cast(){}
     
+    // Destroy object with delay on death
+    protected override void OnDeath(){
+        Stop();
+        anim.SetBool(Settings.instance.anim_death, true);
+        Destroy(gameObject, 10f);
+    }
     // Move AI to position
     protected void MoveTo(Vector3 position){
         moveToPosition = position;
@@ -113,6 +125,14 @@ public class AI : Character {
     // Set desired target
     public void SetTarget(Character c){
         target = c;
+
+        if ( target != null ){
+            combat = true;
+        } else {
+            combat = false;
+        }
+        
+        charMovt.Sprint(combat);
     }
     // Set attack animation
     public void SetAtkCounter(int x){

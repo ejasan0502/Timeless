@@ -16,6 +16,7 @@ public class Settings : MonoBehaviour {
     public string anim_weapon_type = "weaponType";
     public string anim_attack = "isAttacking";
     public string anim_reload = "isReloading";
+    public string anim_death = "death";
 
     [Header("-Camera Settings-")]
     public float cam_sensitivity = 5f;

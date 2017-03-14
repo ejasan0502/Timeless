@@ -16,8 +16,27 @@ public class Character : MonoBehaviour {
             return currentCharStats.health > 0;
         }
     }
+    public bool IsPlayer {
+        get {
+            return tag == "Player" || tag == "User";
+        }
+    }
+    public float MeleeDamage {
+        get {
+            return Random.Range(currentCombatStats.minMeleeDmg, currentCombatStats.maxMeleeDmg);
+        }
+    }
+    public float RangeDamage {
+        get {
+            return Random.Range(currentCombatStats.minRangeDmg, currentCombatStats.maxRangeDmg);
+        }
+    }
+
+    protected Animator anim;
 
     protected virtual void Awake(){
+        anim = GetComponent<Animator>();
+
         currentCharStats = new CharStats(maxCharStats);
         currentCombatStats = new CombatStats(maxCombatStats);
 
@@ -41,5 +60,39 @@ public class Character : MonoBehaviour {
                 currentCharStats.stamina += currentCharStats.staRecov;
             }
         }
+    }
+    // Check if the character died
+    private void CheckDeath(){
+        if ( !IsAlive ){
+            OnDeath();
+        }
+    }
+    // Do this upon death
+    protected virtual void OnDeath(){
+
+    }
+
+    // Inflict damage to character
+    public void Hit(Character atker, float rawDmg, InflictType inflictType){
+        if ( !IsAlive ) return;
+
+        float inflict = rawDmg;
+        if ( inflictType == InflictType.melee || inflictType == InflictType.range ){
+            inflict -= currentCombatStats.physDef;
+        } else {
+            inflict -= currentCombatStats.magicDef;
+        }
+        
+        currentCharStats.health -= inflict;
+
+        // If AI and has no target, set target to atker
+        if ( !IsPlayer ){
+            AI ai = this as AI;
+            if ( !ai.HasTarget ){
+                ai.SetTarget(atker);
+            }
+        }
+
+        CheckDeath();
     }
 }

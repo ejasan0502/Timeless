@@ -12,6 +12,7 @@ public class Firearm : Weapon {
     public int carryingAmmo;
 
     [Header("-Object References-")]
+    public GameObject bloodRef;
     public GameObject decalRef;
     public GameObject muzzleFlashRef;
     public AudioClip fireSound;
@@ -117,10 +118,23 @@ public class Firearm : Weapon {
             if ( debug ) Debug.DrawRay(bulletSpawn.position, hit.point-bulletSpawn.position, Color.red, 1f);
 
             // Decal
-            if ( decalRef ){
-                GameObject decal = Instantiate(decalRef, hit.point, Quaternion.LookRotation(hit.normal)) as GameObject;
-                Destroy(decal, 2f);
+            GameObject decal = null;
+            if ( hit.collider.gameObject.isStatic ){
+                if ( decalRef ){
+                    decal = Instantiate(decalRef, hit.point, Quaternion.LookRotation(hit.normal)) as GameObject;
+                }
+            } else {
+                if ( bloodRef ){
+                    decal = Instantiate(bloodRef, hit.point, Quaternion.LookRotation(hit.normal)) as GameObject;
+                }
+
+                Character c = hit.collider.GetComponent<Character>();
+                if ( c != null ){
+                    c.Hit(character, character.RangeDamage, InflictType.range);
+                }
             }
+            decal.transform.SetParent(hit.collider.transform);
+            Destroy(decal, 2f);
         }
 
         // Fire delay

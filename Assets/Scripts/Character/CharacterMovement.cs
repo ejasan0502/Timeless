@@ -27,7 +27,7 @@ public class CharacterMovement : MonoBehaviour {
     private Vector3 velocity = Vector3.zero;
 
     private bool jumping = false;
-    private bool sprinting = false;
+    public bool sprinting = false;
     private bool freefalling = false;
     private bool dodging = false;
     private bool crouching = false;
