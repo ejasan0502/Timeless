@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 // Handles generic AI logic
 [RequireComponent(typeof(CharacterMovement))]

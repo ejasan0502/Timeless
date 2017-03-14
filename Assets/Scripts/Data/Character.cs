@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 // Handles character object logic
 public class Character : MonoBehaviour {
@@ -10,6 +11,9 @@ public class Character : MonoBehaviour {
 
     public CharStats maxCharStats;
     public CombatStats maxCombatStats;
+
+    [Header("-Graphics-")]
+    public List<Texture> bloodyTextures;
 
     public bool IsAlive {
         get {
@@ -33,9 +37,16 @@ public class Character : MonoBehaviour {
     }
 
     protected Animator anim;
+    protected SkinnedMeshRenderer skinMeshRenderer;
+    protected Material meshMat;
+
+    private int bloodyTextureIndex = 0;
 
     protected virtual void Awake(){
         anim = GetComponent<Animator>();
+        skinMeshRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
+        meshMat = new Material(skinMeshRenderer.sharedMaterial);
+        skinMeshRenderer.sharedMaterial = meshMat;
 
         currentCharStats = new CharStats(maxCharStats);
         currentCombatStats = new CombatStats(maxCombatStats);
@@ -67,6 +78,13 @@ public class Character : MonoBehaviour {
             OnDeath();
         }
     }
+    // Create a blood decal on the mesh
+    private void ShowBlood(){
+        if ( skinMeshRenderer && bloodyTextures.Count > 0 ){
+            skinMeshRenderer.sharedMaterial.SetTexture("_DecalTex", bloodyTextures[bloodyTextureIndex]);
+        }
+    }
+
     // Do this upon death
     protected virtual void OnDeath(){
 
@@ -91,6 +109,13 @@ public class Character : MonoBehaviour {
             if ( !ai.HasTarget ){
                 ai.SetTarget(atker);
             }
+        }
+
+        // Add blood effect if health threshold is reached
+        Debug.Log((bloodyTextureIndex+1)*(100f/bloodyTextures.Count+1) + " " + (100-100f*(currentCharStats.health/maxCharStats.health)));
+        if ( bloodyTextureIndex < bloodyTextures.Count && (bloodyTextureIndex+1)*(100f/bloodyTextures.Count+1) < 100f-100f*(currentCharStats.health/maxCharStats.health) ){
+            bloodyTextureIndex++;
+            ShowBlood();
         }
 
         CheckDeath();
