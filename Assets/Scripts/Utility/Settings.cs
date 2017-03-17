@@ -28,6 +28,9 @@ public class Settings : MonoBehaviour {
         get {
             if ( _instance == null ){
                 _instance = GameObject.FindObjectOfType<Settings>();
+                if ( _instance == null ){
+                    _instance = new GameObject().AddComponent<Settings>();
+                }
             }
             return _instance;
         }

@@ -11,16 +11,17 @@ namespace LibNoise.Unity.Generator
     /// <summary>
     /// Provides a noise module that outputs a three-dimensional perlin noise. [GENERATOR]
     /// </summary>
+    [System.Serializable]
     public class Perlin : ModuleBase
     {
         #region Fields
 
-        private double m_frequency = 1.0;
-        private double m_lacunarity = 2.0;
-        private QualityMode m_quality = QualityMode.Medium;
-        private int m_octaveCount = 6;
-        private double m_persistence = 0.5;
-        private int m_seed = 0;
+        public double m_frequency = 1.0;
+        public double m_lacunarity = 2.0;
+        public QualityMode m_quality = QualityMode.Medium;
+        public int m_octaveCount = 6;
+        public double m_persistence = 0.5;
+        public int m_seed = 0;
 
         #endregion
 

@@ -115,13 +115,11 @@ public class CubeSphere : MonoBehaviour {
         Color.cyan,
         Color.magenta
     };
-    private RiggedMultifractal noise = new RiggedMultifractal();
 
 	void Awake () {
         for (int i = 0; i < 6; i++)
             chunks.Add(new Chunk());
 
-        noise.Frequency = frequency;
 		StartCoroutine(Generate());
 	}
     void OnDrawGizmos(){
@@ -400,9 +398,7 @@ public class CubeSphere : MonoBehaviour {
 		s.y = v.y * Mathf.Sqrt(1f - x2 / 2f - z2 / 2f + x2 * z2 / 3f);
 		s.z = v.z * Mathf.Sqrt(1f - x2 / 2f - y2 / 2f + x2 * y2 / 3f);
 		normals[i] = s;
-
-        float noiseVal = (float)noise.GetValue(normals[i]);
-		vertices[i] = normals[i] * radius * (1f + noiseVal);
+		vertices[i] = normals[i] * radius;
 	}
     // Create the triangles connecting each vertex to form the mesh
 	private void CreateTriangles () {
