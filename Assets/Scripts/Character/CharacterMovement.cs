@@ -2,29 +2,31 @@
 using System.Collections;
 
 // Handles movement logic and animation
-[RequireComponent(typeof(CharacterController), typeof(AudioSource))]
+[RequireComponent(typeof(AudioSource))]
 public class CharacterMovement : MonoBehaviour {
 
     public float speed = 5f;
     public float freeFallTime = 1.25f;
-	public float jumpHeight = 2.0f;
+	public float jumpForce = 220f;
+    public float jetPackForce = 10f;
     public float jetPackConsumeRate = 5f;
     public AudioClip footsteps;
     public AudioClip jetpack;
 
     public bool IsGrounded {
         get {
-            return cc.isGrounded;
+            return isGrounded;
         }
     }
 
     private Animator anim;
-    private CharacterController cc;
     private AudioSource audioSource;
     private Character character;
+    private Rigidbody rb;
 
-    private float velY = 0f;
     private Vector3 velocity = Vector3.zero;
+    private Vector3 targetVelocity = Vector3.zero;
+    private Vector3 smoothVelocity = Vector3.zero;
 
     private bool jumping = false;
     public bool sprinting = false;
@@ -35,25 +37,25 @@ public class CharacterMovement : MonoBehaviour {
 
     private bool canJetPack = false;
     private bool jetPacking = false;
+    public bool isGrounded = false;
     
 	void Awake() {
         anim = GetComponent<Animator>();
-        cc = GetComponent<CharacterController>();
         audioSource = GetComponent<AudioSource>();
         character = GetComponent<Character>();
+        rb = GetComponent<Rigidbody>();
 
         SetupAnimator();
 	}
-	void Update() {
-	    // We apply gravity manually for more tuning control
-	    if ( !jetPacking ) velY += Physics.gravity.y * Time.deltaTime;
-        velocity.y = velY;
+    void Update(){
+        velocity = Vector3.SmoothDamp(velocity, targetVelocity, ref smoothVelocity, 0.15f);
 
-        cc.Move(velocity*Time.deltaTime);
- 
-	    CheckGround();
+        CheckGround();
         JetpackRecov();
-	}
+    }
+    void FixedUpdate(){
+        rb.MovePosition(rb.position + transform.TransformDirection(velocity)*Time.fixedDeltaTime);
+    }
 
     // Move character based on input or AI
     public void Move(Vector3 v){
@@ -71,13 +73,12 @@ public class CharacterMovement : MonoBehaviour {
             audioSource.Play();
         }
 
-	    velocity = v * velocityMultipler;
-	    velocity *= speed;
+	    targetVelocity = v.normalized * speed * velocityMultipler;
     }
     // Have character jump
     public void Jump(){
-        if ( cc.isGrounded && !jumping ){
-            velY = jumpHeight;
+        if ( IsGrounded && !jumping ){
+            rb.AddForce(transform.up*jumpForce);
             jumping = true;
             StartCoroutine(FreeFall());
         } else if ( canJetPack ){
@@ -90,7 +91,7 @@ public class CharacterMovement : MonoBehaviour {
             if ( character ) {
                 if ( character.currentCharStats.jetpack > 0 ){
                     character.currentCharStats.jetpack -= jetPackConsumeRate*Time.deltaTime;
-                    velY += jumpHeight*Time.deltaTime;
+                    rb.AddForce(transform.up*jetPackForce);
                 } else {
                     jetPacking = false;
                 }
@@ -127,12 +128,6 @@ public class CharacterMovement : MonoBehaviour {
     // Have character crouch
     public void Crouch(bool b){
         crouching = b;
-
-        if ( crouching ){
-            cc.height *= 1.00f/2.00f;
-        } else {
-            cc.height *= 2.00f;
-        }
     }
     // Have character prone
     public void Prone(bool b){
@@ -143,7 +138,7 @@ public class CharacterMovement : MonoBehaviour {
         if ( anim == null ) return;
 
         // Play footsteps sound
-        if ( cc.isGrounded && (forward != 0 || strafe != 0) ){
+        if ( IsGrounded && (forward != 0 || strafe != 0) ){
             if ( audioSource.clip != footsteps ){
                 audioSource.clip = footsteps;
             }
@@ -167,7 +162,7 @@ public class CharacterMovement : MonoBehaviour {
         anim.SetFloat(Settings.instance.anim_velocity_x, strafe);
         anim.SetFloat(Settings.instance.anim_velocity_z, sprinting ? forward*2f : forward);
 
-        anim.SetBool(Settings.instance.anim_grounded, cc.isGrounded);
+        anim.SetBool(Settings.instance.anim_grounded, IsGrounded);
         anim.SetBool(Settings.instance.anim_jump, jumping);
         anim.SetBool(Settings.instance.anim_free_fall, freefalling);
         anim.SetBool(Settings.instance.anim_free_fall, jetPacking);
@@ -183,8 +178,19 @@ public class CharacterMovement : MonoBehaviour {
     }
     // Check if character is grounded
     private void CheckGround(){
-        if ( cc.isGrounded ){
-            velY = 0f;
+        RaycastHit hit;
+        Debug.DrawRay(transform.position,-transform.up*1.1f,Color.blue);
+        if ( Physics.Raycast(new Ray(transform.position, -transform.up), out hit, 1.1f, 1 << LayerMask.NameToLayer("Environment")) ){
+            if ( hit.collider.gameObject.isStatic ){
+                isGrounded = true;
+            } else {
+                isGrounded = false;
+            }
+        } else {
+            isGrounded = false;
+        }
+
+        if ( IsGrounded ){
             dodging = false;
             jumping = false;
             freefalling = false;

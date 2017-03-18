@@ -7,7 +7,7 @@ public class CameraControl : MonoBehaviour {
 
     public bool rotXAxis, rotYAxis;
 
-    private float sensitivity = 1f;
+    private float sensitivity = 5f;
     private float minX, maxX;
     private float rotX = 0f, rotY = 0f;
 
@@ -17,18 +17,20 @@ public class CameraControl : MonoBehaviour {
         maxX = Settings.instance.cam_maxRotX;
     }
     void Update(){
-        if ( Cursor.visible ) return;
-
-        if ( rotYAxis ){
-            rotY += Input.GetAxis("Mouse X") * sensitivity;
+        if ( !Cursor.visible ){
+            if ( rotYAxis ){
+                rotY = Input.GetAxis("Mouse X") * sensitivity;
+            }
+            if ( rotXAxis ){
+                rotX += Input.GetAxis("Mouse Y") * sensitivity;
+                rotX = Mathf.Clamp(rotX, minX, maxX);
+            }
         }
-        if ( rotXAxis ){
-            rotX += Input.GetAxis("Mouse Y") * sensitivity;
-            rotX = Mathf.Clamp(rotX, minX, maxX);
-        }
-    }
-    void LateUpdate(){
-        transform.localEulerAngles = new Vector3(-rotX, rotY, 0f);
+        
+        if ( rotYAxis )
+            transform.Rotate(Vector3.up * rotY);
+        if ( rotXAxis )
+            transform.localEulerAngles = Vector3.left * rotX;
     }
 
 }
