@@ -7,9 +7,10 @@ public class CharacterMovement : MonoBehaviour {
 
     public float speed = 5f;
     public float freeFallTime = 1.25f;
-	public float jumpForce = 220f;
+	public float jumpForce = 250f;
     public float jetPackForce = 10f;
-    public float jetPackConsumeRate = 5f;
+    public float jetPackConsumeRate = 75f;
+    public float sprintConsumeRate = 25f;
     public AudioClip footsteps;
     public AudioClip jetpack;
 
@@ -48,13 +49,21 @@ public class CharacterMovement : MonoBehaviour {
         SetupAnimator();
 	}
     void Update(){
+        if ( sprinting ){
+            if ( character.currentCharStats.stamina > 0 ){
+                character.currentCharStats.stamina -= sprintConsumeRate*Time.deltaTime;
+            } else {
+                sprinting = false;
+            }
+        }
+
         velocity = Vector3.SmoothDamp(velocity, targetVelocity, ref smoothVelocity, 0.15f);
 
         CheckGround();
         JetpackRecov();
     }
     void FixedUpdate(){
-        rb.MovePosition(rb.position + transform.TransformDirection(velocity)*Time.fixedDeltaTime);
+        rb.MovePosition(rb.position + velocity*Time.fixedDeltaTime);
     }
 
     // Move character based on input or AI
@@ -124,6 +133,10 @@ public class CharacterMovement : MonoBehaviour {
     // Have character sprint
     public void Sprint(bool b){
         sprinting = b;
+
+        if ( character.currentCharStats.stamina < 1 ){
+            sprinting = false;
+        }
     }
     // Have character crouch
     public void Crouch(bool b){
