@@ -156,6 +156,13 @@ public class CharacterMovement : MonoBehaviour {
         if ( character.currentCharStats.stamina < 1 ){
             sprinting = false;
         }
+        if ( sprinting ){
+            weaponHandler.charModel.transform.localPosition = Vector3.Lerp(weaponHandler.charModel.transform.localPosition,weaponHandler.charModel.originalPos, 15*Time.deltaTime);
+            weaponHandler.charModel.transform.localEulerAngles = Vector3.Lerp(weaponHandler.charModel.transform.localEulerAngles,weaponHandler.charModel.originalRot, 15*Time.deltaTime);   
+        } else if ( weaponHandler.currentWeapon != null ){
+            weaponHandler.charModel.transform.localPosition = weaponHandler.currentWeapon.camPosOffset;
+            weaponHandler.charModel.transform.localEulerAngles = weaponHandler.currentWeapon.camRotOffset;
+        }
     }
     // Have character crouch
     public void Crouch(bool b){
@@ -244,7 +251,7 @@ public class CharacterMovement : MonoBehaviour {
     // Check if character is underwater
     private void CheckWater(){
         RaycastHit hit;
-        if ( Physics.Raycast(transform.position+transform.up*10f, -transform.up, out hit) ){
+        if ( Physics.Raycast(transform.position+transform.up*10f, -transform.up, out hit, (1 << LayerMask.NameToLayer("Self")) | (1 << LayerMask.NameToLayer("Water")) ) ){
             if ( hit.collider.gameObject.layer == LayerMask.NameToLayer("Water") ){
                 if ( !underwater ) {
                     underwater = true;
