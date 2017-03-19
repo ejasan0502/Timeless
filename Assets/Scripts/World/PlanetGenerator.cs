@@ -11,11 +11,14 @@ public class PlanetGenerator : MonoBehaviour {
 
     public Planet planet;
     public GameObject waterRef;
+    public UnityEngine.Gradient coloring;
 
 	//private Mesh mesh;
 	private Vector3[] vertices;
 	private Vector3[] normals;
+    private Vector2[] uvs;
     private List<int> triangles;
+    private Color[] colors;
 
 	void Awake () {
 		StartCoroutine(Generate());
@@ -32,6 +35,8 @@ public class PlanetGenerator : MonoBehaviour {
         m.vertices = vertices;
         m.triangles = triangles.ToArray();
         m.normals = normals;
+        m.uv = uvs;
+        m.colors = colors;
 
         GetComponent<MeshFilter>().mesh = m;
         GetComponent<MeshCollider>().sharedMesh = m;
@@ -71,25 +76,32 @@ public class PlanetGenerator : MonoBehaviour {
 			(gridSize - 1) * (gridSize - 1)) * 2;
 		vertices = new Vector3[cornerVertices + edgeVertices + faceVertices];
 		normals = new Vector3[vertices.Length];
+        colors = new Color[vertices.Length];
+        uvs = new Vector2[vertices.Length];
 
 		int v = 0;
 		for (int y = 0; y <= gridSize; y++) {
 			for (int x = 0; x <= gridSize; x++) {
 				SetVertex(v++, x, y, 0);
+                uvs[v] = new Vector2(x,y);
 			}
 			for (int z = 1; z <= gridSize; z++) {
 				SetVertex(v++, gridSize, y, z);
+                uvs[v] = new Vector2(y,z);
 			}
 			for (int x = gridSize - 1; x >= 0; x--) {
 				SetVertex(v++, x, y, gridSize);
+                uvs[v] = new Vector2(x,y);
 			}
 			for (int z = gridSize - 1; z > 0; z--) {
 				SetVertex(v++, 0, y, z);
+                uvs[v] = new Vector2(y,z);
 			}
 		}
 		for (int z = 1; z < gridSize; z++) {
 			for (int x = 1; x < gridSize; x++) {
 				SetVertex(v++, x, gridSize, z);
+                uvs[v] = new Vector2(x,z);
 			}
 		}
 		for (int z = 1; z < gridSize; z++) {
@@ -110,9 +122,9 @@ public class PlanetGenerator : MonoBehaviour {
 		s.z = v.z * Mathf.Sqrt(1f - x2 / 2f - y2 / 2f + x2 * y2 / 3f);
 		normals[i] = s;
 
-        float noise = (float)planet.perlin.GetValue(x/planet.radius, y/planet.radius, z/planet.radius)*
-                      (float)planet.rmf.GetValue(x/planet.radius,y/planet.radius,z/planet.radius);
+        float noise =  (float)planet.perlin.GetValue(x/planet.radius, y/planet.radius, z/planet.radius);
 		vertices[i] = normals[i] * planet.radius * (planet.height + noise);
+        colors[i] = coloring.Evaluate(noise);
 	}
     // Create the triangles connecting each vertex to form the mesh
 	private void CreateTriangles (int gridSize) {
