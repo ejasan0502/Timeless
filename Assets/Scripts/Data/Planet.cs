@@ -8,9 +8,9 @@ public class Planet {
 
     [Header("-World Settings-")]
     public float gravity;
-	public int gridSize;
-	public float radius = 1f;
-    public float height = 1f;
+	[Range(10,100)] public int gridSize;
+	[Range(10, 100)] public float radius = 1f;
+    [Range(1,20)] public float height = 1f;
     public Perlin perlin;
     public RiggedMultifractal rmf;
 

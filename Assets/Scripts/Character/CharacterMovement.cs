@@ -65,8 +65,11 @@ public class CharacterMovement : MonoBehaviour {
                 character.currentCharStats.stamina -= sprintConsumeRate*Time.deltaTime;
             } else {
                 sprinting = false;
-                weaponHandler.charModel.transform.localPosition = weaponHandler.currentWeapon.camPosOffset;
-                weaponHandler.charModel.transform.localEulerAngles = weaponHandler.currentWeapon.camRotOffset;
+
+                if ( weaponHandler.currentWeapon != null ){
+                    weaponHandler.charModel.transform.localPosition = weaponHandler.currentWeapon.camPosOffset;
+                    weaponHandler.charModel.transform.localEulerAngles = weaponHandler.currentWeapon.camRotOffset;
+                }
             }
         }
 
@@ -253,7 +256,7 @@ public class CharacterMovement : MonoBehaviour {
     // Check if character is underwater
     private void CheckWater(){
         RaycastHit hit;
-        if ( Physics.Raycast(transform.position+transform.up*10f, -transform.up, out hit, (1 << LayerMask.NameToLayer("Self")) | (1 << LayerMask.NameToLayer("Water")) ) ){
+        if ( Physics.Raycast(transform.position+transform.up*100f, -transform.up, out hit, (1 << LayerMask.NameToLayer("Self")) | (1 << LayerMask.NameToLayer("Water")) ) ){
             if ( hit.collider.gameObject.layer == LayerMask.NameToLayer("Water") ){
                 if ( !underwater ) {
                     underwater = true;

@@ -10,7 +10,8 @@ public class OnReloadEnd : StateMachineBehaviour {
         animator.SetBool(Settings.instance.anim_reload, false);
 
         Firearm weapon = (Firearm) animator.GetComponent<WeaponHandler>().currentWeapon;
-        weapon.Reload();
+        if ( weapon != null )
+            weapon.Reload();
     }
 
 }

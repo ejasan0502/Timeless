@@ -34,9 +34,11 @@ public class PlanetGenerator : MonoBehaviour {
 
         m.vertices = vertices;
         m.triangles = triangles.ToArray();
-        m.normals = normals;
         m.uv = uvs;
         m.colors = colors;
+        m.normals = normals;
+
+        m.RecalculateNormals();
 
         GetComponent<MeshFilter>().mesh = m;
         GetComponent<MeshCollider>().sharedMesh = m;
