@@ -81,10 +81,10 @@ public class UserInput : MonoBehaviour {
                 sprinting = true;
                 charMovt.Sprint(sprinting);
             }
-            if ( Input.GetButtonUp("Sprint") ){
-                sprinting = false;
-                charMovt.Sprint(sprinting);
-            }
+        }
+        if ( Input.GetButtonUp("Sprint") ){
+            sprinting = false;
+            charMovt.Sprint(sprinting);
         }
     }
     // Handle dodging logic

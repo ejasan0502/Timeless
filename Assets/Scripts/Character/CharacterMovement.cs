@@ -37,7 +37,7 @@ public class CharacterMovement : MonoBehaviour {
     private Vector3 smoothVelocity = Vector3.zero;
 
     private bool jumping = false;
-    private bool sprinting = false;
+    public bool sprinting = false;
     private bool freefalling = false;
     private bool dodging = false;
     private bool crouching = false;
@@ -45,9 +45,9 @@ public class CharacterMovement : MonoBehaviour {
 
     private bool canJetPack = false;
     private bool jetPacking = false;
-    public bool isGrounded = false;
+    private bool isGrounded = false;
 
-    public bool underwater = false;
+    private bool underwater = false;
     
 	void Awake() {
         weaponHandler = GetComponent<WeaponHandler>();
@@ -65,6 +65,8 @@ public class CharacterMovement : MonoBehaviour {
                 character.currentCharStats.stamina -= sprintConsumeRate*Time.deltaTime;
             } else {
                 sprinting = false;
+                weaponHandler.charModel.transform.localPosition = weaponHandler.currentWeapon.camPosOffset;
+                weaponHandler.charModel.transform.localEulerAngles = weaponHandler.currentWeapon.camRotOffset;
             }
         }
 
