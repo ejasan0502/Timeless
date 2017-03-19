@@ -13,10 +13,16 @@ public class CharacterMovement : MonoBehaviour {
     public float sprintConsumeRate = 25f;
     public AudioClip footsteps;
     public AudioClip jetpack;
+    public AudioClip swimming;
 
     public bool IsGrounded {
         get {
             return isGrounded;
+        }
+    }
+    public bool IsUnderWater {
+        get {
+            return underwater;
         }
     }
 
@@ -24,13 +30,14 @@ public class CharacterMovement : MonoBehaviour {
     private AudioSource audioSource;
     private Character character;
     private Rigidbody rb;
+    private WeaponHandler weaponHandler;
 
     private Vector3 velocity = Vector3.zero;
     private Vector3 targetVelocity = Vector3.zero;
     private Vector3 smoothVelocity = Vector3.zero;
 
     private bool jumping = false;
-    public bool sprinting = false;
+    private bool sprinting = false;
     private bool freefalling = false;
     private bool dodging = false;
     private bool crouching = false;
@@ -39,8 +46,11 @@ public class CharacterMovement : MonoBehaviour {
     private bool canJetPack = false;
     private bool jetPacking = false;
     public bool isGrounded = false;
+
+    public bool underwater = false;
     
 	void Awake() {
+        weaponHandler = GetComponent<WeaponHandler>();
         anim = GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();
         character = GetComponent<Character>();
@@ -49,6 +59,7 @@ public class CharacterMovement : MonoBehaviour {
         SetupAnimator();
 	}
     void Update(){
+        // Consume stamina while sprinting
         if ( sprinting ){
             if ( character.currentCharStats.stamina > 0 ){
                 character.currentCharStats.stamina -= sprintConsumeRate*Time.deltaTime;
@@ -56,6 +67,8 @@ public class CharacterMovement : MonoBehaviour {
                 sprinting = false;
             }
         }
+
+        CheckWater();
 
         velocity = Vector3.SmoothDamp(velocity, targetVelocity, ref smoothVelocity, 0.15f);
 
@@ -86,6 +99,8 @@ public class CharacterMovement : MonoBehaviour {
     }
     // Have character jump
     public void Jump(){
+        if ( underwater ) return;
+
         if ( IsGrounded && !jumping ){
             rb.AddForce(transform.up*jumpForce);
             jumping = true;
@@ -96,13 +111,15 @@ public class CharacterMovement : MonoBehaviour {
     }
     // Have character use jet pack
     public void OnJetPackHold(){
-        if ( jetPacking ){
-            if ( character ) {
-                if ( character.currentCharStats.jetpack > 0 ){
-                    character.currentCharStats.jetpack -= jetPackConsumeRate*Time.deltaTime;
-                    rb.AddForce(transform.up*jetPackForce);
-                } else {
-                    jetPacking = false;
+        if ( !underwater ){
+            if ( jetPacking ){
+                if ( character ) {
+                    if ( character.currentCharStats.jetpack > 0 ){
+                        character.currentCharStats.jetpack -= jetPackConsumeRate*Time.deltaTime;
+                        rb.AddForce(transform.up*jetPackForce);
+                    } else {
+                        jetPacking = false;
+                    }
                 }
             }
         }
@@ -132,6 +149,8 @@ public class CharacterMovement : MonoBehaviour {
     }
     // Have character sprint
     public void Sprint(bool b){
+        if ( underwater ) return;
+
         sprinting = b;
 
         if ( character.currentCharStats.stamina < 1 ){
@@ -140,10 +159,14 @@ public class CharacterMovement : MonoBehaviour {
     }
     // Have character crouch
     public void Crouch(bool b){
+        if ( underwater ) return;
+
         crouching = b;
     }
     // Have character prone
     public void Prone(bool b){
+        if ( underwater ) return;
+
         proning = b;
     }
     // Animate character;
@@ -151,7 +174,7 @@ public class CharacterMovement : MonoBehaviour {
         if ( anim == null ) return;
 
         // Play footsteps sound
-        if ( IsGrounded && (forward != 0 || strafe != 0) ){
+        if ( IsGrounded && !underwater && (forward != 0 || strafe != 0) ){
             if ( audioSource.clip != footsteps ){
                 audioSource.clip = footsteps;
             }
@@ -164,6 +187,13 @@ public class CharacterMovement : MonoBehaviour {
         } else if ( jetPacking ){
             if ( audioSource.clip != jetpack ){
                 audioSource.clip = jetpack;
+            }
+            if ( !audioSource.isPlaying ){
+                audioSource.Play();
+            }
+        } else if ( underwater && (forward != 0 || strafe != 0) ){
+            if ( audioSource.clip != swimming ){
+                audioSource.clip = swimming;
             }
             if ( !audioSource.isPlaying ){
                 audioSource.Play();
@@ -182,6 +212,7 @@ public class CharacterMovement : MonoBehaviour {
         anim.SetBool(Settings.instance.anim_dodge, dodging);
         anim.SetBool(Settings.instance.anim_crouch, crouching);
         anim.SetBool(Settings.instance.anim_prone, proning);
+        anim.SetBool(Settings.instance.anim_swim, underwater);
     }
 
     // Character is freefalling after a certain duration
@@ -192,7 +223,6 @@ public class CharacterMovement : MonoBehaviour {
     // Check if character is grounded
     private void CheckGround(){
         RaycastHit hit;
-        Debug.DrawRay(transform.position,-transform.up*1.1f,Color.blue);
         if ( Physics.Raycast(new Ray(transform.position, -transform.up), out hit, 1.1f, 1 << LayerMask.NameToLayer("Environment")) ){
             if ( hit.collider.gameObject.isStatic ){
                 isGrounded = true;
@@ -209,6 +239,20 @@ public class CharacterMovement : MonoBehaviour {
             freefalling = false;
             canJetPack = true;
             StopCoroutine(FreeFall());
+        }
+    }
+    // Check if character is underwater
+    private void CheckWater(){
+        RaycastHit hit;
+        if ( Physics.Raycast(transform.position+transform.up*10f, -transform.up, out hit) ){
+            if ( hit.collider.gameObject.layer == LayerMask.NameToLayer("Water") ){
+                if ( !underwater ) {
+                    underwater = true;
+                    weaponHandler.Unequip();
+                }   
+            } else {
+                underwater = false;
+            }
         }
     }
     // Apply jetpack recovery

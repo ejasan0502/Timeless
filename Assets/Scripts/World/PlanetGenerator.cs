@@ -10,6 +10,7 @@ using LibNoise.Unity.Operator;
 public class PlanetGenerator : MonoBehaviour {
 
     public Planet planet;
+    public GameObject waterRef;
 
 	//private Mesh mesh;
 	private Vector3[] vertices;
@@ -36,10 +37,18 @@ public class PlanetGenerator : MonoBehaviour {
         GetComponent<MeshCollider>().sharedMesh = m;
 
         CreateGravity();
+        CreateWater();
 
         yield break;
 	}
 
+    // Create water
+    private void CreateWater(){
+        GameObject waterObj = Instantiate(waterRef, transform.position, Quaternion.identity, transform);
+
+        float scale = planet.height * planet.radius * 2;
+        waterObj.transform.localScale = new Vector3(scale, scale, scale);
+    }
     // Apply gravity pull
     private void CreateGravity(){
         GameObject o = new GameObject("Gravity");
@@ -100,9 +109,10 @@ public class PlanetGenerator : MonoBehaviour {
 		s.y = v.y * Mathf.Sqrt(1f - x2 / 2f - z2 / 2f + x2 * z2 / 3f);
 		s.z = v.z * Mathf.Sqrt(1f - x2 / 2f - y2 / 2f + x2 * y2 / 3f);
 		normals[i] = s;
-		vertices[i] = normals[i] * planet.radius * (planet.height + 
-                        (float)planet.perlin.GetValue(x/planet.radius, y/planet.radius, z/planet.radius)*
-                        (float)planet.rmf.GetValue(x/planet.radius,y/planet.radius,z/planet.radius));
+
+        float noise = (float)planet.perlin.GetValue(x/planet.radius, y/planet.radius, z/planet.radius)*
+                      (float)planet.rmf.GetValue(x/planet.radius,y/planet.radius,z/planet.radius);
+		vertices[i] = normals[i] * planet.radius * (planet.height + noise);
 	}
     // Create the triangles connecting each vertex to form the mesh
 	private void CreateTriangles (int gridSize) {

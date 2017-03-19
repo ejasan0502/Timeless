@@ -43,6 +43,16 @@ public class WeaponHandler : MonoBehaviour {
 
         anim.SetInteger(Settings.instance.anim_weapon_type, (int)currentWeapon.weaponType);
     }
+    // Unequip current weapon
+    public void Unequip(){
+        if ( weaponIndex != -1 ){
+            currentWeapon.Unequip(charModel);
+            anim.SetInteger(Settings.instance.anim_weapon_type, 0);
+            charModel.transform.localPosition = charModel.originalPos;
+            charModel.transform.localEulerAngles = charModel.originalRot;
+            weaponIndex = -1;
+        }
+    }
     // Add weapon to list
     public void AddWeapon(string path){
         GameObject o = (GameObject) Instantiate(Resources.Load(path));

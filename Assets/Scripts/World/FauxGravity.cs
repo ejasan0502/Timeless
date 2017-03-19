@@ -8,15 +8,17 @@ public class FauxGravity : MonoBehaviour {
     public GravityPull gravityPull;
 
     private Rigidbody rb;
+    private CharacterMovement charMovt;
 
     void Awake(){
+        charMovt = GetComponent<CharacterMovement>();
         rb = GetComponent<Rigidbody>();
         rb.useGravity = false;
         rb.constraints = RigidbodyConstraints.FreezeRotation;
     }
     void FixedUpdate(){
         if ( gravityPull ){
-            gravityPull.Attract(rb);
+            gravityPull.Attract(rb, charMovt != null && charMovt.IsUnderWater ? 0.01f : 1f);
         }
     }
 }

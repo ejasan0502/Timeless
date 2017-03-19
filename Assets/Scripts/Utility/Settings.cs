@@ -17,6 +17,7 @@ public class Settings : MonoBehaviour {
     public string anim_attack = "isAttacking";
     public string anim_reload = "isReloading";
     public string anim_death = "death";
+    public string anim_swim = "isSwimming";
 
     [Header("-Camera Settings-")]
     public float cam_sensitivity = 5f;
@@ -29,7 +30,7 @@ public class Settings : MonoBehaviour {
             if ( _instance == null ){
                 _instance = GameObject.FindObjectOfType<Settings>();
                 if ( _instance == null ){
-                    _instance = new GameObject().AddComponent<Settings>();
+                    _instance = new GameObject("Settings").AddComponent<Settings>();
                 }
             }
             return _instance;
@@ -41,5 +42,7 @@ public class Settings : MonoBehaviour {
             Destroy(gameObject);
 
         DontDestroyOnLoad(this);
+
+        Physics.IgnoreLayerCollision(LayerMask.NameToLayer("Environment"), LayerMask.NameToLayer("Water"));
     }
 }

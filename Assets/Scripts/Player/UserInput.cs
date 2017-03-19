@@ -44,7 +44,8 @@ public class UserInput : MonoBehaviour {
     private void Movement(){
         if ( !dodging ){
             Vector3 v = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
-            v = transform.TransformDirection(v);
+            if ( !charMovt.IsUnderWater ) v = transform.TransformDirection(v);
+            else v = Camera.main.transform.TransformDirection(v);
 
             charMovt.Move(v);
         }
