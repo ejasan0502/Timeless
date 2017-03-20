@@ -130,30 +130,31 @@ public class PlanetGenerator : MonoBehaviour {
 		int v = 0;
 		for (int y = 0; y <= gridSize; y++) {
 			for (int x = 0; x <= gridSize; x++) {
-				SetVertex(v++, x, y, 0);
                 uvs[v] = new Vector2(x,y);
+				SetVertex(v++, x, y, 0);
 			}
 			for (int z = 1; z <= gridSize; z++) {
-				SetVertex(v++, gridSize, y, z);
                 uvs[v] = new Vector2(y,z);
+				SetVertex(v++, gridSize, y, z);
 			}
 			for (int x = gridSize - 1; x >= 0; x--) {
-				SetVertex(v++, x, y, gridSize);
                 uvs[v] = new Vector2(x,y);
+				SetVertex(v++, x, y, gridSize);
 			}
 			for (int z = gridSize - 1; z > 0; z--) {
-				SetVertex(v++, 0, y, z);
                 uvs[v] = new Vector2(y,z);
+				SetVertex(v++, 0, y, z);
 			}
 		}
 		for (int z = 1; z < gridSize; z++) {
 			for (int x = 1; x < gridSize; x++) {
-				SetVertex(v++, x, gridSize, z);
                 uvs[v] = new Vector2(x,z);
+				SetVertex(v++, x, gridSize, z);
 			}
 		}
 		for (int z = 1; z < gridSize; z++) {
 			for (int x = 1; x < gridSize; x++) {
+                uvs[v] = new Vector2(x,z);
 				SetVertex(v++, x, 0, z);
 			}
 		}
