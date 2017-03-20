@@ -9,23 +9,29 @@ using LibNoise.Unity.Operator;
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class PlanetGenerator : MonoBehaviour {
 
+    public bool debug = false;
     public Planet planet;
     public GameObject waterRef;
+    public GameObject[] treeRefs;
     public UnityEngine.Gradient coloring;
 
-	//private Mesh mesh;
 	private Vector3[] vertices;
 	private Vector3[] normals;
     private Vector2[] uvs;
     private List<int> triangles;
     private Color[] colors;
 
-	void Awake () {
-		StartCoroutine(Generate());
-	}
+    private List<Vector3> spawnPoints = new List<Vector3>();
+
+    void Start(){
+		Generate();
+
+        if ( spawnPoints.Count > 0 )
+            GameObject.FindWithTag("Player").transform.position = spawnPoints[Random.Range(0,spawnPoints.Count)];
+    }
 
     // Generate the mesh
-	private IEnumerator Generate () {
+	private void Generate () {
         CreateVertices(planet.gridSize);
         CreateTriangles(planet.gridSize);
 
@@ -38,17 +44,57 @@ public class PlanetGenerator : MonoBehaviour {
         m.colors = colors;
         m.normals = normals;
 
-        m.RecalculateNormals();
-
         GetComponent<MeshFilter>().mesh = m;
         GetComponent<MeshCollider>().sharedMesh = m;
 
         CreateGravity();
         CreateWater();
+        CreateSpawnPoints();
+        CreateTrees();
 
-        yield break;
+        if ( debug ) Debug.Log("World generated.");
 	}
 
+    // Create trees
+    private void CreateTrees(){
+        if ( treeRefs.Length < 1 ) return;
+
+        int treeSpawnCount = Mathf.RoundToInt(planet.radius*planet.height*planet.gridSize*planet.treeDensity);
+
+        Transform treesParent = new GameObject("Trees").transform;
+        treesParent.transform.SetParent(transform);
+        treesParent.gameObject.isStatic = true;
+
+        for (int i = 0; i < treeSpawnCount; i++){
+            Vector3 randomPoint = Random.onUnitSphere*planet.radius*planet.height*1.1f;
+            Vector3 downVector = planet.origin - randomPoint;
+
+            RaycastHit hit;
+            if ( Physics.Raycast(randomPoint, downVector, out hit, planet.radius, 1 << LayerMask.NameToLayer("Environment")) ){
+                if ( !CloseToSpawnPoint(hit.point) ){
+                    Instantiate(treeRefs[Random.Range(0,treeRefs.Length)], hit.point, Quaternion.LookRotation(hit.normal), treesParent);
+                }
+            }
+        }
+
+        Debug.Log("Trees generated.");
+    }
+    // Create all spawnPoints on planet
+    private void CreateSpawnPoints(){
+        int spawnPointCount = Random.Range(10,20);
+        for (int i = 0; i < spawnPointCount; i++){
+            Vector3 randomPoint = Random.onUnitSphere*planet.radius*planet.height*1.1f;
+            Vector3 downVector = planet.origin - randomPoint;
+
+            RaycastHit hit;
+            if ( debug ) Debug.DrawLine(randomPoint, planet.origin, Color.yellow, 1f);
+            if ( Physics.Raycast(randomPoint, downVector, out hit, planet.radius, 1 << LayerMask.NameToLayer("Environment")) ){
+                 Vector3 pos = hit.point + -downVector.normalized*planet.height;
+                 spawnPoints.Add(pos);
+            }
+        }
+        if ( debug ) Debug.Log("Created " + spawnPoints.Count + " spawn points.");
+    }
     // Create water
     private void CreateWater(){
         GameObject waterObj = Instantiate(waterRef, transform.position, Quaternion.identity, transform);
@@ -124,7 +170,7 @@ public class PlanetGenerator : MonoBehaviour {
 		s.z = v.z * Mathf.Sqrt(1f - x2 / 2f - y2 / 2f + x2 * y2 / 3f);
 		normals[i] = s;
 
-        float noise =  (float)planet.perlin.GetValue(x/planet.radius, y/planet.radius, z/planet.radius);
+        float noise = (float)planet.perlin.GetValue(planet.origin.x+x/planet.radius, planet.origin.y+y/planet.radius, planet.origin.z+z/planet.radius);
 		vertices[i] = normals[i] * planet.radius * (planet.height + noise);
         colors[i] = coloring.Evaluate(noise);
 	}
@@ -224,6 +270,7 @@ public class PlanetGenerator : MonoBehaviour {
 
 		return t;
 	}
+
     // Create the face using the triangles and four vertices
 	private static int
 	SetQuad (int[] triangles, int i, int v00, int v10, int v01, int v11) {
@@ -233,5 +280,14 @@ public class PlanetGenerator : MonoBehaviour {
 		triangles[i + 5] = v11;
 		return i + 6;
 	}
+    // Check if point is within the radius of a spawn point
+    private bool CloseToSpawnPoint(Vector3 point){
+        foreach (Vector3 spawnPoint in spawnPoints){
+            if ( Vector3.Distance(spawnPoint, point) < Settings.instance.spawn_point_radius ){
+                return true;
+            }
+        }
 
+        return false;
+    }
 }

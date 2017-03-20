@@ -133,8 +133,7 @@ public class Firearm : Weapon {
                     c.Hit(character, character.RangeDamage, InflictType.range);
                 }
             }
-            Debug.Log(hit.collider.transform.name);
-            decal.transform.SetParent(hit.collider.transform);
+            if ( decal != null ) decal.transform.SetParent(hit.collider.transform);
             Destroy(decal, 2f);
         }
 

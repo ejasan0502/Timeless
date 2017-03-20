@@ -24,6 +24,9 @@ public class Settings : MonoBehaviour {
     public float cam_minRotX = -75f, cam_maxRotX = 90f;
     public float defaultFov = 60f;
 
+    [Header("-World Settings-")]
+    public float spawn_point_radius = 20f;
+
     private static Settings _instance;
     public static Settings instance {
         get {

@@ -6,15 +6,20 @@ using LibNoise.Unity.Generator;
 // Handle data for planets
 public class Planet {
 
-    [Header("-World Settings-")]
+    [Header("-World Generation-")]
+    public Vector3 origin;
     public float gravity;
-	[Range(10,100)] public int gridSize;
-	[Range(10, 100)] public float radius = 1f;
-    [Range(1,20)] public float height = 1f;
+	public int gridSize;
+	public float radius = 1f;
+    public float height = 1f;
     public Perlin perlin;
     public RiggedMultifractal rmf;
 
-    public Planet(float gravity, int gridSize, float radius, float height, Perlin perlin, RiggedMultifractal rmf){
+    [Header("Object Density")]
+    [Range(0,1)] public float treeDensity;
+
+    public Planet(Vector3 origin, float gravity, int gridSize, float radius, float height, Perlin perlin, RiggedMultifractal rmf){
+        this.origin = origin;
         this.gravity = gravity;
         this.gridSize = gridSize;
         this.radius = radius;
