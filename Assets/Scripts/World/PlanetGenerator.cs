@@ -10,6 +10,8 @@ using LibNoise.Unity.Operator;
 public class PlanetGenerator : MonoBehaviour {
 
     public bool debug = false;
+    public bool hideTrees = false;
+
     public Planet planet;
     public GameObject waterRef;
     public GameObject[] treeRefs;
@@ -18,7 +20,9 @@ public class PlanetGenerator : MonoBehaviour {
 	private Vector3[] vertices;
 	private Vector3[] normals;
     private Vector2[] uvs;
-    private List<int> triangles;
+    private int[] trianglesX;
+    private int[] trianglesY;
+    private int[] trianglesZ;
     private Color[] colors;
 
     private List<Vector3> spawnPoints = new List<Vector3>();
@@ -26,8 +30,9 @@ public class PlanetGenerator : MonoBehaviour {
     void Start(){
 		Generate();
 
-        if ( spawnPoints.Count > 0 )
+        if ( spawnPoints.Count > 0 && GameObject.FindWithTag("Player") != null ){
             GameObject.FindWithTag("Player").transform.position = spawnPoints[Random.Range(0,spawnPoints.Count)];
+        }
     }
 
     // Generate the mesh
@@ -39,10 +44,16 @@ public class PlanetGenerator : MonoBehaviour {
         m.name = "planet";
 
         m.vertices = vertices;
-        m.triangles = triangles.ToArray();
+        m.subMeshCount = 3;
+        m.SetTriangles(trianglesZ, 0);
+        m.SetTriangles(trianglesX, 1);
+        m.SetTriangles(trianglesY, 2);
+
         m.uv = uvs;
         m.colors = colors;
         m.normals = normals;
+
+        m.RecalculateNormals();
 
         GetComponent<MeshFilter>().mesh = m;
         GetComponent<MeshCollider>().sharedMesh = m;
@@ -50,14 +61,19 @@ public class PlanetGenerator : MonoBehaviour {
         CreateGravity();
         CreateWater();
         CreateSpawnPoints();
+        CreateGrass();
         CreateTrees();
 
         if ( debug ) Debug.Log("World generated.");
 	}
 
+    // Create grass
+    private void CreateGrass(){
+        
+    }
     // Create trees
     private void CreateTrees(){
-        if ( treeRefs.Length < 1 ) return;
+        if ( treeRefs.Length < 1 || hideTrees ) return;
 
         int treeSpawnCount = Mathf.RoundToInt(planet.radius*planet.height*planet.gridSize*planet.treeDensity);
 
@@ -129,7 +145,7 @@ public class PlanetGenerator : MonoBehaviour {
 
 		int v = 0;
 		for (int y = 0; y <= gridSize; y++) {
-			for (int x = 0; x <= gridSize; x++) {
+            for (int x = 0; x <= gridSize; x++) {
                 uvs[v] = new Vector2(x,y);
 				SetVertex(v++, x, y, 0);
 			}
@@ -148,13 +164,13 @@ public class PlanetGenerator : MonoBehaviour {
 		}
 		for (int z = 1; z < gridSize; z++) {
 			for (int x = 1; x < gridSize; x++) {
-                uvs[v] = new Vector2(x,z);
+                uvs[v] = new Vector2(z,x);
 				SetVertex(v++, x, gridSize, z);
 			}
 		}
 		for (int z = 1; z < gridSize; z++) {
 			for (int x = 1; x < gridSize; x++) {
-                uvs[v] = new Vector2(x,z);
+                uvs[v] = new Vector2(z,x);
 				SetVertex(v++, x, 0, z);
 			}
 		}
@@ -177,9 +193,9 @@ public class PlanetGenerator : MonoBehaviour {
 	}
     // Create the triangles connecting each vertex to form the mesh
 	private void CreateTriangles (int gridSize) {
-		int[] trianglesZ = new int[(gridSize * gridSize) * 12];
-		int[] trianglesX = new int[(gridSize * gridSize) * 12];
-		int[] trianglesY = new int[(gridSize * gridSize) * 12];
+		trianglesZ = new int[(gridSize * gridSize) * 12];
+		trianglesX = new int[(gridSize * gridSize) * 12];
+		trianglesY = new int[(gridSize * gridSize) * 12];
 		int ring = (gridSize + gridSize) * 2;
 		int tZ = 0, tX = 0, tY = 0, v = 0;
 
@@ -201,11 +217,6 @@ public class PlanetGenerator : MonoBehaviour {
 
 		tY = CreateTopFace(trianglesY, tY, ring);
 		tY = CreateBottomFace(trianglesY, tY, ring);
-        
-        triangles = new List<int>();
-        triangles.AddRange(trianglesZ);
-        triangles.AddRange(trianglesY);
-        triangles.AddRange(trianglesX);
 	}
     // Create the top face of the spherified cube
 	private int CreateTopFace (int[] triangles, int t, int ring) {
@@ -222,9 +233,7 @@ public class PlanetGenerator : MonoBehaviour {
 		for (int z = 1; z < planet.gridSize - 1; z++, vMin--, vMid++, vMax++) {
 			t = SetQuad(triangles, t, vMin, vMid, vMin - 1, vMid + planet.gridSize - 1);
 			for (int x = 1; x < planet.gridSize - 1; x++, vMid++) {
-				t = SetQuad(
-					triangles, t,
-					vMid, vMid + 1, vMid + planet.gridSize - 1, vMid + planet.gridSize);
+				t = SetQuad(triangles, t, vMid, vMid + 1, vMid + planet.gridSize - 1, vMid + planet.gridSize);
 			}
 			t = SetQuad(triangles, t, vMid, vMax, vMid + planet.gridSize - 1, vMax + 1);
 		}
