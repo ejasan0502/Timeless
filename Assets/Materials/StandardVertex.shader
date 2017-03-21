@@ -10,6 +10,7 @@
          LOD 200
          
          CGPROGRAM
+		 #pragma shader_feature _FACES_X _FACES_Y _FACES_Z
          #pragma surface surf Standard vertex:vert fullforwardshadows
          #pragma target 3.0
          struct Input {
@@ -25,7 +26,7 @@
          void vert (inout appdata_full v, out Input o)
          {
              UNITY_INITIALIZE_OUTPUT(Input,o);
-             o.vertexColor = v.color; // Save the Vertex Color in the Input for the surf() method
+			 o.vertexColor = v.color;
          }
  
          sampler2D _MainTex;

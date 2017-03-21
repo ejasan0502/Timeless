@@ -19,7 +19,6 @@ public class PlanetGenerator : MonoBehaviour {
 
 	private Vector3[] vertices;
 	private Vector3[] normals;
-    private Vector2[] uvs;
     private int[] trianglesX;
     private int[] trianglesY;
     private int[] trianglesZ;
@@ -49,7 +48,6 @@ public class PlanetGenerator : MonoBehaviour {
         m.SetTriangles(trianglesX, 1);
         m.SetTriangles(trianglesY, 2);
 
-        m.uv = uvs;
         m.colors = colors;
         m.normals = normals;
 
@@ -61,16 +59,11 @@ public class PlanetGenerator : MonoBehaviour {
         CreateGravity();
         CreateWater();
         CreateSpawnPoints();
-        CreateGrass();
         CreateTrees();
 
         if ( debug ) Debug.Log("World generated.");
 	}
 
-    // Create grass
-    private void CreateGrass(){
-        
-    }
     // Create trees
     private void CreateTrees(){
         if ( treeRefs.Length < 1 || hideTrees ) return;
@@ -141,36 +134,29 @@ public class PlanetGenerator : MonoBehaviour {
 		vertices = new Vector3[cornerVertices + edgeVertices + faceVertices];
 		normals = new Vector3[vertices.Length];
         colors = new Color[vertices.Length];
-        uvs = new Vector2[vertices.Length];
 
 		int v = 0;
 		for (int y = 0; y <= gridSize; y++) {
             for (int x = 0; x <= gridSize; x++) {
-                uvs[v] = new Vector2(x,y);
 				SetVertex(v++, x, y, 0);
 			}
 			for (int z = 1; z <= gridSize; z++) {
-                uvs[v] = new Vector2(y,z);
 				SetVertex(v++, gridSize, y, z);
 			}
 			for (int x = gridSize - 1; x >= 0; x--) {
-                uvs[v] = new Vector2(x,y);
 				SetVertex(v++, x, y, gridSize);
 			}
 			for (int z = gridSize - 1; z > 0; z--) {
-                uvs[v] = new Vector2(y,z);
 				SetVertex(v++, 0, y, z);
 			}
 		}
 		for (int z = 1; z < gridSize; z++) {
 			for (int x = 1; x < gridSize; x++) {
-                uvs[v] = new Vector2(z,x);
 				SetVertex(v++, x, gridSize, z);
 			}
 		}
 		for (int z = 1; z < gridSize; z++) {
 			for (int x = 1; x < gridSize; x++) {
-                uvs[v] = new Vector2(z,x);
 				SetVertex(v++, x, 0, z);
 			}
 		}
