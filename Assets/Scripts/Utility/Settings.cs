@@ -27,6 +27,9 @@ public class Settings : MonoBehaviour {
     [Header("-World Settings-")]
     public float spawn_point_radius = 20f;
 
+    [Header("-Resource Paths-")]
+    public string path_icons = "Icons/";
+
     private static Settings _instance;
     public static Settings instance {
         get {

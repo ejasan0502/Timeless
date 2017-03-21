@@ -25,10 +25,39 @@ public class UIManager : MonoBehaviour {
 
         GatherUIElements();
     }
+    void Start(){
+        foreach (UI ui in uiElements){
+            if ( ui.hideOnStart )
+                Display(ui,false);
+        }
+    }
+    void Update(){
+        if ( uiElements.Length > 0 ){
+            foreach (UI ui in uiElements){
+                if ( ui.key != KeyCode.None ){
+                    if ( Input.GetKeyUp(ui.key) ){
+                        Display(ui,!ui.gameObject.activeSelf);
+                    }
+                }
+            }
+
+            if ( Input.GetKeyUp(KeyCode.Escape) ){
+                foreach (UI ui in uiElements){
+                    if ( ui.key != KeyCode.None ){
+                        Display(ui,false);
+                    }
+                }
+            }
+        }
+    }
 
     // Fills uiElements list with UI components in children
     private void GatherUIElements(){
         uiElements = GetComponentsInChildren<UI>();
+    }
+    // Show/Hide given ui element
+    private void Display(UI ui, bool b){
+        ui.gameObject.SetActive(b);
     }
 
     // Displays or hides a uiElement of given name

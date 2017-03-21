@@ -17,6 +17,7 @@ public class UserInput : MonoBehaviour {
     private bool sprinting = false;
 
     private bool hideMouse = true;
+    private bool disableControls = false;
 
     void Awake(){
         charMovt = GetComponent<CharacterMovement>();
@@ -27,17 +28,19 @@ public class UserInput : MonoBehaviour {
         SetCursorView();
     }
     void Update(){
-        Reload();
-        Attack();
-        Jumping();
-        Sprinting();
-        Crouching();
-        Prone();
+        if ( !disableControls ){
+            Reload();
+            Attack();
+            Jumping();
+            Sprinting();
+            Crouching();
+            Prone();
 
-        Movement();
+            Movement();
 
-        HideViewCursor();
-        WeaponSwitch();
+            HideViewCursor();
+            WeaponSwitch();
+        }
     }
 
     // Handles movement logic
@@ -206,5 +209,17 @@ public class UserInput : MonoBehaviour {
         }
         
         return KeyCode.None;
+    }
+
+    // Enable/Disable controls
+    public void SetInputControls(bool b){
+        disableControls = !b;
+
+        if ( !disableControls ){
+            hideMouse = true;
+        } else {
+            hideMouse = false;
+        }
+        SetCursorView();
     }
 }

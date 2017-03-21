@@ -8,5 +8,16 @@ public class Item {
     public bool stackable;
     public ItemType itemType;
     public float weight;
+    public string iconPath;
+
+    private Sprite icon = null;
+    public Sprite Icon {
+        get {
+            if ( icon == null ){
+                icon = (Sprite) Resources.Load(iconPath);
+            }
+            return icon;
+        }
+    }
 
 }

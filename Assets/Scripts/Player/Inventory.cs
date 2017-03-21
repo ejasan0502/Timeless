@@ -11,16 +11,12 @@ public class Inventory : MonoBehaviour {
             return weight;
         }
     }
-
-    public class InventoryItem {
-        public Item item;
-        public int amount;
-
-        public InventoryItem(Item item, int amount){
-            this.item = item;
-            this.amount = amount;
+    public List<InventoryItem> Items {
+        get {
+            return inventoryItems;
         }
     }
+
     private List<InventoryItem> inventoryItems = new List<InventoryItem>();
     private float weight = 0f;
 
