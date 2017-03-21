@@ -35,6 +35,11 @@ public class Character : MonoBehaviour {
             return Random.Range(currentCombatStats.minRangeDmg, currentCombatStats.maxRangeDmg);
         }
     }
+    public float WeightPercent {
+        get {
+            return currentCharStats.weight/maxCharStats.weight;
+        }
+    }
 
     protected Animator anim;
     protected SkinnedMeshRenderer skinMeshRenderer;

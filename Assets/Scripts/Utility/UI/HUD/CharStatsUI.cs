@@ -16,6 +16,7 @@ public class CharStatsUI : UI {
         public Text text;
         public Image fill;
         public float threshold = 0.15f;
+        public bool upDown = true;
     }
     [SerializeField]
     public List<StatUI> statUIs = new List<StatUI>();
@@ -59,6 +60,10 @@ public class CharStatsUI : UI {
                     current = player.currentCharStats.jetpack;
                     max = player.maxCharStats.jetpack;
                     break;
+                case 6:
+                    current = player.currentCharStats.weight;
+                    max = player.maxCharStats.weight;
+                    break;
                 }
 
                 UpdateUI(statUIs[i], current, max);
@@ -68,7 +73,7 @@ public class CharStatsUI : UI {
 
     // Update stat display, fill, and texts
     private void UpdateUI(StatUI statUI, float current, float max){
-        if ( current/max <= statUI.threshold || ignoreThreshold ){
+        if ( current/max <= statUI.threshold && statUI.upDown || current/max >= statUI.threshold && !statUI.upDown || ignoreThreshold ){
             if ( !statUI.statObj.activeSelf ){
                 statUI.statObj.SetActive(true);
                 if ( !displayedUIs.Contains(statUI) ){
@@ -95,17 +100,19 @@ public class CharStatsUI : UI {
     }
     // Setup UIs from children transforms
     private void SetupUIS(){
-        foreach (Transform t in transform){
+        for (int i = 0; i < transform.childCount; i++){
+            if ( i < statUIs.Count && statUIs[i].statObj != null ) continue;
+
+            Transform t = transform.GetChild(i);
             StatUI statUI = new StatUI();
             statUI.statObj = t.gameObject;
             statUI.fill = t.GetChild(1).GetComponent<Image>();
             statUI.text = t.GetChild(2).GetComponent<Text>();
 
-            if ( t == transform.GetChild(transform.childCount-1) ){
-                statUI.threshold = 0.99f;
-            }
-
-            statUIs.Add(statUI);
+            if ( i < statUIs.Count )
+                statUIs[i] = statUI;
+            else
+                statUIs.Add(statUI);
         }
     }
     // Update ui positions according to which uis is display

@@ -5,7 +5,6 @@ using System.Collections;
 [RequireComponent(typeof(AudioSource))]
 public class CharacterMovement : MonoBehaviour {
 
-    public float speed = 5f;
     public float freeFallTime = 1.25f;
 	public float jumpForce = 250f;
     public float jetPackForce = 10f;
@@ -37,7 +36,7 @@ public class CharacterMovement : MonoBehaviour {
     private Vector3 smoothVelocity = Vector3.zero;
 
     private bool jumping = false;
-    public bool sprinting = false;
+    private bool sprinting = false;
     private bool freefalling = false;
     private bool dodging = false;
     private bool crouching = false;
@@ -100,7 +99,7 @@ public class CharacterMovement : MonoBehaviour {
             audioSource.Play();
         }
 
-	    targetVelocity = v.normalized * speed * velocityMultipler;
+	    targetVelocity = v.normalized * character.currentCharStats.movementSpeed * (1f - character.WeightPercent) * velocityMultipler;
     }
     // Have character jump
     public void Jump(){

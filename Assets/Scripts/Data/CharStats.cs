@@ -21,6 +21,9 @@ public class CharStats {
     public float jetpack;
     public float jetpackRecov;
 
+    public float weight;
+    public float movementSpeed;
+
     public CharStats(){
         FieldInfo[] fields = GetType().GetFields();
         for (int i = 0; i < fields.Length; i++){
