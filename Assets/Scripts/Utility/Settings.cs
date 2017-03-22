@@ -2,7 +2,7 @@
 using System.Collections;
 
 // All settings for the game
-public class Settings : MonoBehaviour {
+public class Settings {
 
     [Header("-Animator Settings-")]
     public string anim_velocity_x = "velX";
@@ -34,21 +34,11 @@ public class Settings : MonoBehaviour {
     public static Settings instance {
         get {
             if ( _instance == null ){
-                _instance = GameObject.FindObjectOfType<Settings>();
-                if ( _instance == null ){
-                    _instance = new GameObject("Settings").AddComponent<Settings>();
-                }
+                _instance = new Settings();
             }
             return _instance;
         }
     }
 
-    void Awake(){
-        if ( instance != this )
-            Destroy(gameObject);
-
-        DontDestroyOnLoad(this);
-
-        Physics.IgnoreLayerCollision(LayerMask.NameToLayer("Environment"), LayerMask.NameToLayer("Water"));
-    }
+    public Settings(){}
 }
