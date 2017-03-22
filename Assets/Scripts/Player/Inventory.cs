@@ -6,6 +6,8 @@ using System.Collections.Generic;
 // Manages player inventory based on weight and effects player movement speed
 public class Inventory : MonoBehaviour {
 
+    public bool debug = false;
+
     public float Weight {
         get {
             return weight;
@@ -27,9 +29,13 @@ public class Inventory : MonoBehaviour {
     }
     void Start(){
         CalculateWeight();
+
+        AddItem(new Equip("Hatchet","asdf",false,ItemType.equip,1f,"Icons/Weapons/Axes/default","Models/Weapons/Tools/Hatchet"),1);
     }
 
     public void AddItem(Item item, int amount){
+        if ( debug ) Debug.Log("Gained " + amount + " " + item.name);
+
         InventoryItem ii = GetInventoryItem(item);
         if ( ii != null && ii.item.stackable ){
             ii.amount += amount;
@@ -52,6 +58,9 @@ public class Inventory : MonoBehaviour {
                 inventoryItems.Remove(ii);
             }
         }
+    }
+    public InventoryItem GetInventoryItem(int index){
+        return inventoryItems[index];
     }
 
     private InventoryItem GetInventoryItem(Item item){

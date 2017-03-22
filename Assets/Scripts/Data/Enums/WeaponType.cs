@@ -4,6 +4,7 @@ public enum WeaponType {
     fists = 0,
     pistol = 1,
     sword = 2,
-    rifle = 3
+    rifle = 3,
+    hatchet = 4
 
 }

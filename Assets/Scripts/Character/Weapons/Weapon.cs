@@ -2,7 +2,7 @@
 using System.Collections;
 
 // Handles generic weapon logic
-[RequireComponent(typeof(Collider), typeof(Rigidbody))]
+[RequireComponent(typeof(Collider), typeof(Rigidbody), typeof(AudioSource))]
 public class Weapon : MonoBehaviour {
 
     [Header("-Weapon Info-")]
@@ -48,6 +48,12 @@ public class Weapon : MonoBehaviour {
     }
     // Check if weapon is melee, override on melee script
     public virtual bool isMelee {
+        get {
+            return false;
+        }
+    }
+    // Check if weapon is a tool
+    public virtual bool isTool {
         get {
             return false;
         }
