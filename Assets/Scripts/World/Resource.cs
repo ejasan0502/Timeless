@@ -4,7 +4,7 @@ using System.Collections;
 // A resource object in world
 public class Resource : MonoBehaviour {
 
-    public Item resource;
+    public string resourceId;
     public int amount;
     public float maxHealth = 100f;
 

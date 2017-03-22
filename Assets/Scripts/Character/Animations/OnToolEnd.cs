@@ -17,7 +17,7 @@ public class OnToolEnd : StateMachineBehaviour {
                 Resource resource = hit.collider.GetComponent<Resource>();
                 int amt = resource.Hit(character.MeleeDamage);
 
-                inventory.AddItem(resource.resource, amt);
+                inventory.AddItem(resource.resourceId, amt);
             }
         }
     }

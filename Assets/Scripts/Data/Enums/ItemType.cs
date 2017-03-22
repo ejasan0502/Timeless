@@ -3,6 +3,7 @@
     resource,
     material,
     consumable,
-    equip
+    equip,
+    block
 
 }

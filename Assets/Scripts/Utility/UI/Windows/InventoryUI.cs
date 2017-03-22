@@ -17,16 +17,14 @@ public class InventoryUI : UI {
 
     private float x, y;
     private RectTransform rt, rt2;
-    private UserInput user;
     private int selectedIndex = 0;
 
-    void Awake(){
+    protected override void Awake(){
+        base.Awake();
+
         if ( !content ) content = transform.GetChild(0).GetChild(0) as RectTransform;
         if ( !inventory ) {
             inventory = GameObject.FindWithTag("Player").GetComponent<Inventory>();
-            if ( inventory ){
-                user = inventory.GetComponent<UserInput>();
-            }
         }
         if ( !menu ){
             menu = transform.GetChild(2) as RectTransform;
@@ -41,15 +39,11 @@ public class InventoryUI : UI {
     void OnEnable(){
         UpdateUI();
 
-        if ( user ){
-            user.SetInputControls(false);
-        }
+        SetInputControls(false);
     }
     void OnDisable(){
         SetMenuDisplay(-1,false);
-        if ( user ){
-            user.SetInputControls(true);
-        }
+        SetInputControls(true);
     }   
 
     // Create icon into content list
