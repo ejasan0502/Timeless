@@ -78,11 +78,12 @@ public class CraftingUI : UI {
             content.sizeDelta = new Vector2(content.sizeDelta.x, rt2.rect.height*Mathf.FloorToInt(craftItems.Count/(rt.rect.width/rt2.rect.width)));
         }
     }
+
     // Update crafting queue ui
-    private void UpdateCraftingUI(){
+    public void UpdateCraftingUI(){
         for (int i = 0; i < craftingQueue.childCount; i++){
             Image icon = craftingQueue.GetChild(i).GetComponent<Image>();
-            Text amtText = craftingQueue.GetChild(i).GetChild(0).GetChild(0).GetComponent<Text>();
+            Text amtText = craftingQueue.GetChild(i).GetChild(0).GetComponent<Text>();
 
             if ( i < craftManager.crafting.Count ){
                 icon.sprite = ItemManager.instance.GetItem(craftManager.crafting[i].recipe.productId).Icon;
@@ -93,7 +94,10 @@ public class CraftingUI : UI {
             }
         }
     }
-
+    // Update current craft item
+    public void UpdateCurrentCraft(float fill){
+        craftingQueue.GetChild(0).GetChild(1).GetComponent<Image>().fillAmount = fill;
+    }
     // Set the current craftManager
     public void SetCraftManager(CraftManager cm){
         craftManager = cm;

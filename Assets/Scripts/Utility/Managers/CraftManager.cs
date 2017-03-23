@@ -22,12 +22,14 @@ public class CraftManager : MonoBehaviour {
     public List<Recipe> recipes { get; private set; }
     
     private Inventory inventory;
+    private CraftingUI craftingUI;
 
     private bool isCrafting = false;
     private float currentIncrement = 0;
 
     void Awake(){
         inventory = GetComponent<Inventory>();
+        craftingUI = CraftingUI.instance;
 
         crafting = new List<CraftItem>();
         recipes = new List<Recipe>();
@@ -50,13 +52,17 @@ public class CraftManager : MonoBehaviour {
                 yield return new WaitForSeconds(1f);
                 // Progress timer for current crafting queue
                 currentIncrement += 1;
+                craftingUI.UpdateCurrentCraft(currentIncrement/crafting[0].recipe.craftTime);
                 if ( currentIncrement >= crafting[0].recipe.craftTime ){
                     Debug.Log("Crafted " + crafting[0].recipe.productId);
                     inventory.AddItem(crafting[0].recipe.productId,1);
                     currentIncrement = 0;
+                    craftingUI.UpdateCurrentCraft(currentIncrement/crafting[0].recipe.craftTime);
+
                     crafting[0].amount -= 1;
                     if ( crafting[0].amount < 1 ){
                         crafting.RemoveAt(0);
+                        craftingUI.UpdateCraftingUI();
                     }
                 }
             } else {
