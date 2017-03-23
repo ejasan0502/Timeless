@@ -13,6 +13,8 @@ public class InventoryUI : UI {
     public RectTransform info;
     public Inventory inventory;
 
+    public float planeDist { get; private set; }
+
     private List<RectTransform> inventoryItemUIs = new List<RectTransform>();
 
     private float x, y;
@@ -31,6 +33,7 @@ public class InventoryUI : UI {
         
         rt = transform as RectTransform;
         rt2 = inventoryItemRef.transform as RectTransform;
+        planeDist = transform.parent.GetComponent<Canvas>().planeDistance;
 
         key = KeyCode.I;
     }
@@ -59,6 +62,7 @@ public class InventoryUI : UI {
         InventoryItemUI iiu = o.GetComponent<InventoryItemUI>();
         iiu.inventoryUI = this;
         iiu.index = inventoryItemUIs.Count;
+        iiu.originalPos = ((RectTransform)o.transform).anchoredPosition3D;
 
         inventoryItemUIs.Add(o.transform as RectTransform);
     }
@@ -126,7 +130,7 @@ public class InventoryUI : UI {
                 WeaponHandler weaponHandler = inventory.GetComponent<WeaponHandler>();
                 if ( weaponHandler ){
                     Equip e = ii.item as Equip;
-                    weaponHandler.AddWeapon(e.modelPath);
+                    weaponHandler.AddWeapon(weaponHandler.nextAvailableIndex,e.modelPath);
 
                     SetInfoDisplay(-1,false);
                     SetMenuDisplay(-1,false);

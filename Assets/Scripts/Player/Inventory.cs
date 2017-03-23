@@ -28,6 +28,9 @@ public class Inventory : MonoBehaviour {
         character = GetComponent<Character>();
     }
     void Start(){
+        AddItem("block-0",100);
+        AddItem("equip-1",1);
+
         CalculateWeight();
     }
 
@@ -113,6 +116,10 @@ public class Inventory : MonoBehaviour {
                 currentAmount = 0;
             }
         }
+    }
+    // Remove inventory item from inventory
+    public void Remove(InventoryItem ii){
+        inventoryItems.Remove(ii);
     }
     // Get inventory item from inventory based on index
     public InventoryItem GetInventoryItem(int index){

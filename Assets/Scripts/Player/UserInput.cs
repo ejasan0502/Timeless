@@ -39,7 +39,7 @@ public class UserInput : MonoBehaviour {
             Movement();
 
             HideViewCursor();
-            WeaponSwitch();
+            Hotkeys();
         }
     }
 
@@ -164,23 +164,42 @@ public class UserInput : MonoBehaviour {
         }
     }
     // Handle weapon switching
-    private void WeaponSwitch(){
+    private void Hotkeys(){
         if ( !weaponHandler ) return;
 
-        KeyCode keyPressed = GetKeyDown(KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4);
+        KeyCode keyPressed = GetKeyDown(KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5,
+                                        KeyCode.Alpha6, KeyCode.Alpha7, KeyCode.Alpha8, KeyCode.Alpha9, KeyCode.Alpha0);
         if ( keyPressed != KeyCode.None ){
             switch (keyPressed){
             case KeyCode.Alpha1:
-            weaponHandler.Equip(0);
-            break;
-            case KeyCode.Alpha2:
             weaponHandler.Equip(1);
             break;
-            case KeyCode.Alpha3:
+            case KeyCode.Alpha2:
             weaponHandler.Equip(2);
             break;
-            case KeyCode.Alpha4:
+            case KeyCode.Alpha3:
             weaponHandler.Equip(3);
+            break;
+            case KeyCode.Alpha4:
+            weaponHandler.Equip(4);
+            break;
+            case KeyCode.Alpha5:
+            weaponHandler.Equip(5);
+            break;
+            case KeyCode.Alpha6:
+            weaponHandler.Equip(6);
+            break;
+            case KeyCode.Alpha7:
+            weaponHandler.Equip(7);
+            break;
+            case KeyCode.Alpha8:
+            weaponHandler.Equip(8);
+            break;
+            case KeyCode.Alpha9:
+            weaponHandler.Equip(9);
+            break;
+            case KeyCode.Alpha0:
+            weaponHandler.Equip(0);
             break;
             }
         }

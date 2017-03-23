@@ -11,6 +11,7 @@ public class Item {
     public ItemType itemType;
     public float weight;
     public string iconPath;
+    public string modelPath;
 
     private Sprite icon = null;
     public Sprite Icon {
@@ -33,13 +34,14 @@ public class Item {
         }
     }
 
-    public Item(string name, string id, bool stackable, ItemType itemType, float weight, string iconPath){
+    public Item(string name, string id, bool stackable, ItemType itemType, float weight, string iconPath, string modelPath){
         this.name = name;
         this.id = id;
         this.stackable = stackable;
         this.itemType = itemType;
         this.weight = weight;
         this.iconPath = iconPath;
+        this.modelPath = modelPath;
     }
     public Item(Item item){
         FieldInfo[] fields1 = GetType().GetFields();

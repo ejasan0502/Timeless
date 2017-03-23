@@ -7,22 +7,31 @@ public class WeaponHandler : MonoBehaviour {
 
     public Weapon currentWeapon {
         get {
-            return weaponIndex < weapons.Count && weaponIndex >= 0 ? weapons[weaponIndex] : null;
+            return weaponIndex < weapons.Length && weaponIndex >= 0 ? weapons[weaponIndex] : null;
         }
     }
     public CharacterModel charModel { get; private set; }
-
-    public List<Weapon> weapons = new List<Weapon>();
+    public Weapon[] weapons { get; private set; }
 
     private Animator anim;
     public int weaponIndex = -1;
+    public int nextAvailableIndex { 
+        get {
+            for (int i = 0; i < weapons.Length; i++){
+                if ( weapons[i] == null ) return i;
+            }
+            return -1;
+        }
+    }
 
     void Awake(){
         charModel = GetComponentInChildren<CharacterModel>();
         anim = GetComponent<Animator>();
+
+        weapons = new Weapon[10];
     }
     void Start(){
-        AddWeapon("Models/Weapons/Tools/Hatchet");
+        //AddWeapon("Models/Weapons/Tools/Hatchet");
     }
 
     // Instantiate and place weapon object to hands, Update animator
@@ -33,13 +42,17 @@ public class WeaponHandler : MonoBehaviour {
             currentWeapon.Unequip(charModel);
         }
 
-        weaponIndex = index;
-        if ( weaponIndex >= weapons.Count ) weaponIndex = 0;
+        Debug.Log("Equipping index " + index);
+        if ( weapons[index] != null ){
+            weaponIndex = index;
 
-        Weapon weapon = weapons[weaponIndex];
-        weapon.Equip(charModel.rightHand);
+            Weapon weapon = weapons[weaponIndex];
+            weapon.Equip(charModel.rightHand);
 
-        anim.SetInteger(Settings.instance.anim_weapon_type, (int)currentWeapon.weaponType);
+            anim.SetInteger(Settings.instance.anim_weapon_type, (int)currentWeapon.weaponType);
+        } else {
+            anim.SetInteger(Settings.instance.anim_weapon_type, 0);
+        }
     }
     // Unequip current weapon
     public void Unequip(){
@@ -51,17 +64,20 @@ public class WeaponHandler : MonoBehaviour {
             weaponIndex = -1;
         }
     }
-    // Add weapon to list
-    public void AddWeapon(string path){
+    // Add weapon to list, return index of equip
+    public void AddWeapon(int index, string path){
+        if ( index == -1 ) return;
+
+        Debug.Log("Adding weapon to handler ("+path+") with index of " + index);
         GameObject o = (GameObject) Instantiate(Resources.Load(path));
 
         Weapon weapon = o.GetComponent<Weapon>();
         weapon.SetAnim(anim);
         weapon.Unequip(charModel);
-        weapons.Add(weapon);
+        weapons[index] = weapon;
 
         if ( weaponIndex == -1 ){
-            Equip(0);
+            Equip(index);
         }
     }
 }

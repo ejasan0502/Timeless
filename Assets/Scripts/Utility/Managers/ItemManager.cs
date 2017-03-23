@@ -58,10 +58,10 @@ public class ItemManager {
             new Equip("Handgun","equip-1",false,ItemType.equip,1f,"Icons/Weapons/Pistols/default","Models/Weapons/Pistols/Handgun")
         };
         materials = new List<Item>(){
-            new Item("Wood Plank","material-0",true,ItemType.material,0.01f,"Icons/Materials/wood_plank")
+            new Item("Wood Plank","material-0",true,ItemType.material,0.01f,"Icons/Materials/wood_plank","")
         };
         resources = new List<Item>(){
-            new Item("Wood","resource-0",true,ItemType.resource,0.01f,"Icons/Resources/wood")
+            new Item("Wood","resource-0",true,ItemType.resource,0.01f,"Icons/Resources/wood","")
         };
         blocks = new List<ItemBlock>(){
             new ItemBlock("Wood Block","block-0",true,ItemType.block,0.01f,"Icons/Blocks/wood_block","Models/Blocks/Wood_Block",100f)
