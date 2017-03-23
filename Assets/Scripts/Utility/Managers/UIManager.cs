@@ -9,6 +9,7 @@ public class UIManager : MonoBehaviour {
     public UI[] uiElements;
 
     private UserInput user;
+    private bool displayingUI = false;
 
     private static UIManager _instance;
     public static UIManager instance {
@@ -45,10 +46,12 @@ public class UIManager : MonoBehaviour {
                 }
             }
 
-            if ( Input.GetKeyUp(KeyCode.Escape) ){
-                foreach (UI ui in uiElements){
-                    if ( ui.key != KeyCode.None ){
-                        Display(ui,false);
+            if ( displayingUI ){
+                if ( Input.GetKeyUp(KeyCode.Escape) ){
+                    foreach (UI ui in uiElements){
+                        if ( ui.key != KeyCode.None ){
+                            Display(ui,false);
+                        }
                     }
                 }
             }
@@ -73,9 +76,11 @@ public class UIManager : MonoBehaviour {
 
             if ( enableControls ){
                 user.SetInputControls(true);
+                displayingUI = false;
             }
         } else {
             user.SetInputControls(false);
+            displayingUI = true;
         }
     }
 
