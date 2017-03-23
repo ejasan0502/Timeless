@@ -7,6 +7,7 @@ public class Resource : MonoBehaviour {
     public string resourceId;
     public int amount;
     public float maxHealth = 100f;
+    public AudioClip hitSound;
 
     private float health = 100f;
     private float prevHealth;
@@ -20,12 +21,13 @@ public class Resource : MonoBehaviour {
     public int Hit(float x){
         health -= x;
 
+
         float percent = (prevHealth/maxHealth) - (health/maxHealth);
         int amt = Mathf.RoundToInt(percent * amount);
         prevHealth = health;
 
         if ( health < 1 ){
-            Destroy(gameObject);
+            Destroy(transform.parent.gameObject);
             return amt;
         }
         return amt;

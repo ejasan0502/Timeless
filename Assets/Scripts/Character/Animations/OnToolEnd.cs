@@ -17,6 +17,8 @@ public class OnToolEnd : StateMachineBehaviour {
                 Resource resource = hit.collider.GetComponent<Resource>();
                 int amt = resource.Hit(character.MeleeDamage);
 
+                animator.GetComponent<WeaponHandler>().currentWeapon.GetComponent<AudioSource>().PlayOneShot(resource.hitSound);
+
                 inventory.AddItem(resource.resourceId, amt);
             }
         }

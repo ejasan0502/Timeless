@@ -209,8 +209,8 @@ public class CharacterMovement : MonoBehaviour {
             if ( !audioSource.isPlaying ){
                 audioSource.Play();
             }
-        } else {
-            audioSource.Stop();
+        } else if ( IsGrounded && (forward == 0 && strafe == 0) ){
+            audioSource.Pause();
         }
 
         anim.SetFloat(Settings.instance.anim_velocity_x, strafe);
