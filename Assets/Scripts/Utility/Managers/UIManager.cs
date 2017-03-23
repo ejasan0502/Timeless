@@ -8,6 +8,8 @@ public class UIManager : MonoBehaviour {
 
     public UI[] uiElements;
 
+    private UserInput user;
+
     private static UIManager _instance;
     public static UIManager instance {
         get {
@@ -22,6 +24,8 @@ public class UIManager : MonoBehaviour {
         if ( instance != this ) Destroy(gameObject);
 
         DontDestroyOnLoad(this);
+
+        user = GameObject.FindWithTag("Player").GetComponent<UserInput>();
 
         GatherUIElements();
     }
@@ -58,6 +62,21 @@ public class UIManager : MonoBehaviour {
     // Show/Hide given ui element
     private void Display(UI ui, bool b){
         ui.gameObject.SetActive(b);
+
+        if ( !b ){
+            bool enableControls = true;
+            foreach (UI uiElement in uiElements){
+                if ( uiElement.hideOnStart && uiElement.gameObject.activeSelf ){
+                    enableControls = false;
+                }
+            }
+
+            if ( enableControls ){
+                user.SetInputControls(true);
+            }
+        } else {
+            user.SetInputControls(false);
+        }
     }
 
     // Displays or hides a uiElement of given name

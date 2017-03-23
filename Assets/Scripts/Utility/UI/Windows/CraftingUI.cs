@@ -28,9 +28,7 @@ public class CraftingUI : UI {
         }
     }
 
-    protected override void Awake(){
-        base.Awake();
-
+    void Awake(){
         if ( CraftingUI.instance != this ) Destroy(gameObject);
         if ( !content ) content = transform.GetChild(0).GetChild(0) as RectTransform;
         if ( !infoText ) infoText = transform.GetChild(2).GetChild(0).GetComponent<Text>();
@@ -45,12 +43,10 @@ public class CraftingUI : UI {
         }
 
         UpdateUI();
-        SetInputControls(false);
     }
     void OnDisable(){
         craftManager = null;
         infoText.text = "";
-        SetInputControls(true);
     }
 
     // Create the list of recipes, indicates which recipes are craftable
@@ -62,7 +58,7 @@ public class CraftingUI : UI {
             craftItems = new List<GameObject>();
         }
 
-        if ( craftManager != null ){
+        if ( craftManager != null && craftManager.recipes != null ){
             float y = -rt2.rect.height/2.00f;
             for (int i = 0; i < craftManager.recipes.Count; i++){
                 GameObject o = (GameObject) Instantiate(craftItemUI, Vector3.zero, Quaternion.identity, content);

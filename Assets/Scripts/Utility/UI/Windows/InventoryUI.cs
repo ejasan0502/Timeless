@@ -19,9 +19,7 @@ public class InventoryUI : UI {
     private RectTransform rt, rt2;
     private int selectedIndex = 0;
 
-    protected override void Awake(){
-        base.Awake();
-
+    void Awake(){
         if ( !content ) content = transform.GetChild(0).GetChild(0) as RectTransform;
         if ( !inventory ) {
             inventory = GameObject.FindWithTag("Player").GetComponent<Inventory>();
@@ -38,12 +36,9 @@ public class InventoryUI : UI {
     }
     void OnEnable(){
         UpdateUI();
-
-        SetInputControls(false);
     }
     void OnDisable(){
         SetMenuDisplay(-1,false);
-        SetInputControls(true);
     }   
 
     // Create icon into content list

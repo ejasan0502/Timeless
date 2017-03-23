@@ -28,9 +28,11 @@ public class CraftManager : MonoBehaviour {
 
     void Awake(){
         inventory = GetComponent<Inventory>();
-        FillRecipeList();
 
         crafting = new List<CraftItem>();
+        recipes = new List<Recipe>();
+
+        FillRecipeList();
     }
     
     // Fill recipe list, For testing purposes, fill list with block recipes
