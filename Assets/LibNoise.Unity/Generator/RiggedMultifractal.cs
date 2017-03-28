@@ -11,16 +11,15 @@ namespace LibNoise.Unity.Generator
     /// <summary>
     /// Provides a noise module that outputs 3-dimensional ridged-multifractal noise. [GENERATOR]
     /// </summary>
-    [System.Serializable]
     public class RiggedMultifractal : ModuleBase
     {
         #region Fields
 
-        public double m_frequency = 1.0;
-        public double m_lacunarity = 2.0;
-        public QualityMode m_quality = QualityMode.Medium;
-        public int m_octaveCount = 6;
-        public int m_seed = 0;
+        private double m_frequency = 1.0;
+        private double m_lacunarity = 2.0;
+        private QualityMode m_quality = QualityMode.Medium;
+        private int m_octaveCount = 6;
+        private int m_seed = 0;
         private double[] m_weights = new double[Utils.OctavesMaximum];
 
         #endregion

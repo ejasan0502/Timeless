@@ -34,7 +34,7 @@ namespace LibNoise.Unity
         private int m_width = 0;
         private int m_height = 0;
         private float m_borderValue = float.NaN;
-        private float[,] m_data = null;
+        public float[,] m_data = null;
         private ModuleBase m_generator = null;
 
         #endregion

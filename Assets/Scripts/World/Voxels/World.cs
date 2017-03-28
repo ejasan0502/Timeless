@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using LibNoise.Unity;
+using LibNoise.Unity.Generator;
 
 public class World : MonoBehaviour {
 
@@ -9,6 +12,8 @@ public class World : MonoBehaviour {
 
     public Chunk[,,] chunks { get; private set; }
 
+    private List<Vector3> debugVerts = new List<Vector3>();
+
     void Awake(){
         chunks = new Chunk[worldSize.x,worldSize.y,worldSize.z];
     }
@@ -17,20 +22,10 @@ public class World : MonoBehaviour {
     }
     void OnDrawGizmos(){
         if ( debug ){
-            Gizmos.color = Color.black;
-            if ( chunks != null && chunks.Length > 0 ){
-                foreach (Chunk c in chunks){
-                    if ( c != null ){
-                        if ( c.blocks != null ){
-                            foreach (Block b in c.blocks){
-                                if ( b.vertices != null && b.vertices.Length > 0 ){
-                                    foreach (Vector3 v in b.vertices){
-                                        Gizmos.DrawSphere(v, 0.1f);
-                                    }
-                                }
-                            }
-                        }
-                    }
+            Gizmos.color = Color.red;
+            if ( debugVerts.Count > 0 ){
+                foreach (Vector3 v in debugVerts){
+                    Gizmos.DrawSphere(v, 0.1f);
                 }
             }
         }
@@ -60,6 +55,47 @@ public class World : MonoBehaviour {
 
         // Prep chunks and blocks for mesh creation
         SetupNeighbors();
+
+        // Apply noise
+        int width = worldSize.x*chunkSize.x;
+        int height = worldSize.y*chunkSize.y;
+        int length = worldSize.z*chunkSize.z;
+        float dampen = 0.25f;
+        
+        Noise2D noise2d = new Noise2D(width,length,new Perlin());
+        noise2d.GeneratePlanar(-1, 1, -1, 1);
+
+        int xMulti = 0, yMulti = 0, zMulti = 0;
+        int X = 0, Y = 0, Z = 0;
+        for (int y = 0; y < height; y++){
+            zMulti = 0;
+            if ( y != 0 && y%chunkSize.y == 0 ){
+                yMulti++;
+            }
+            Y = y - chunkSize.y*yMulti;
+
+            for (int z = 0; z < length; z++){
+                xMulti = 0;
+                if ( z != 0 && z%chunkSize.z == 0 ){
+                    zMulti++;
+                }
+                Z = z - chunkSize.z*zMulti;
+
+                for (int x = 0; x < width; x++){
+                    if ( x != 0 && x%chunkSize.x == 0 ){
+                        xMulti++;
+                    }
+                    X = x - chunkSize.x*xMulti;
+
+                    float noise = noise2d.m_data[x,z]*height;
+                    if ( debug ) debugVerts.Add(new Vector3(x,noise*dampen,z));
+
+                    if ( chunks[xMulti,yMulti,zMulti].blocks[X,Y,Z].scenePos.y > noise*dampen ){
+                        chunks[xMulti,yMulti,zMulti].blocks[X,Y,Z].isEmpty = true;
+                    }
+                }
+            }
+        }
 
         // Loop through all chunks and create/update meshes
         foreach (Chunk c in chunks){

@@ -3,6 +3,7 @@ using System.Collections;
 
 public class Block {
 
+    public Vector3 scenePos;
     public Point chunkPos;
     public bool isEmpty;
     public Block[] neighbors;

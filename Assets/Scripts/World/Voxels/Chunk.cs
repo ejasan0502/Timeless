@@ -43,6 +43,7 @@ public class Chunk {
     // Create block with center and position in chunk
     public void CreateBlock(Vector3 scenePos, int x, int y, int z){
         blocks[x,y,z] = new Block();
+        blocks[x,y,z].scenePos = scenePos;
         blocks[x,y,z].chunkPos = new Point(x,y,z);
         
         List<Vector3> vertices = new List<Vector3>();
@@ -121,9 +122,12 @@ public class Chunk {
         List<Vector3> vertices = new List<Vector3>();
         List<int> triangles = new List<int>();
         foreach (Block b in blocks){
+            // SKip this block if its empty
+            if ( b.isEmpty ) continue;
+
             for (int i = 0; i < b.neighbors.Length; i++){
                 int v = vertices.Count;
-                if ( b.neighbors[i] == null ){
+                if ( b.neighbors[i] == null || b.neighbors[i].isEmpty ){
                     // Grab vertices from BlockFaceVertTable by looping through the list of int provided
                     for (int j = 0; j < BlockFaceVertTable[i].Length; j++){
                         int index = BlockFaceVertTable[i][j];
