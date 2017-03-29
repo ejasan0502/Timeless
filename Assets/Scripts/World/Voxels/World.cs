@@ -8,6 +8,8 @@ public class World : MonoBehaviour {
 
     [Header("Performance Settings")]
     public float distanceFromCamera = 10;
+    public float updateChunksThreshold = 5;
+    public float updateChunksFrequency = 10;
 
     [Header("World Settings")]
     [Range(0.01f,1f)] public float scale = 0.5f;
@@ -20,12 +22,17 @@ public class World : MonoBehaviour {
     private Noise2D noise2d;
     private List<Chunk> visibleChunks = new List<Chunk>();
     private List<Chunk> chunksToRemove = new List<Chunk>();
+    private Vector3 prevCamPos;
 
     void Awake(){
+        prevCamPos = Camera.main.transform.position;
         chunks = new Chunk[worldSize.x,worldSize.y,worldSize.z];
     }
     void Start(){
         Create();
+    }
+    void OnDisable(){
+        StopCoroutine("UpdateChunks");
     }
 
     // Create the world by looping through chunks, X -> Z -> Y
@@ -45,6 +52,9 @@ public class World : MonoBehaviour {
         GenerateChunks();
 
         Debug.Log("World generated in " + Time.realtimeSinceStartup + " seconds.");
+
+        // Update chunks at a regular basis
+        StartCoroutine(UpdateChunks());
     }
     // Create a chunk at position in world
     private Chunk CreateChunk(Vector3 scenePos, int X, int Y, int Z){
@@ -129,41 +139,53 @@ public class World : MonoBehaviour {
     }
     // Apply noise to terrain
     private void ApplyNoise(){
-        int width = worldSize.x*chunkSize.x;
-        int height = worldSize.y*chunkSize.y;
-        int length = worldSize.z*chunkSize.z;
+        foreach (Chunk c in visibleChunks){
+            foreach (Block b in c.blocks){
+                int x = chunkSize.x*c.worldPos.x + b.chunkPos.x;
+                int z = chunkSize.z*c.worldPos.z + b.chunkPos.z;
 
-        int xMulti = 0, yMulti = 0, zMulti = 0;
-        int X = 0, Y = 0, Z = 0;
-        for (int y = 0; y < height; y++){
-            zMulti = 0;
-            if ( y != 0 && y%chunkSize.y == 0 ){
-                yMulti++;
-            }
-            Y = y - chunkSize.y*yMulti;
-
-            for (int z = 0; z < length; z++){
-                xMulti = 0;
-                if ( z != 0 && z%chunkSize.z == 0 ){
-                    zMulti++;
-                }
-                Z = z - chunkSize.z*zMulti;
-
-                for (int x = 0; x < width; x++){
-                    if ( x != 0 && x%chunkSize.x == 0 ){
-                        xMulti++;
-                    }
-                    X = x - chunkSize.x*xMulti;
-
-                    float noise = noise2d.m_data[x,z]*height;
-
-                    if ( chunks[xMulti,yMulti,zMulti] != null &&
-                         chunks[xMulti,yMulti,zMulti].blocks[X,Y,Z].scenePos.y > noise*scale ){
-                        chunks[xMulti,yMulti,zMulti].blocks[X,Y,Z].isEmpty = true;
-                    }
+                float noise = noise2d.m_data[x,z]*(worldSize.y*chunkSize.y);
+                if ( b.scenePos.y > noise*scale ){
+                    b.isEmpty = true;
                 }
             }
         }
+
+        //int width = worldSize.x*chunkSize.x;
+        //int height = worldSize.y*chunkSize.y;
+        //int length = worldSize.z*chunkSize.z;
+
+        //int xMulti = 0, yMulti = 0, zMulti = 0;
+        //int X = 0, Y = 0, Z = 0;
+        //for (int y = 0; y < height; y++){
+        //    zMulti = 0;
+        //    if ( y != 0 && y%chunkSize.y == 0 ){
+        //        yMulti++;
+        //    }
+        //    Y = y - chunkSize.y*yMulti;
+
+        //    for (int z = 0; z < length; z++){
+        //        xMulti = 0;
+        //        if ( z != 0 && z%chunkSize.z == 0 ){
+        //            zMulti++;
+        //        }
+        //        Z = z - chunkSize.z*zMulti;
+
+        //        for (int x = 0; x < width; x++){
+        //            if ( x != 0 && x%chunkSize.x == 0 ){
+        //                xMulti++;
+        //            }
+        //            X = x - chunkSize.x*xMulti;
+
+        //            float noise = noise2d.m_data[x,z]*height;
+
+        //            if ( chunks[xMulti,yMulti,zMulti] != null &&
+        //                 chunks[xMulti,yMulti,zMulti].blocks[X,Y,Z].scenePos.y > noise*scale ){
+        //                chunks[xMulti,yMulti,zMulti].blocks[X,Y,Z].isEmpty = true;
+        //            }
+        //        }
+        //    }
+        //}
     }
     // Generate chunks based on distance from camera
     private void GenerateChunks(){
@@ -189,6 +211,9 @@ public class World : MonoBehaviour {
                         if ( chunks[x,y,z] == null ){
                             // Create chunk
                             visibleChunks.Add( CreateChunk(pos,x,y,z) );
+                        } else {
+                            // Place chunk inside visibleChunks
+                            visibleChunks.Add( chunks[x,y,z] );
                         }
                     }
 
@@ -228,6 +253,21 @@ public class World : MonoBehaviour {
         foreach (Chunk c in visibleChunks){
             if ( c != null && c.gameObject == null ){
                 c.UpdateMesh();
+            }
+        }
+    }
+    // Coroutine that updates visible chunks based on camera position by a rate
+    private IEnumerator UpdateChunks(){
+        while (true){
+            yield return new WaitForSeconds(updateChunksFrequency);
+
+            // Check if camera position has moved beyond the threshold
+            if ( Vector3.Distance(Camera.main.transform.position,prevCamPos) > updateChunksThreshold ){
+                // Update chunks
+                GenerateChunks();
+
+                // Update prevCamPos
+                prevCamPos = Camera.main.transform.position;
             }
         }
     }
