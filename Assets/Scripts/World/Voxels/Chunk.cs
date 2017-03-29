@@ -29,17 +29,48 @@ public class Chunk {
     };
 
     public Point worldPos;
+    public Vector3 scenePos;
     public Block[,,] blocks { get; private set; }
     public Chunk[] neighbors;
     public MeshData meshData;
     public GameObject gameObject;
+    public bool blocksInitialized;
+    public bool noiseInitialized;
 
     public Chunk(int width, int height, int length){
         blocks = new Block[width,height,length];
         neighbors = new Chunk[6];
         meshData = new MeshData();
+
+        blocksInitialized = false;
+        noiseInitialized = false;
     }
 
+    // Create all blocks
+    public void CreateBlocks(){
+        Point chunkSize = new Point(blocks.GetLength(0), blocks.GetLength(1), blocks.GetLength(2));
+
+        Vector3 startPos = Vector3.zero;
+        startPos.x = scenePos.x - chunkSize.x*0.5f + 0.5f;
+        startPos.y = scenePos.y - chunkSize.y*0.5f + 0.5f;
+        startPos.z = scenePos.z - chunkSize.z*0.5f + 0.5f;
+
+        Vector3 pos = startPos;
+        for (int y = 0; y < chunkSize.y; y++){
+            for (int z = 0; z < chunkSize.z; z++){
+                for (int x = 0; x < chunkSize.x; x++){
+                    CreateBlock(pos,x,y,z);
+                    pos.x += 1f;
+                }
+                pos.x = startPos.x;
+                pos.z += 1f;
+            }
+            pos.z = startPos.z;
+            pos.y += 1f;
+        }
+
+        blocksInitialized = true;
+    }
     // Create block with center and position in chunk
     public void CreateBlock(Vector3 scenePos, int x, int y, int z){
         blocks[x,y,z] = new Block();
@@ -63,6 +94,8 @@ public class Chunk {
             for (int z = 0; z < length; z++){
                 for (int x = 0; x < width; x++){
                     for (int i = 0; i < blocks[x,y,z].neighbors.Length; i++){
+                        if ( blocks[x,y,z].neighbors[i] != null ) continue;
+
                         // Make sure to check inside the chunk and neighboring chunks for neighboring blocks
                         switch (i){
                             case (int)Face.front:

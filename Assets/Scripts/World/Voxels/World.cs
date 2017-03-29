@@ -23,6 +23,7 @@ public class World : MonoBehaviour {
     private List<Chunk> visibleChunks = new List<Chunk>();
     private List<Chunk> chunksToRemove = new List<Chunk>();
     private Vector3 prevCamPos;
+    private float updateChunkStartTime = 0f;
 
     void Awake(){
         prevCamPos = Camera.main.transform.position;
@@ -31,8 +32,14 @@ public class World : MonoBehaviour {
     void Start(){
         Create();
     }
-    void OnDisable(){
-        StopCoroutine("UpdateChunks");
+    void Update(){
+        //if ( Time.time - updateChunkStartTime > updateChunksFrequency ){
+        //    if ( Vector3.Distance(Camera.main.transform.position,prevCamPos) > updateChunksThreshold ){
+        //        GenerateChunks();
+        //        prevCamPos = Camera.main.transform.position;
+        //        updateChunkStartTime = Time.time;
+        //    }
+        //}
     }
 
     // Create the world by looping through chunks, X -> Z -> Y
@@ -48,45 +55,18 @@ public class World : MonoBehaviour {
             return;
         }
 
+        // Initialize chunk positions
+        InitializeChunks();
+
         // Create chunks based on camera distance
         GenerateChunks();
 
         Debug.Log("World generated in " + Time.realtimeSinceStartup + " seconds.");
-
-        // Update chunks at a regular basis
-        StartCoroutine(UpdateChunks());
-    }
-    // Create a chunk at position in world
-    private Chunk CreateChunk(Vector3 scenePos, int X, int Y, int Z){
-        // Initialize chunk
-        chunks[X,Y,Z] = new Chunk(chunkSize.x,chunkSize.y,chunkSize.z);
-        chunks[X,Y,Z].worldPos = new Point(X,Y,Z);
-
-        // Create all blocks in chunk
-        Vector3 startPos = Vector3.zero;
-        startPos.x = scenePos.x - chunkSize.x*0.5f + 0.5f;
-        startPos.y = scenePos.y - chunkSize.y*0.5f + 0.5f;
-        startPos.z = scenePos.z - chunkSize.z*0.5f + 0.5f;
-
-        Vector3 pos = startPos;
-        for (int y = 0; y < chunkSize.y; y++){
-            for (int z = 0; z < chunkSize.z; z++){
-                for (int x = 0; x < chunkSize.x; x++){
-                    chunks[X,Y,Z].CreateBlock(pos,x,y,z);
-                    pos.x += 1f;
-                }
-                pos.x = startPos.x;
-                pos.z += 1f;
-            }
-            pos.z = startPos.z;
-            pos.y += 1f;
-        }
-        return chunks[X,Y,Z];
     }
     // Setup neighbors for chunks and blocks to make mesh creation/destruction easier
     private void SetupNeighbors(){
         // Loop through chunks in world
-        foreach (Chunk c in visibleChunks){
+        foreach (Chunk c in chunks){
             if ( c != null ){
                 SetupNeighbors(c);
             }
@@ -100,6 +80,7 @@ public class World : MonoBehaviour {
 
         // Setup neighbors for each chunk
         for (int i = 0; i < chunk.neighbors.Length; i++){
+            if ( chunk.neighbors[i] != null ) continue;
             switch (i){
                 case (int)Face.front:
                 if ( z-1 >= 0 && chunks[x,y,z-1] != null ){
@@ -133,13 +114,11 @@ public class World : MonoBehaviour {
                 break;
             }
         }
-
-        // Setup neighbors for each block in chunk
-        chunk.SetupNeighbors();
     }
     // Apply noise to terrain
     private void ApplyNoise(){
         foreach (Chunk c in visibleChunks){
+            if ( c.noiseInitialized ) continue;
             foreach (Block b in c.blocks){
                 int x = chunkSize.x*c.worldPos.x + b.chunkPos.x;
                 int z = chunkSize.z*c.worldPos.z + b.chunkPos.z;
@@ -149,6 +128,7 @@ public class World : MonoBehaviour {
                     b.isEmpty = true;
                 }
             }
+            c.noiseInitialized = true;
         }
 
         //int width = worldSize.x*chunkSize.x;
@@ -187,35 +167,23 @@ public class World : MonoBehaviour {
         //    }
         //}
     }
-    // Generate chunks based on distance from camera
-    private void GenerateChunks(){
-        // Reset visibleChunks
-        if ( visibleChunks.Count > 0 ){
-            chunksToRemove = new List<Chunk>(visibleChunks);
-            visibleChunks.Clear();
-        }
-
+    // Initialize chunks
+    private void InitializeChunks(){
         // Loop through the 3d array and fill it with chunks
         Vector3 startPos = Vector3.zero;
         startPos.x = -1*chunkSize.x*worldSize.x*0.5f + chunkSize.x*0.5f;
         startPos.y = -1*chunkSize.y*worldSize.y*0.5f + chunkSize.y*0.5f;
         startPos.z = -1*chunkSize.z*worldSize.z*0.5f + chunkSize.z*0.5f;
 
-        // Only create chunks based on distance from main camera
+        // Initialize all chunks but do not set up blocks
         Vector3 pos = startPos;
         for (int y = 0; y < worldSize.y; y++){
             for (int z = 0; z < worldSize.z; z++){
                 for (int x = 0; x < worldSize.x; x++){
                     // Check if chunk is around the player
-                    if ( Vector3.Distance(Camera.main.transform.position, pos) < distanceFromCamera ){
-                        if ( chunks[x,y,z] == null ){
-                            // Create chunk
-                            visibleChunks.Add( CreateChunk(pos,x,y,z) );
-                        } else {
-                            // Place chunk inside visibleChunks
-                            visibleChunks.Add( chunks[x,y,z] );
-                        }
-                    }
+                    chunks[x,y,z] = new Chunk(chunkSize.x,chunkSize.y,chunkSize.z);
+                    chunks[x,y,z].worldPos = new Point(x,y,z);
+                    chunks[x,y,z].scenePos = pos;
 
                     pos.x += chunkSize.x;
                 }
@@ -226,8 +194,54 @@ public class World : MonoBehaviour {
             pos.y += chunkSize.y;
         }
 
-        // Prep chunks and blocks for mesh creation
         SetupNeighbors();
+    }
+    // Generate chunks based on distance from camera
+    private void GenerateChunks(){
+        // Reset visibleChunks
+        if ( visibleChunks.Count > 0 ){
+            chunksToRemove = new List<Chunk>(visibleChunks);
+            visibleChunks.Clear();
+        }
+
+        //foreach (Chunk c in chunks){
+        //    if ( Vector3.Distance(Camera.main.transform.position, c.scenePos) < distanceFromCamera ){
+        //        if ( !c.blocksInitialized ) c.CreateBlocks();
+        //        visibleChunks.Add( c );
+        //    }
+        //}
+
+        // Make sure first chunk is initialized
+        Chunk firstChunk = GetChunkAt(Camera.main.transform.position);
+        firstChunk.CreateBlocks();
+        SetupNeighbors(firstChunk);
+        visibleChunks.Add(firstChunk);
+
+        // Continiously loop through the chunk neighbors until distance requirement is met
+        int count = 0;
+        List<Chunk> chunksToAdd = new List<Chunk>(firstChunk.neighbors);
+        List<Chunk> nextChunksToAdd = new List<Chunk>();
+        while ( count < distanceFromCamera ){
+            foreach (Chunk c in chunksToAdd){
+                if ( c == null || visibleChunks.Contains(c) ) continue;
+
+                if ( !c.blocksInitialized ){ 
+                    c.CreateBlocks();
+                }
+                visibleChunks.Add(c);
+
+                nextChunksToAdd.AddRange( c.neighbors );
+            }
+
+            chunksToAdd = new List<Chunk>(nextChunksToAdd);
+            nextChunksToAdd.Clear();
+            count++;
+        }
+
+        // Setup block neighbors
+        foreach (Chunk c in visibleChunks){
+            c.SetupNeighbors();
+        }
 
         // Apply noise
         ApplyNoise();
@@ -251,24 +265,23 @@ public class World : MonoBehaviour {
 
         // Loop through visibleChunks and create meshes
         foreach (Chunk c in visibleChunks){
-            if ( c != null && c.gameObject == null ){
-                c.UpdateMesh();
+            if ( c != null ){
+                if ( c.gameObject == null )
+                    c.UpdateMesh();
+                else
+                    c.gameObject.SetActive(true);
             }
         }
     }
-    // Coroutine that updates visible chunks based on camera position by a rate
-    private IEnumerator UpdateChunks(){
-        while (true){
-            yield return new WaitForSeconds(updateChunksFrequency);
 
-            // Check if camera position has moved beyond the threshold
-            if ( Vector3.Distance(Camera.main.transform.position,prevCamPos) > updateChunksThreshold ){
-                // Update chunks
-                GenerateChunks();
+    // Return chunk at scene position
+    private Chunk GetChunkAt(Vector3 position){
+        Point worldPos = new Point();
 
-                // Update prevCamPos
-                prevCamPos = Camera.main.transform.position;
-            }
-        }
+        worldPos.x = Mathf.FloorToInt( (position.x+chunkSize.x*worldSize.x*0.5f)/chunkSize.x );
+        worldPos.y = Mathf.FloorToInt( (position.y+chunkSize.y*worldSize.y*0.5f)/chunkSize.y );
+        worldPos.z = Mathf.FloorToInt( (position.z+chunkSize.z*worldSize.z*0.5f)/chunkSize.z );
+
+        return chunks[worldPos.x,worldPos.y,worldPos.z];
     }
 }
