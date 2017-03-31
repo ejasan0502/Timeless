@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using LibNoise.Unity;
+using LibNoise.Unity.Generator;
 
 public class Chunk {
 
@@ -165,6 +166,20 @@ public class Chunk {
 
             float noise = noise2d.m_data[x,z]*height;
             if ( b.scenePos.y > noise ){
+                b.isEmpty = true;
+            }
+        }
+    }
+    // Apply spherical noise to chunk
+    public void ApplyNoise(Perlin perlin, float scale, Vector3 center, float radius){
+        foreach (Block b in blocks){
+            Vector3 pos = Vector3.zero;
+            pos.x = center.x + b.scenePos.x/radius;
+            pos.y = center.y + b.scenePos.y/radius;
+            pos.z = center.z + b.scenePos.z/radius;
+
+            float noise = (float)perlin.GetValue(pos) * radius * scale;
+            if ( Vector3.Distance(b.scenePos,center) > noise+radius ){
                 b.isEmpty = true;
             }
         }
