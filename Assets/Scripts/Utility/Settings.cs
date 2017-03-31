@@ -26,6 +26,7 @@ public class Settings {
 
     [Header("-World Settings-")]
     public float spawn_point_radius = 20f;
+    public int maximum_vertices = 65000;
 
     [Header("-Resource Paths-")]
     public string path_icons = "Icons/";

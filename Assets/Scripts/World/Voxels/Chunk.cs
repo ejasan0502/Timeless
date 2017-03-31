@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using LibNoise.Unity;
 
 public class Chunk {
 
@@ -35,7 +36,6 @@ public class Chunk {
     public MeshData meshData;
     public GameObject gameObject;
     public bool blocksInitialized;
-    public bool noiseInitialized;
 
     public Chunk(int width, int height, int length){
         blocks = new Block[width,height,length];
@@ -43,10 +43,9 @@ public class Chunk {
         meshData = new MeshData();
 
         blocksInitialized = false;
-        noiseInitialized = false;
     }
 
-    // Create all blocks
+    // Create all blocks into a plane
     public void CreateBlocks(){
         Point chunkSize = new Point(blocks.GetLength(0), blocks.GetLength(1), blocks.GetLength(2));
 
@@ -82,6 +81,16 @@ public class Chunk {
             vertices.Add(scenePos + BlockVertexTable[i]*0.5f);
         }
         blocks[x,y,z].vertices = vertices.ToArray();
+    }
+    // Create blocks within a radius and a center point
+    public void CreateBlocks(Vector3 center, float radius){
+        CreateBlocks();
+
+        foreach (Block b in blocks){
+            if ( Vector3.Distance(b.scenePos,center) > radius ){
+                b.isEmpty = true;
+            }
+        }
     }
     // Setup block neighbors
     public void SetupNeighbors(){
@@ -146,6 +155,20 @@ public class Chunk {
             }
         }
     }
+    // Apply noise to chunk's blocks
+    public void ApplyNoise(Noise2D noise2d, float height){
+        Point chunkSize = new Point(blocks.GetLength(0), blocks.GetLength(1), blocks.GetLength(2));
+
+        foreach (Block b in blocks){
+            int x = chunkSize.x*worldPos.x + b.chunkPos.x;
+            int z = chunkSize.z*worldPos.z + b.chunkPos.z;
+
+            float noise = noise2d.m_data[x,z]*height;
+            if ( b.scenePos.y > noise ){
+                b.isEmpty = true;
+            }
+        }
+    }
     // Update meshData
     public void UpdateMesh(){
         // Make sure to clear previous mesh data
@@ -179,6 +202,11 @@ public class Chunk {
         meshData.vertices = vertices;
         meshData.triangles = triangles;
 
+        if ( meshData.vertices.Count > Settings.instance.maximum_vertices ){
+            Debug.LogError("Mesh contains too many vertices!");
+            return;
+        }
+
         // Check if we should create a new gameObject or update the existing one
         if ( gameObject == null ){
             // Create Mesh
@@ -193,7 +221,10 @@ public class Chunk {
             // Make sure to save gameObject to chunk
             gameObject = o;
         } else {
-            
+            Mesh m = meshData.CreateMesh("Chunk " + worldPos);
+
+            gameObject.GetComponent<MeshFilter>().mesh = m;
+            gameObject.GetComponent<MeshCollider>().sharedMesh = m;
         }
     }
 
