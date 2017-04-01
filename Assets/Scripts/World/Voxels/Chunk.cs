@@ -48,6 +48,7 @@ public class Chunk {
 
     // Create all blocks into a plane
     public void CreateBlocks(){
+        MarchingCubes marchingCubes = new MarchingCubes();
         Point chunkSize = new Point(blocks.GetLength(0), blocks.GetLength(1), blocks.GetLength(2));
 
         Vector3 startPos = Vector3.zero;
@@ -59,7 +60,8 @@ public class Chunk {
         for (int y = 0; y < chunkSize.y; y++){
             for (int z = 0; z < chunkSize.z; z++){
                 for (int x = 0; x < chunkSize.x; x++){
-                    CreateBlock(pos,x,y,z);
+                    marchingCubes.MarchCube(pos.x,pos.y,pos.z,1f);
+
                     pos.x += 1f;
                 }
                 pos.x = startPos.x;
@@ -68,6 +70,18 @@ public class Chunk {
             pos.z = startPos.z;
             pos.y += 1f;
         }
+
+        Mesh m = new Mesh();
+        m.name = "Chunk " + worldPos;
+        m.vertices = marchingCubes.GetVertices();
+        m.triangles = marchingCubes.GetIndices();
+        m.RecalculateBounds();
+        m.RecalculateNormals();
+
+        GameObject o = new GameObject("Chunk " + worldPos);
+        o.AddComponent<MeshFilter>().mesh = m;
+        o.AddComponent<MeshRenderer>().material = new Material(Shader.Find("Standard"));
+        gameObject = o;
 
         blocksInitialized = true;
     }

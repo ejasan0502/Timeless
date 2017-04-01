@@ -54,25 +54,16 @@ public class World : MonoBehaviour {
     }
     // Create a spherical world
     private void CreateSpherical(){
-        Perlin perlin = new Perlin(1, 2, 0.5, 6, 0, QualityMode.High);
+        // Initialize noise
+        noise2d = new Noise2D(worldSize.x*chunkSize.x,worldSize.z*chunkSize.z,new Perlin());
+        noise2d.GenerateSpherical(-1, 1, -1, 1);
 
         InitializeChunks();
 
         foreach (Chunk c in chunks){
             if ( Vector3.Distance(c.scenePos,Camera.main.transform.position) < distanceFromCamera ){
-                c.CreateBlocks();
-                c.ApplyNoise(perlin, scale, Vector3.zero, worldSize.y*chunkSize.y*0.5f); 
-
-                //visibleChunks.Add(c.scenePos,c);
-                visibleChunks.Add(c) ;
+                c.CreateBlocks(); 
             }
-        }
-
-        foreach (Chunk c in visibleChunks){
-            c.SetupNeighbors();
-        }
-        foreach (Chunk c in visibleChunks){
-            c.UpdateMesh();
         }
     }
 
