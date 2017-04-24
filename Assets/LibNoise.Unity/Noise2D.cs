@@ -449,7 +449,7 @@ namespace LibNoise.Unity
                 }
             }
             //result.SetData<Color>(data);
-            //Debug.Log("Setting pixels");
+            //this.Log("Setting pixels");
             result.SetPixels(data);
             return result;
         }

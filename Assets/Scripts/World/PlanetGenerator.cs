@@ -9,7 +9,6 @@ using LibNoise.Unity.Operator;
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class PlanetGenerator : MonoBehaviour {
 
-    public bool debug = false;
     public bool hideTrees = false;
 
     public Planet planet;
@@ -26,6 +25,9 @@ public class PlanetGenerator : MonoBehaviour {
 
     private List<Vector3> spawnPoints = new List<Vector3>();
 
+    void Awake(){
+        planet.perlin = new Perlin();
+    }
     void Start(){
 		Generate();
 
@@ -61,7 +63,7 @@ public class PlanetGenerator : MonoBehaviour {
         CreateSpawnPoints();
         CreateTrees();
 
-        if ( debug ) Debug.Log("World generated.");
+        if ( GameManager.isDebugging ) this.Log("World generated.");
 	}
 
     // Create trees
@@ -86,7 +88,7 @@ public class PlanetGenerator : MonoBehaviour {
             }
         }
 
-        Debug.Log("Trees generated.");
+        this.Log("Trees generated.");
     }
     // Create all spawnPoints on planet
     private void CreateSpawnPoints(){
@@ -96,13 +98,13 @@ public class PlanetGenerator : MonoBehaviour {
             Vector3 downVector = planet.origin - randomPoint;
 
             RaycastHit hit;
-            if ( debug ) Debug.DrawLine(randomPoint, planet.origin, Color.yellow, 1f);
+            if ( GameManager.isDebugging ) Debug.DrawLine(randomPoint, planet.origin, Color.yellow, 1f);
             if ( Physics.Raycast(randomPoint, downVector, out hit, planet.radius, 1 << LayerMask.NameToLayer("Environment")) ){
                  Vector3 pos = hit.point + -downVector.normalized*planet.height;
                  spawnPoints.Add(pos);
             }
         }
-        if ( debug ) Debug.Log("Created " + spawnPoints.Count + " spawn points.");
+        if ( GameManager.isDebugging ) this.Log("Created " + spawnPoints.Count + " spawn points.");
     }
     // Create water
     private void CreateWater(){

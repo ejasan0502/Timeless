@@ -48,6 +48,7 @@ public class UIManager : MonoBehaviour {
 
             if ( displayingUI ){
                 if ( Input.GetKeyUp(KeyCode.Escape) ){
+                    this.Log("Close UI window");
                     foreach (UI ui in uiElements){
                         if ( ui.key != KeyCode.None ){
                             Display(ui,false);
@@ -75,11 +76,14 @@ public class UIManager : MonoBehaviour {
             }
 
             if ( enableControls ){
-                user.SetInputControls(true);
+                GameManager.instance.SetControlsInput(false);
+                user.HideMouse(true);
                 displayingUI = false;
             }
         } else {
-            user.SetInputControls(false);
+            this.Log("Display " + ui.name);
+            GameManager.instance.SetControlsInput(true);
+            user.HideMouse(false);
             displayingUI = true;
         }
     }

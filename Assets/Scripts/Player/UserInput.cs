@@ -17,7 +17,6 @@ public class UserInput : MonoBehaviour {
     private bool sprinting = false;
 
     private bool hideMouse = true;
-    private bool disableControls = false;
 
     void Awake(){
         charMovt = GetComponent<CharacterMovement>();
@@ -28,7 +27,7 @@ public class UserInput : MonoBehaviour {
         SetCursorView();
     }
     void Update(){
-        if ( !disableControls ){
+        if ( !GameManager.instance.ignoreControlsInput ){
             Reload();
             Attack();
             Jumping();
@@ -38,9 +37,10 @@ public class UserInput : MonoBehaviour {
 
             Movement();
 
-            HideViewCursor();
             Hotkeys();
         }
+
+        HideViewCursor();
     }
 
     // Handles movement logic
@@ -58,6 +58,7 @@ public class UserInput : MonoBehaviour {
     // Handle jumping/jetpack logic
     private void Jumping(){
         if ( Input.GetButtonDown("Jump") ){
+            this.Log("OnJumpDown");
             if ( proning ){
                 proning = false;
                 charMovt.Prone(proning);
@@ -72,6 +73,7 @@ public class UserInput : MonoBehaviour {
             charMovt.OnJetPackHold();
         }
         if ( Input.GetButtonUp("Jump") ){
+            this.Log("OnJumpUp");
             charMovt.OnJetPackEnd();
         }
     }
@@ -80,12 +82,14 @@ public class UserInput : MonoBehaviour {
         if ( crouching || proning ) return;
 
         if ( charMovt.IsGrounded ){
-            if ( Input.GetButton("Sprint") ){
+            if ( Input.GetButtonDown("Sprint") ){
+                this.Log("OnSprintDown");
                 sprinting = true;
                 charMovt.Sprint(sprinting);
             }
         }
         if ( Input.GetButtonUp("Sprint") ){
+            this.Log("OnSprintUp");
             sprinting = false;
             charMovt.Sprint(sprinting);
         }
@@ -98,6 +102,7 @@ public class UserInput : MonoBehaviour {
         if ( currentPressed != KeyCode.None ){
             if ( lastKeyPressed != KeyCode.None ){
                 if ( GetKeyDown(KeyCode.W, KeyCode.S, KeyCode.A, KeyCode.D) == lastKeyPressed ){
+                    this.Log("OnDodgeDown");
                     charMovt.Dodge(currentPressed);
                     dodging = true;
                 } else {
@@ -121,6 +126,7 @@ public class UserInput : MonoBehaviour {
             }
         }
         if ( Input.GetButtonUp("Crouch") ){
+            this.Log("OnCrouchUp");
             crouching = false;
             charMovt.Crouch(crouching);
         }
@@ -128,6 +134,7 @@ public class UserInput : MonoBehaviour {
     // Handle proning logic
     private void Prone(){
         if ( Input.GetButtonUp("Prone") ){
+            this.Log("OnProneUp");
             proning = !proning;
             charMovt.Prone(proning);
         }
@@ -138,20 +145,24 @@ public class UserInput : MonoBehaviour {
 
         // Primary Fire
         if ( Input.GetButtonDown("Fire1") ){
+            this.Log("OnPrimaryFireDown");
             weaponHandler.currentWeapon.SinglePrimaryFire();
         }
         if ( Input.GetButton("Fire1") ){
             weaponHandler.currentWeapon.PrimaryFire();
         }
         if ( Input.GetButtonUp("Fire1") ){
+            this.Log("OnPrimaryFireUp");
             anim.SetInteger(Settings.instance.anim_attack, 0);
         }
 
         // Secondary Fire
         if ( Input.GetButtonDown("Fire2") ){
+            this.Log("OnSecondaryFireDown");
             weaponHandler.currentWeapon.SecondaryFire();
         }
         if ( Input.GetButtonUp("Fire2") ){
+            this.Log("OnSecondaryFireUp");
             weaponHandler.currentWeapon.SecondaryFireEnd();
         }
     }
@@ -208,6 +219,7 @@ public class UserInput : MonoBehaviour {
     // Hide/View cursor input
     private void HideViewCursor(){
         if ( Input.GetKeyDown(KeyCode.Escape) ){
+            this.Log("HideViewCursor");
             hideMouse = !hideMouse;
 
             SetCursorView();
@@ -215,6 +227,8 @@ public class UserInput : MonoBehaviour {
     }
     // Hide.View cursor
     private void SetCursorView(){
+        this.Log("SetCursorView");
+        GameManager.instance.SetControlsInput(!hideMouse);
         Cursor.visible = !hideMouse;
         Cursor.lockState = hideMouse ? CursorLockMode.Locked : CursorLockMode.None;
     }
@@ -230,15 +244,10 @@ public class UserInput : MonoBehaviour {
         return KeyCode.None;
     }
 
-    // Enable/Disable controls
-    public void SetInputControls(bool b){
-        disableControls = !b;
-
-        if ( !disableControls ){
-            hideMouse = true;
-        } else {
-            hideMouse = false;
-        }
+    // View/Hide mouse cursor
+    public void HideMouse(bool hide){
+        this.Log("HideMouse");
+        hideMouse = hide;
         SetCursorView();
     }
 }

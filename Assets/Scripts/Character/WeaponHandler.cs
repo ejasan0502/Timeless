@@ -42,7 +42,7 @@ public class WeaponHandler : MonoBehaviour {
             currentWeapon.Unequip(charModel);
         }
 
-        Debug.Log("Equipping index " + index);
+        this.Log("Equipping index " + index);
         if ( weapons[index] != null ){
             weaponIndex = index;
 
@@ -68,7 +68,7 @@ public class WeaponHandler : MonoBehaviour {
     public void AddWeapon(int index, string path){
         if ( index == -1 ) return;
 
-        Debug.Log("Adding weapon to handler ("+path+") with index of " + index);
+        this.Log("Adding weapon to handler ("+path+") with index of " + index);
         GameObject o = (GameObject) Instantiate(Resources.Load(path));
 
         Weapon weapon = o.GetComponent<Weapon>();

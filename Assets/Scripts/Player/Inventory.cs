@@ -6,8 +6,6 @@ using System.Collections.Generic;
 // Manages inventory based on weight and effects character movement speed
 public class Inventory : MonoBehaviour {
 
-    public bool debug = false;
-
     public float Weight {
         get {
             return weight;
@@ -51,7 +49,7 @@ public class Inventory : MonoBehaviour {
     }
     // Add specific item into inventory with amount
     public void AddItem(Item item, int amount){
-        if ( debug ) Debug.Log("Gained " + amount + " " + item.name);
+        if ( GameManager.isDebugging ) this.Log("Gained " + amount + " " + item.name);
 
         InventoryItem ii = GetInventoryItem(item);
         if ( ii != null && ii.item.stackable ){
@@ -73,11 +71,11 @@ public class Inventory : MonoBehaviour {
 
         InventoryItem ii = GetInventoryItem(id);
         if ( ii != null && ii.item.stackable ){
-            if ( debug ) Debug.Log("Gained " + amount + " " + ii.item.name);
+            if ( GameManager.isDebugging ) this.Log("Gained " + amount + " " + ii.item.name);
             ii.amount += amount;
         } else {
             Item item = ItemManager.instance.GetItem(id);
-            if ( debug ) Debug.Log("Gained " + amount + " " + item.name);
+            if ( GameManager.isDebugging ) this.Log("Gained " + amount + " " + item.name);
             if ( item.stackable ){
                 inventoryItems.Add(new InventoryItem(item, amount));
             } else {
@@ -112,7 +110,7 @@ public class Inventory : MonoBehaviour {
                     inventoryItems.Remove(ii);
                 }
             } else {
-                Debug.Log("RemoveItem was called with an amount higher than whats in inventory...");
+                this.Log("RemoveItem was called with an amount higher than whats in inventory...");
                 currentAmount = 0;
             }
         }

@@ -5,8 +5,8 @@ using System.Collections;
 public class CharacterModel : MonoBehaviour {
 
     public Transform rightHand;
+    public Transform spine1;
 
-    public Transform holster;       // Used to place weapons for self
     public Transform leftHolster;
     public Transform rightHolster;
     public Transform backHolster;
@@ -14,6 +14,21 @@ public class CharacterModel : MonoBehaviour {
     public Vector3 originalPos { get; private set; }
     public Vector3 originalRot { get; private set; }
 
+    void Awake(){
+        foreach (Transform t in GetComponentsInChildren<Transform>()){
+            if ( !rightHand && t.name.Contains("RightHand") ){
+                rightHand = t;
+            } else if ( !leftHolster && t.name.Contains("LeftHolster") ){
+                leftHolster = t;
+            } else if ( !rightHolster && t.name.Contains("RightHolster") ){
+                rightHolster = t;
+            } else if ( !backHolster && t.name.Contains("BackHolster") ){
+                backHolster = t;
+            } else if ( !spine1 && t.name.Contains("Spine") ){
+                spine1 = t;
+            }
+        }
+    }
     void Start(){
         originalPos = transform.localPosition;
         originalRot = transform.localEulerAngles;

@@ -23,19 +23,24 @@ public class InventoryItemUI : MonoBehaviour {
                 transform.SetSiblingIndex(index);
                 ((RectTransform)transform).anchoredPosition3D = originalPos;
                 
-                HotkeyUI hotkey = HotkeysUI.instance.GetHotkeyAt(Input.mousePosition);
-                WeaponHandler weaponHandler = GameManager.instance.player.GetComponent<WeaponHandler>();
-                Inventory inventory = GameManager.instance.player.GetComponent<Inventory>();
-                InventoryItem inventoryItem = inventory.GetInventoryItem(index);
-                if ( inventoryItem.item.itemType == ItemType.block ){
-                    ItemBlock itemBlock = inventoryItem.item as ItemBlock;
-                    weaponHandler.AddWeapon(int.Parse(hotkey.name),itemBlock.modelPath);
-                } else if ( inventoryItem.item.itemType == ItemType.equip ){
-                    Equip equip = inventoryItem.item as Equip;
-                    weaponHandler.AddWeapon(int.Parse(hotkey.name),equip.modelPath);
-                }
+                if ( HotkeysUI.instance != null ){
+                    HotkeyUI hotkey = HotkeysUI.instance.GetHotkeyAt(Input.mousePosition);
+                    WeaponHandler weaponHandler = this.GetSelf().GetComponent<WeaponHandler>();
+                    Inventory inventory = this.GetSelf().GetComponent<Inventory>();
+                    InventoryItem inventoryItem = inventory.GetInventoryItem(index);
+                    if ( inventoryItem.item.itemType == ItemType.block ){
+                        ItemBlock itemBlock = inventoryItem.item as ItemBlock;
+                        weaponHandler.AddWeapon(int.Parse(hotkey.name),itemBlock.modelPath);
+                    } else if ( inventoryItem.item.itemType == ItemType.equip ){
+                        Equip equip = inventoryItem.item as Equip;
+                        if ( equip != null )
+                            weaponHandler.AddWeapon(int.Parse(hotkey.name),equip.modelPath);
+                        else
+                            this.Log(inventoryItem.item.name + " does not derive from Equip");
+                    }
 
-                hotkey.Set(inventoryItem.item.Icon, inventoryItem.amount+"");
+                    hotkey.Set(inventoryItem.item.Icon, inventoryItem.amount+"");
+                }
             }
         }
     }

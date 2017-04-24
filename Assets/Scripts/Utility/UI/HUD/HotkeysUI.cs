@@ -5,6 +5,8 @@ using System.Collections.Generic;
 // Manages all hotkeyUIs
 public class HotkeysUI : UI {
 
+    public Sprite emptyHotkey;
+
     private List<HotkeyUI> hotkeys = new List<HotkeyUI>();
 
     private static HotkeysUI _instance;
@@ -25,10 +27,10 @@ public class HotkeysUI : UI {
 
     // Initialize hotkeys
     private void SetupHotkeys(){
-        for (int i = 1; i < transform.childCount; i++){
+        for (int i = 0; i < transform.childCount; i++){
             HotkeyUI hotkey = transform.GetChild(i).GetComponent<HotkeyUI>();
 
-            hotkey.Set(null, "");
+            hotkey.Set(emptyHotkey ?? null, "");
 
             hotkeys.Add(hotkey);
         }

@@ -7,14 +7,9 @@ public class FreeRoam : MonoBehaviour {
 
     public float speed = 5f;
     private float sensitivity = 5f;
-    private float minX, maxX;
+    private float minX = -75f, maxX = 90f;
     private float rotX = 0f, rotY = 0f;
 
-    void Awake(){
-        sensitivity = Settings.instance.cam_sensitivity;
-        minX = Settings.instance.cam_minRotX;
-        maxX = Settings.instance.cam_maxRotX;
-    }
     void Update(){
         rotY += Input.GetAxis("Mouse X") * sensitivity;
         rotX += Input.GetAxis("Mouse Y") * sensitivity;

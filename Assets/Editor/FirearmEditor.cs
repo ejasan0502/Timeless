@@ -11,6 +11,10 @@ public class FirearmEditor : Editor {
         base.OnInspectorGUI();
         
         weapon = (Firearm) target;
+        
+        if ( GUILayout.Button("Clear All Positions") ){
+            weapon.Clear();
+        }
 
         if ( GUILayout.Button("Save charModel offset position and rotation") ){
             if ( weapon.CharModel ){

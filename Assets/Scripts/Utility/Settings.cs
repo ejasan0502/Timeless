@@ -2,7 +2,7 @@
 using System.Collections;
 
 // All settings for the game
-public class Settings {
+public class Settings : MonoBehaviour {
 
     [Header("-Animator Settings-")]
     public string anim_velocity_x = "velX";
@@ -19,14 +19,15 @@ public class Settings {
     public string anim_death = "death";
     public string anim_swim = "isSwimming";
 
-    [Header("-Camera Settings-")]
-    public float cam_sensitivity = 5f;
-    public float cam_minRotX = -75f, cam_maxRotX = 90f;
-    public float defaultFov = 60f;
-
     [Header("-World Settings-")]
     public float spawn_point_radius = 20f;
     public int maximum_vertices = 65000;
+
+    [Header("Base Stat Settings")]
+    public CharStats base_player_charStats;
+    public CombatStats base_player_combatStats;
+    public CharStats base_enemy_charStats;
+    public CombatStats base_enemy_combatStats;
 
     [Header("-Resource Paths-")]
     public string path_icons = "Icons/";
@@ -35,11 +36,9 @@ public class Settings {
     public static Settings instance {
         get {
             if ( _instance == null ){
-                _instance = new Settings();
+                _instance = GameObject.FindObjectOfType<Settings>();
             }
             return _instance;
         }
     }
-
-    public Settings(){}
 }

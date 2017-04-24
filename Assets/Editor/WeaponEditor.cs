@@ -12,6 +12,10 @@ public class WeaponEditor : Editor {
 
         weapon = (Weapon) target;
         
+        if ( GUILayout.Button("Clear All Positions") ){
+            weapon.Clear();
+        }
+
         if ( GUILayout.Button("Save charModel offset position and rotation") ){
             if ( weapon.CharModel ){
                 weapon.camPosOffset = weapon.CharModel.transform.localPosition;

@@ -116,7 +116,7 @@ public class CraftingUI : UI {
                 craftManager.AddCraftItem(selectedIndex,1);
                 UpdateCraftingUI();
             } else {
-                Debug.Log("Not enough materials to craft this item");
+                this.Log("Not enough materials to craft this item");
             }
         }
     }

@@ -33,6 +33,14 @@ public class Firearm : Weapon {
         }
     }
 
+    // Add onto clear function
+    public override void Clear(){
+        base.Clear();
+
+        aimPos = Vector3.zero;
+        aimRot = Vector3.zero;
+    }
+
     // Single fire on button down
     public override void SinglePrimaryFire(){
         if ( autoFire || anim.GetBool(Settings.instance.anim_reload) ) return;
@@ -115,7 +123,7 @@ public class Firearm : Weapon {
 
         RaycastHit hit;
         if ( Physics.Raycast(bulletSpawn.position, direction, out hit, atkRange) ){
-            if ( debug ) Debug.DrawRay(bulletSpawn.position, hit.point-bulletSpawn.position, Color.red, 1f);
+            if ( GameManager.isDebugging ) Debug.DrawRay(bulletSpawn.position, hit.point-bulletSpawn.position, Color.red, 1f);
 
             // Decal
             GameObject decal = null;
@@ -146,11 +154,11 @@ public class Firearm : Weapon {
         aiming = b;
 
         if ( aiming ){
-            Camera.main.fieldOfView = Settings.instance.defaultFov/2.00f;
+            Camera.main.fieldOfView = 60f/2.00f;
             charModel.transform.localPosition = aimPos;
             charModel.transform.localEulerAngles = aimRot;
         } else {
-            Camera.main.fieldOfView = Settings.instance.defaultFov;
+            Camera.main.fieldOfView = 60f;
             charModel.transform.localPosition = camPosOffset;
             charModel.transform.localEulerAngles = camRotOffset;
         }

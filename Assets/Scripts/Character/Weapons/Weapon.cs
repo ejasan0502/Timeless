@@ -6,7 +6,6 @@ using System.Collections;
 public class Weapon : MonoBehaviour {
 
     [Header("-Weapon Info-")]
-    public bool debug;
     public WeaponType weaponType;
     public float atkRate;
     public float atkRange;
@@ -65,6 +64,15 @@ public class Weapon : MonoBehaviour {
         character = anim.GetComponent<Character>();
         charModel = anim.GetComponent<WeaponHandler>().charModel;
     }
+    // Clear all positions
+    public virtual void Clear(){
+        camPosOffset = Vector3.zero;
+        camRotOffset = Vector3.zero;
+        equipPos = Vector3.zero;
+        equipRot = Vector3.zero;
+        unequipPos = Vector3.zero;
+        unequipRot = Vector3.zero;
+    }
 
     // Equip current weapon object to hand transform
     public void Equip(Transform hand){
@@ -82,8 +90,8 @@ public class Weapon : MonoBehaviour {
     public void Unequip(CharacterModel charModel){
         Transform holsterTrans = holster == HolsterType.left ? charModel.leftHolster : holster == HolsterType.right ? charModel.rightHolster : charModel.backHolster;
 
-        if ( holsterTrans == null && charModel.holster ){
-            transform.SetParent(charModel.holster);
+        if ( holsterTrans == null ){
+            transform.SetParent(charModel.spine1);
             transform.localPosition = Vector3.zero;
             transform.localEulerAngles = Vector3.zero;
         } else {

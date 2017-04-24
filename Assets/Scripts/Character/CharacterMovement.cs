@@ -2,7 +2,8 @@
 using System.Collections;
 
 // Handles movement logic and animation
-[RequireComponent(typeof(AudioSource))]
+[RequireComponent(typeof(AudioSource),typeof(Animator),typeof(Rigidbody))]
+[RequireComponent(typeof(Character),typeof(WeaponHandler),typeof(CapsuleCollider))]
 public class CharacterMovement : MonoBehaviour {
 
     public float freeFallTime = 1.25f;
@@ -44,9 +45,9 @@ public class CharacterMovement : MonoBehaviour {
 
     private bool canJetPack = false;
     private bool jetPacking = false;
-    private bool isGrounded = false;
+    public bool isGrounded = false;
 
-    private bool underwater = false;
+    public bool underwater = false;
     
 	void Awake() {
         weaponHandler = GetComponent<WeaponHandler>();
@@ -94,22 +95,22 @@ public class CharacterMovement : MonoBehaviour {
             velocityMultipler = 2f;
         }
 
-        if ( audioSource && !audioSource.isPlaying ){
-            audioSource.clip = footsteps;
-            audioSource.Play();
-        }
-
 	    targetVelocity = v.normalized * character.currentCharStats.movementSpeed * (1f - character.WeightPercent) * velocityMultipler;
     }
     // Have character jump
     public void Jump(){
-        if ( underwater ) return;
+        if ( underwater ){
+            this.Log("Cannot jump while underwater");
+            return;
+        }
 
         if ( IsGrounded && !jumping ){
+            this.Log("Jump");
             rb.AddForce(transform.up*jumpForce);
             jumping = true;
             StartCoroutine(FreeFall());
         } else if ( canJetPack ){
+            this.Log("Use jetpack");
             jetPacking = true;
         }
     }
@@ -153,31 +154,46 @@ public class CharacterMovement : MonoBehaviour {
     }
     // Have character sprint
     public void Sprint(bool b){
-        if ( underwater ) return;
+        if ( underwater ) {
+            this.Log("Cannot sprint while underwater.");
+            return;
+        }
 
         sprinting = b;
 
         if ( character.currentCharStats.stamina < 1 ){
+            this.Log("Not enough stamina.");
             sprinting = false;
         }
-        if ( sprinting ){
-            weaponHandler.charModel.transform.localPosition = Vector3.Lerp(weaponHandler.charModel.transform.localPosition,weaponHandler.charModel.originalPos, 15*Time.deltaTime);
-            weaponHandler.charModel.transform.localEulerAngles = Vector3.Lerp(weaponHandler.charModel.transform.localEulerAngles,weaponHandler.charModel.originalRot, 15*Time.deltaTime);   
-        } else if ( weaponHandler.currentWeapon != null ){
-            weaponHandler.charModel.transform.localPosition = weaponHandler.currentWeapon.camPosOffset;
-            weaponHandler.charModel.transform.localEulerAngles = weaponHandler.currentWeapon.camRotOffset;
-        }
+
+        //if ( weaponHandler != null ){
+        //    if ( sprinting ){
+        //        weaponHandler.charModel.transform.localPosition = Vector3.Lerp(weaponHandler.charModel.transform.localPosition,weaponHandler.charModel.originalPos, 15*Time.deltaTime);
+        //        weaponHandler.charModel.transform.localEulerAngles = Vector3.Lerp(weaponHandler.charModel.transform.localEulerAngles,weaponHandler.charModel.originalRot, 15*Time.deltaTime);   
+        //    } else if ( weaponHandler.currentWeapon != null ){
+        //        weaponHandler.charModel.transform.localPosition = weaponHandler.currentWeapon.camPosOffset;
+        //        weaponHandler.charModel.transform.localEulerAngles = weaponHandler.currentWeapon.camRotOffset;
+        //    }
+        //}
     }
     // Have character crouch
     public void Crouch(bool b){
-        if ( underwater ) return;
+        if ( underwater ){
+            this.Log("Cannot crouch underwater");
+            return;
+        }
 
+        this.Log(b ? "Crouch" : "Stand");
         crouching = b;
     }
     // Have character prone
     public void Prone(bool b){
-        if ( underwater ) return;
+        if ( underwater ) {
+            this.Log("Cannot prone underwater");
+            return;
+        }
 
+        this.Log(b ? "Go prone" : "Get out of prone");
         proning = b;
     }
     // Animate character;
@@ -211,6 +227,8 @@ public class CharacterMovement : MonoBehaviour {
             }
         } else if ( IsGrounded && (forward == 0 && strafe == 0) ){
             audioSource.Pause();
+        } else {
+            audioSource.Stop();
         }
 
         anim.SetFloat(Settings.instance.anim_velocity_x, strafe);
@@ -234,7 +252,8 @@ public class CharacterMovement : MonoBehaviour {
     // Check if character is grounded
     private void CheckGround(){
         RaycastHit hit;
-        if ( Physics.Raycast(new Ray(transform.position, -transform.up), out hit, 1.1f, 1 << LayerMask.NameToLayer("Environment")) ){
+        Debug.DrawRay(transform.position, -transform.up*0.2f, Color.red);
+        if ( Physics.Raycast(transform.position, -transform.up, out hit, 0.2f, 1 << LayerMask.NameToLayer("Environment")) ){
             if ( hit.collider.gameObject.isStatic ){
                 isGrounded = true;
             } else {
@@ -292,6 +311,10 @@ public class CharacterMovement : MonoBehaviour {
                 }
             }
         }
+    }
+    // Play sound
+    private void PlaySound(AudioClip clip){
+        audioSource.PlayOneShot(clip);
     }
 }
 

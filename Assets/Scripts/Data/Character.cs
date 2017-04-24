@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 // Handles character object logic
+[RequireComponent(typeof(Inventory))]
 public class Character : MonoBehaviour {
 
     [Header("-Character Info-")]
@@ -107,7 +108,7 @@ public class Character : MonoBehaviour {
             inflict -= currentCombatStats.magicDef;
         }
         
-        Debug.Log(string.Format("{0} receives {1} {2} damage from {3}", name, inflict, inflictType, atker.name));
+        this.Log(string.Format("{0} receives {1} {2} damage from {3}", name, inflict, inflictType, atker.name));
         currentCharStats.health -= inflict;
 
         // If AI and has no target, set target to atker

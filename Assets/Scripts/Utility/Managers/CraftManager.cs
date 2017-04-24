@@ -54,7 +54,7 @@ public class CraftManager : MonoBehaviour {
                 currentIncrement += 1;
                 craftingUI.UpdateCurrentCraft(currentIncrement/crafting[0].recipe.craftTime);
                 if ( currentIncrement >= crafting[0].recipe.craftTime ){
-                    Debug.Log("Crafted " + crafting[0].recipe.productId);
+                    this.Log("Crafted " + crafting[0].recipe.productId);
                     inventory.AddItem(crafting[0].recipe.productId,1);
                     currentIncrement = 0;
                     craftingUI.UpdateCurrentCraft(currentIncrement/crafting[0].recipe.craftTime);
@@ -76,18 +76,18 @@ public class CraftManager : MonoBehaviour {
         Recipe recipe = recipes[index];
         CraftItem ci = GetCraftItem(recipe);
         if ( ci != null ){
-            Debug.Log("Increment recipe " + index);
+            this.Log("Increment recipe " + index);
             ci.amount += amount;
         } else {
             if ( crafting.Count < maxQueue ){
-                Debug.Log("Crafting recipe " + index);
+                this.Log("Crafting recipe " + index);
                 crafting.Add(new CraftItem(recipe,amount));
                 if ( !isCrafting ){
                     isCrafting = true;
                     StartCoroutine(Craft());
                 }
             } else {
-                Debug.Log("Too many recipes in crafting queue!");
+                this.Log("Too many recipes in crafting queue!");
             }
         }
     }

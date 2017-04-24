@@ -8,14 +8,9 @@ public class CameraControl : MonoBehaviour {
     public bool rotXAxis, rotYAxis;
 
     private float sensitivity = 5f;
-    private float minX, maxX;
+    private float minX = -75f, maxX = 90f;
     private float rotX = 0f, rotY = 0f;
 
-    void Awake(){
-        sensitivity = Settings.instance.cam_sensitivity;
-        minX = Settings.instance.cam_minRotX;
-        maxX = Settings.instance.cam_maxRotX;
-    }
     void Update(){
         if ( !Cursor.visible ){
             if ( rotYAxis ){
