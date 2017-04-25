@@ -24,6 +24,7 @@ public class Settings : MonoBehaviour {
     public int maximum_vertices = 65000;
 
     [Header("Base Stat Settings")]
+    public float default_fov = 60f;
     public CharStats base_player_charStats;
     public CombatStats base_player_combatStats;
     public CharStats base_enemy_charStats;
@@ -40,5 +41,9 @@ public class Settings : MonoBehaviour {
             }
             return _instance;
         }
+    }
+
+    void Awake(){
+        default_fov = Camera.main.fieldOfView;
     }
 }

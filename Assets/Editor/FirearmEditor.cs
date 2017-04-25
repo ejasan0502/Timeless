@@ -34,8 +34,8 @@ public class FirearmEditor : Editor {
 
         if ( GUILayout.Button("Save aim position and rotation") ){
             if ( weapon.CharModel ){
-                weapon.aimPos = weapon.CharModel.transform.localPosition;
-                weapon.aimRot = weapon.CharModel.transform.localEulerAngles;
+                weapon.aimPos = Camera.main.transform.localPosition;
+                weapon.aimRot = Camera.main.transform.localEulerAngles;
             }
         }
     }

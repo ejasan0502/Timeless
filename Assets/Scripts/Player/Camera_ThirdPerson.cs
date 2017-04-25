@@ -24,6 +24,7 @@ public class Camera_ThirdPerson : MonoBehaviour {
     private float orgFov;
     private CharacterModel charModel;
     private WeaponHandler weaponHandler;
+    private bool aiming = false;
 
     void Awake(){
         orgFov = Camera.main.fieldOfView;
@@ -53,6 +54,8 @@ public class Camera_ThirdPerson : MonoBehaviour {
 
     // Check if camera is clipping thru wall and re-position it
     private void CheckWall(){
+        if ( aiming ) return;
+
         RaycastHit hit;
 
         float dist = onLeft ? camOffsetLeft.z : camOffsetRight.z;
@@ -83,13 +86,20 @@ public class Camera_ThirdPerson : MonoBehaviour {
         }
     }
 
-    // Zoom in/out camera
-    public void Zoom(bool isZooming){
-        if ( GameManager.instance.ignoreControlsInput ) return;
+    // Aim with given firearm
+    public void Aim(Firearm weapon, bool isAiming){
+        aiming = isAiming;
 
-        float fov = isZooming ? Mathf.Lerp(Camera.main.fieldOfView, zoomFov, Time.deltaTime*zoomSpd) :
-                                Mathf.Lerp(Camera.main.fieldOfView, orgFov, Time.deltaTime*zoomSpd);
-
-        Camera.main.fieldOfView = fov;
+        if ( aiming ){
+            Camera.main.fieldOfView = Settings.instance.default_fov/2.00f;
+            Camera.main.transform.SetParent(weapon.transform);
+            Camera.main.transform.localPosition = weapon.aimPos;
+            Camera.main.transform.localEulerAngles = weapon.aimRot;
+        } else {
+            Camera.main.fieldOfView = Settings.instance.default_fov;
+            Camera.main.transform.SetParent(transform);
+            Camera.main.transform.localPosition = onLeft ? camOffsetLeft : camOffsetRight;
+            Camera.main.transform.localEulerAngles = Vector3.zero;
+        }
     }
 }

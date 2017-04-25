@@ -11,9 +11,7 @@ public static class ExtensionMethods {
     }
 
     public static void Log(this MonoBehaviour monoBehaviour, string text){
-        if ( GameManager.isSelf ){
-            if ( GameManager.instance.debug ) Debug.Log(text);
-        }
+        if ( GameManager.instance.debug ) Debug.Log(text);
     }
 
 }

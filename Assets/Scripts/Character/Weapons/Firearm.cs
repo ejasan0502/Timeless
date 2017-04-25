@@ -3,9 +3,7 @@ using System;
 using System.Collections;
 
 // Handles pistol weapon object
-public delegate void OnUpdateUI(object sender, EventArgs e);
 public class Firearm : Weapon {
-
 
     [Header("-Firearm Info-")]
     public bool autoFire;
@@ -28,7 +26,7 @@ public class Firearm : Weapon {
 
     private bool aiming = false;
     private bool canFire = true;
-    public OnUpdateUI OnUpdateUI;
+    private Transform camPivot = null;
 
     // Override bool to true since weapon is firearm
     public override bool isFirearm {
@@ -152,22 +150,11 @@ public class Firearm : Weapon {
         // Fire delay
         canFire = false;
         StartCoroutine(FireDelay());
-
-        if ( OnUpdateUI != null ){
-            OnUpdateUI(this,null);
-        }
     }
     // Perform aiming logic
     private void Aim(bool b){
         aiming = b;
-
-        if ( aiming ){
-            Camera.main.fieldOfView = 60f/2.00f;
-            charModel.transform.localPosition = aimPos;
-            charModel.transform.localEulerAngles = aimRot;
-        } else {
-            Camera.main.fieldOfView = 60f;
-        }
+        GameManager.Camera.Aim(this, aiming);
     }
     // Apply fire delay
     private IEnumerator FireDelay(){

@@ -9,14 +9,22 @@ public class GameManager : MonoBehaviour {
     public Player player { get; private set; }
     public bool ignoreControlsInput { get; private set; }
 
-    public static bool isSelf { get; private set; }
     public static bool isDebugging {
         get {
             return GameManager.instance.debug;
         }
     }
+    public static Camera_ThirdPerson Camera {
+        get {
+            if ( GameManager.instance.camera == null )
+                GameManager.instance.camera = GameObject.FindObjectOfType<Camera_ThirdPerson>();
+
+            return GameManager.instance.camera;
+        }
+    }
 
     private ItemManager itemManager;
+    private Camera_ThirdPerson camera;
 
     private static GameManager _instance;
     public static GameManager instance {
@@ -40,8 +48,7 @@ public class GameManager : MonoBehaviour {
         InitializeScripts();
         PhysicsIgnoreCollision();
 
-        // Use this variable to determine if this client is the user's client
-        isSelf = true;
+
     }
 
     // Initialize data scripts
