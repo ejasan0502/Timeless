@@ -39,7 +39,7 @@ public class HotkeysUI : UI {
     // Return hotkey at specific point
     public HotkeyUI GetHotkeyAt(Vector3 point){
         foreach (HotkeyUI hotkey in hotkeys){
-            if ( RectTransformUtility.RectangleContainsScreenPoint(hotkey.transform as RectTransform, (Vector2)Input.mousePosition, Camera.main) ){
+            if ( RectTransformUtility.RectangleContainsScreenPoint(hotkey.transform as RectTransform, (Vector2)Input.mousePosition, null) ){
                 return hotkey;
             }
         }
