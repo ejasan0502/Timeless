@@ -48,8 +48,10 @@ public class InventoryItemUI : MonoBehaviour {
 
     public void OnPointerEnter(PointerEventData data){
         this.Log("OnPointerEnter");
-        inventoryUI.SetInfoDisplay(index,true);
-        displayInfo = true;
+        if ( !dragging ){
+            inventoryUI.SetInfoDisplay(index,true);
+            displayInfo = true;
+        }
     }
     public void OnPointerExit(PointerEventData data){
         this.Log("OnPointerExit");
@@ -97,6 +99,7 @@ public class InventoryItemUI : MonoBehaviour {
                     
             hotkey.Set(inventoryItem.item.Icon,inventoryItem.amount+"");
             inventory.Remove(inventoryItem);
+            inventoryUI.UpdateUI();
         }
     }
 }
