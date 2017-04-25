@@ -22,9 +22,13 @@ public class Camera_ThirdPerson : MonoBehaviour {
 
     private float rotX = 0f, rotY = 0f;
     private float orgFov;
+    private CharacterModel charModel;
+    private WeaponHandler weaponHandler;
 
     void Awake(){
         orgFov = Camera.main.fieldOfView;
+        charModel = transform.parent.GetComponentInChildren<CharacterModel>();
+        weaponHandler = this.GetSelf().GetComponent<WeaponHandler>();
     }
     void Update(){
         if ( !GameManager.instance.ignoreControlsInput ){
@@ -32,15 +36,19 @@ public class Camera_ThirdPerson : MonoBehaviour {
 
             rotX += Input.GetAxis("Mouse Y") * sensitivity;
             rotX = Mathf.Clamp(rotX, minX, maxX);
-        }
         
-        target.transform.Rotate(Vector3.up * rotY);
-        transform.localEulerAngles = Vector3.left * rotX;
+            target.transform.Rotate(Vector3.up * rotY);
+            transform.localEulerAngles = Vector3.left * rotX;
+        }
         //transform.localEulerAngles = new Vector3(-rotX, transform.localEulerAngles.y, transform.localEulerAngles.z);
         //target.transform.localEulerAngles = new Vector3(target.transform.localEulerAngles.x, rotY, target.transform.localEulerAngles.z);
 
         CheckWall();
         CheckMesh();
+    }
+    void LateUpdate(){
+        if ( weaponHandler.currentWeapon != null )
+            charModel.spine1.RotateAround(transform.position,-transform.parent.right, rotX);
     }
 
     // Check if camera is clipping thru wall and re-position it

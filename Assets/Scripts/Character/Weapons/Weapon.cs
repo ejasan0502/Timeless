@@ -1,18 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 // Handles generic weapon logic
 [RequireComponent(typeof(Collider), typeof(Rigidbody), typeof(AudioSource))]
 public class Weapon : MonoBehaviour {
 
     [Header("-Weapon Info-")]
-    public WeaponType weaponType;
+    public EquipType weaponType;
     public float atkRate;
     public float atkRange;
 
     [Header("-Equip Settings-")]
-    public Vector3 camPosOffset;
-    public Vector3 camRotOffset;
+    public Vector3 spineRotOffset;
     public Vector3 equipPos;
     public Vector3 equipRot;
     public Vector3 unequipPos;
@@ -66,8 +66,7 @@ public class Weapon : MonoBehaviour {
     }
     // Clear all positions
     public virtual void Clear(){
-        camPosOffset = Vector3.zero;
-        camRotOffset = Vector3.zero;
+        spineRotOffset = Vector3.zero;
         equipPos = Vector3.zero;
         equipRot = Vector3.zero;
         unequipPos = Vector3.zero;
@@ -78,26 +77,26 @@ public class Weapon : MonoBehaviour {
     public void Equip(Transform hand){
         Drop(false);
 
+        gameObject.SetActive(true);
         transform.SetParent(hand);
         transform.localPosition = equipPos;
         transform.localEulerAngles = equipRot;
-
-        // Update charModel
-        charModel.transform.localPosition = camPosOffset;
-        charModel.transform.localEulerAngles = camRotOffset;
     }
     // Unequip current weapon object to holster transform
     public void Unequip(CharacterModel charModel){
-        Transform holsterTrans = holster == HolsterType.left ? charModel.leftHolster : holster == HolsterType.right ? charModel.rightHolster : charModel.backHolster;
 
-        if ( holsterTrans == null ){
-            transform.SetParent(charModel.spine1);
-            transform.localPosition = Vector3.zero;
-            transform.localEulerAngles = Vector3.zero;
-        } else {
+        if ( holster != HolsterType.none ){
+            Transform holsterTrans = null;
+            if ( holster == HolsterType.left ) holsterTrans = charModel.leftHolster;
+            else if ( holster == HolsterType.right ) holsterTrans = charModel.rightHolster;
+            else if ( holster == HolsterType.back ) holsterTrans = charModel.backHolster;
+
             transform.SetParent(holsterTrans);
             transform.localPosition = unequipPos;
             transform.localEulerAngles = unequipRot;
+        } else {
+            transform.SetParent(charModel.transform);
+            gameObject.SetActive(false);
         }
 
         col.enabled = false;

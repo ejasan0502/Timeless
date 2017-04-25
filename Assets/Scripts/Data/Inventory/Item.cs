@@ -34,6 +34,12 @@ public class Item {
         }
     }
 
+    public virtual bool isEquip {
+        get {
+            return false;
+        }
+    }
+
     public Item(string name, string id, bool stackable, ItemType itemType, float weight, string iconPath, string modelPath){
         this.name = name;
         this.id = id;

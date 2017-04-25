@@ -116,10 +116,11 @@ public class InventoryUI : UI {
         if ( menu ) menu.gameObject.SetActive(false);
         if ( b ){
             selectedIndex = index;
-            info.SetParent(inventoryItemUIs[selectedIndex]);
-            info.anchoredPosition3D = new Vector3(info.rect.width/2.0f,-info.rect.height/2.0f,-1f);
 
-            info.GetChild(0).GetComponent<Text>().text = inventory.GetInventoryItem(index).item.Description;
+            Vector3 pos = inventoryItemUIs[selectedIndex].transform.position;
+            info.transform.position = pos;
+
+            info.FindChild("Background/Text").GetComponent<Text>().text = inventory.GetInventoryItem(index).item.Description;
         }
     }
     // Execute if button1 on menu was pressed

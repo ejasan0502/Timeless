@@ -1,8 +1,11 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 
 // Handles pistol weapon object
+public delegate void OnUpdateUI(object sender, EventArgs e);
 public class Firearm : Weapon {
+
 
     [Header("-Firearm Info-")]
     public bool autoFire;
@@ -25,6 +28,7 @@ public class Firearm : Weapon {
 
     private bool aiming = false;
     private bool canFire = true;
+    public OnUpdateUI OnUpdateUI;
 
     // Override bool to true since weapon is firearm
     public override bool isFirearm {
@@ -101,7 +105,7 @@ public class Firearm : Weapon {
         }
 
         // Recoil
-        Vector3 direction = bulletSpawn.forward + (Vector3)Random.insideUnitCircle*(aiming ? bulletSpread*0.1f : bulletSpread);
+        Vector3 direction = bulletSpawn.forward + (Vector3)UnityEngine.Random.insideUnitCircle*(aiming ? bulletSpread*0.1f : bulletSpread);
 
         // Ammo
         if ( clipSize > 0 ){
@@ -148,6 +152,10 @@ public class Firearm : Weapon {
         // Fire delay
         canFire = false;
         StartCoroutine(FireDelay());
+
+        if ( OnUpdateUI != null ){
+            OnUpdateUI(this,null);
+        }
     }
     // Perform aiming logic
     private void Aim(bool b){
@@ -159,8 +167,6 @@ public class Firearm : Weapon {
             charModel.transform.localEulerAngles = aimRot;
         } else {
             Camera.main.fieldOfView = 60f;
-            charModel.transform.localPosition = camPosOffset;
-            charModel.transform.localEulerAngles = camRotOffset;
         }
     }
     // Apply fire delay

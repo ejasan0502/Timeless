@@ -76,8 +76,6 @@ public class WeaponHandler : MonoBehaviour {
         weapon.Unequip(charModel);
         weapons[index] = weapon;
 
-        if ( weaponIndex == -1 ){
-            Equip(index);
-        }
+        Equip(index);
     }
 }

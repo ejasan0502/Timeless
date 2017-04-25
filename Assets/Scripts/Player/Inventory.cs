@@ -121,7 +121,10 @@ public class Inventory : MonoBehaviour {
     }
     // Get inventory item from inventory based on index
     public InventoryItem GetInventoryItem(int index){
-        return inventoryItems[index];
+        if ( index < inventoryItems.Count )
+            return inventoryItems[index];
+        else
+            return null;
     }
 
     // Get inventory item from inventory based on item

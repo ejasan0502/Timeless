@@ -28,18 +28,26 @@ public class InventoryItemUI : MonoBehaviour {
                     WeaponHandler weaponHandler = this.GetSelf().GetComponent<WeaponHandler>();
                     Inventory inventory = this.GetSelf().GetComponent<Inventory>();
                     InventoryItem inventoryItem = inventory.GetInventoryItem(index);
+
+                    if ( hotkey == null ){
+                        this.Log("No hotkey found");
+                        return;
+                    }
+
                     if ( inventoryItem.item.itemType == ItemType.block ){
                         ItemBlock itemBlock = inventoryItem.item as ItemBlock;
                         weaponHandler.AddWeapon(int.Parse(hotkey.name),itemBlock.modelPath);
                     } else if ( inventoryItem.item.itemType == ItemType.equip ){
                         Equip equip = inventoryItem.item as Equip;
-                        if ( equip != null )
+                        if ( equip != null ){
                             weaponHandler.AddWeapon(int.Parse(hotkey.name),equip.modelPath);
-                        else
+                        } else
                             this.Log(inventoryItem.item.name + " does not derive from Equip");
                     }
 
-                    hotkey.Set(inventoryItem.item.Icon, inventoryItem.amount+"");
+                    
+                    hotkey.Set(inventoryItem.item.Icon,inventoryItem.amount+"");
+                    inventory.Remove(inventoryItem);
                 }
             }
         }

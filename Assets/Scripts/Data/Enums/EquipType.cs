@@ -1,5 +1,5 @@
-﻿// All available weapon types
-public enum WeaponType {
+﻿// All available equip types
+public enum EquipType {
     
     fists = 0,
     pistol = 1,

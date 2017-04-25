@@ -15,6 +15,7 @@ public class HotkeyUI : MonoBehaviour {
 
     // Set appearance of hotkey and save equipIndex of item
     public void Set(Sprite icon, string text){
+
         if ( this.image ) image.sprite = icon;
         if ( this.text ) this.text.text = text;
     }

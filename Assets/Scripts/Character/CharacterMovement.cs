@@ -65,11 +65,6 @@ public class CharacterMovement : MonoBehaviour {
                 character.currentCharStats.stamina -= sprintConsumeRate*Time.deltaTime;
             } else {
                 sprinting = false;
-
-                if ( weaponHandler.currentWeapon != null ){
-                    weaponHandler.charModel.transform.localPosition = weaponHandler.currentWeapon.camPosOffset;
-                    weaponHandler.charModel.transform.localEulerAngles = weaponHandler.currentWeapon.camRotOffset;
-                }
             }
         }
 
