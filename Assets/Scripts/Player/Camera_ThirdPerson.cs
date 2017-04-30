@@ -18,17 +18,16 @@ public class Camera_ThirdPerson : MonoBehaviour {
     public float minX = -75f, maxX = 90f;
     public float zoomFov = 30f;
     public float hideMeshThreshold = 1f;
+
+    [Header("Object References")]
     public GameObject target;
+    public Transform spine;
 
     private float rotX = 0f, rotY = 0f;
-    private float orgFov;
-    private CharacterModel charModel;
     private WeaponHandler weaponHandler;
     private bool aiming = false;
 
-    void Awake(){
-        orgFov = Camera.main.fieldOfView;
-        charModel = transform.parent.GetComponentInChildren<CharacterModel>();
+    void Start(){
         weaponHandler = this.GetSelf().GetComponent<WeaponHandler>();
     }
     void Update(){
@@ -41,15 +40,17 @@ public class Camera_ThirdPerson : MonoBehaviour {
             target.transform.Rotate(Vector3.up * rotY);
             transform.localEulerAngles = Vector3.left * rotX;
         }
-        //transform.localEulerAngles = new Vector3(-rotX, transform.localEulerAngles.y, transform.localEulerAngles.z);
-        //target.transform.localEulerAngles = new Vector3(target.transform.localEulerAngles.x, rotY, target.transform.localEulerAngles.z);
 
         CheckWall();
         CheckMesh();
     }
     void LateUpdate(){
-        if ( weaponHandler.currentWeapon != null )
-            charModel.spine1.RotateAround(transform.position,-transform.parent.right, rotX);
+        if ( weaponHandler.currentWeapon != null ){
+            Vector3 lookRot = Quaternion.LookRotation(Camera.main.transform.forward*10f).eulerAngles;
+
+            spine.RotateAround(transform.position,-transform.parent.right, -lookRot.x);
+            //spine.Rotate(weaponHandler.currentWeapon.spineRotOffset);
+        }
     }
 
     // Check if camera is clipping thru wall and re-position it

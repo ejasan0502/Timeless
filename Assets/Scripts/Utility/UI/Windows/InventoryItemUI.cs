@@ -10,7 +10,6 @@ public class InventoryItemUI : MonoBehaviour {
 
     private bool displayInfo = false;
     private bool dragging = false;
-    private float dragStartTime = 0f;
 
     void Start(){
         AddListeners();

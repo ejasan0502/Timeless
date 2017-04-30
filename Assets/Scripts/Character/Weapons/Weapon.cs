@@ -12,7 +12,7 @@ public class Weapon : MonoBehaviour {
     public float atkRange;
 
     [Header("-Equip Settings-")]
-    public Vector3 spineRotOffset;
+    public Vector3 camOffset;
     public Vector3 equipPos;
     public Vector3 equipRot;
     public Vector3 unequipPos;
@@ -66,7 +66,7 @@ public class Weapon : MonoBehaviour {
     }
     // Clear all positions
     public virtual void Clear(){
-        spineRotOffset = Vector3.zero;
+        camOffset = Vector3.zero;
         equipPos = Vector3.zero;
         equipRot = Vector3.zero;
         unequipPos = Vector3.zero;

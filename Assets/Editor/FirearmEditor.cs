@@ -16,10 +16,8 @@ public class FirearmEditor : Editor {
             weapon.Clear();
         }
 
-        if ( GUILayout.Button("Save spine rotation offset") ){
-            if ( weapon.CharModel ){
-                weapon.spineRotOffset = weapon.CharModel.spine1.localEulerAngles;
-            }
+        if ( GUILayout.Button("Save camOffset") ){
+            weapon.camOffset = Camera.main.transform.localPosition;
         }
         
         if ( GUILayout.Button("Save equip position and rotation") ){

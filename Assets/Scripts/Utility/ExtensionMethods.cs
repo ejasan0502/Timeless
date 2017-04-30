@@ -7,6 +7,7 @@ public static class ExtensionMethods {
         return transform as RectTransform;
     }
     public static Player GetSelf(this MonoBehaviour monoBehaviour){
+        if ( GameManager.instance.player == null ) Log(monoBehaviour, "Returned a null value");
         return GameManager.instance.player;
     }
 

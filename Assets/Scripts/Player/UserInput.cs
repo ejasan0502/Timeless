@@ -4,7 +4,6 @@ using System.Collections;
 // Handles input from player other than main camera
 public class UserInput : MonoBehaviour {
 
-    private CharacterModel charModel;
     private CharacterMovement charMovt;
     private WeaponHandler weaponHandler;
     private Animator anim;
@@ -23,7 +22,6 @@ public class UserInput : MonoBehaviour {
         charMovt = GetComponent<CharacterMovement>();
         weaponHandler = GetComponent<WeaponHandler>();
         anim = GetComponent<Animator>();
-        charModel = GetComponentInChildren<CharacterModel>();
     }
     void Start(){
         SetCursorView();

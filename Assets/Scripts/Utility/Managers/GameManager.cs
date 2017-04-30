@@ -14,17 +14,17 @@ public class GameManager : MonoBehaviour {
             return GameManager.instance.debug;
         }
     }
-    public static Camera_ThirdPerson Camera {
+    public static CameraControl Camera {
         get {
-            if ( GameManager.instance.camera == null )
-                GameManager.instance.camera = GameObject.FindObjectOfType<Camera_ThirdPerson>();
+            if ( GameManager.instance.cam == null )
+                GameManager.instance.cam = GameObject.FindObjectOfType<CameraControl>();
 
-            return GameManager.instance.camera;
+            return GameManager.instance.cam;
         }
     }
 
     private ItemManager itemManager;
-    private Camera_ThirdPerson camera;
+    private CameraControl cam;
 
     private static GameManager _instance;
     public static GameManager instance {
@@ -47,8 +47,6 @@ public class GameManager : MonoBehaviour {
 
         InitializeScripts();
         PhysicsIgnoreCollision();
-
-
     }
 
     // Initialize data scripts
