@@ -60,7 +60,6 @@ public class CameraControl : MonoBehaviour {
         } else {
             Camera.main.fieldOfView = Settings.instance.default_fov;
             Camera.main.transform.SetParent(transform);
-            Camera.main.transform.localPosition = weapon.camOffset;
             Camera.main.transform.localEulerAngles = Vector3.zero;
         }
     }
