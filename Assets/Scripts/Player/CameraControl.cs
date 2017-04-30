@@ -18,6 +18,7 @@ public class CameraControl : MonoBehaviour {
     [Header("Object References")]
     public GameObject target;
     public Transform spine;
+    public Transform eyes;
 
     private float rotX = 0f, rotY = 0f;
     private WeaponHandler weaponHandler;
@@ -27,7 +28,8 @@ public class CameraControl : MonoBehaviour {
         weaponHandler = this.GetSelf().GetComponent<WeaponHandler>();
     }
     void Update(){
-        if ( weaponHandler.currentWeapon != null && !aiming ) Camera.main.transform.localPosition = weaponHandler.currentWeapon.camOffset;
+        //if ( weaponHandler.currentWeapon != null && !aiming ) Camera.main.transform.localPosition = weaponHandler.currentWeapon.camOffset;
+        if ( !aiming ) Camera.main.transform.position = eyes.transform.position;
 
         if ( !GameManager.instance.ignoreControlsInput ){
             rotY = Input.GetAxis("Mouse X") * sensitivity;

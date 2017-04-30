@@ -45,7 +45,8 @@ public class Firearm : Weapon {
     // Single fire on button down
     public override void SinglePrimaryFire(){
         if ( autoFire || anim.GetBool(Settings.instance.anim_reload) ) return;
-
+        
+        anim.SetInteger(Settings.instance.anim_attack, 1);
         Fire();
     }
     // Hold fire on button held
