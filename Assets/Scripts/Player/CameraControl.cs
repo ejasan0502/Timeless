@@ -29,7 +29,7 @@ public class CameraControl : MonoBehaviour {
     }
     void Update(){
         //if ( weaponHandler.currentWeapon != null && !aiming ) Camera.main.transform.localPosition = weaponHandler.currentWeapon.camOffset;
-        if ( !aiming ) Camera.main.transform.position = eyes.transform.position;
+        if ( !aiming && weaponHandler.currentWeapon != null ) Camera.main.transform.position = eyes.transform.position + weaponHandler.currentWeapon.camOffset;
 
         if ( !GameManager.instance.ignoreControlsInput ){
             rotY = Input.GetAxis("Mouse X") * sensitivity;
