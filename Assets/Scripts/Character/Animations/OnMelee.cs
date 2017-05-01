@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 // Handle melee attacks
 public class OnMelee : StateMachineBehaviour {
@@ -20,6 +21,7 @@ public class OnMelee : StateMachineBehaviour {
             foreach (Character target in weapon.targets){
                 target.Hit(c, c.MeleeDamage, InflictType.melee);
             }
+            weapon.targets = new List<Character>();
         }
     }
 
