@@ -1,11 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 // Handles melee weapon logic
 public class Melee : Weapon {
 
     public float staminaCost;
     public AudioClip atkSound;
+
+    public List<Character> targets = new List<Character>();
 
     private int atkCounter = 0;
 
@@ -31,6 +34,13 @@ public class Melee : Weapon {
         anim.SetInteger(Settings.instance.anim_attack, 0);
     }
 
+    // Override Dropping
+    public override void Drop(bool dropItem){
+        rb.isKinematic = !dropItem;
+        rb.useGravity = dropItem;
+        col.isTrigger = !dropItem;
+    }
+
     // Perform attacking logic
     private void Attack(){
         if ( character ){
@@ -48,7 +58,14 @@ public class Melee : Weapon {
 
         anim.SetInteger(Settings.instance.anim_attack, atkCounter);
 
-        audioSource.clip = atkSound;
-        audioSource.Play();
+        //audioSource.clip = atkSound;
+        //audioSource.Play();
+    }
+
+    void OnTriggerEnter(Collider other){
+        Character c = other.GetComponent<Character>();
+        if ( c != null && c != character && !targets.Contains(c) ){
+            targets.Add(c);
+        }
     }
 }

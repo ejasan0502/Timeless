@@ -84,7 +84,6 @@ public class Weapon : MonoBehaviour {
     }
     // Unequip current weapon object to holster transform
     public void Unequip(CharacterModel charModel){
-
         if ( holster != HolsterType.none ){
             Transform holsterTrans = null;
             if ( holster == HolsterType.left ) holsterTrans = charModel.leftHolster;
@@ -99,10 +98,11 @@ public class Weapon : MonoBehaviour {
             gameObject.SetActive(false);
         }
 
-        col.enabled = false;
+        if ( !isMelee )
+            col.enabled = false;
     }
     // Drop weapon object
-    public void Drop(bool dropItem){
+    public virtual void Drop(bool dropItem){
         rb.isKinematic = !dropItem;
         rb.useGravity = dropItem;
         col.enabled = dropItem;
@@ -111,6 +111,11 @@ public class Weapon : MonoBehaviour {
     public void PlaySound(AudioClip sound){
         audioSource.clip = sound;
         audioSource.Play();
+    }
+    // Play a sound from weapon with a delay
+    public void PlayDelayedSound(AudioClip sound, float delay){
+        audioSource.clip = sound;
+        audioSource.PlayDelayed(delay);
     }
 
     // Handle single primary fire logic (single left click)
