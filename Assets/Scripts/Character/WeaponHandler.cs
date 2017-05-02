@@ -34,6 +34,7 @@ public class WeaponHandler : MonoBehaviour {
         AddWeapon(0,"Models/Weapons/Rifles/AK12");
         AddWeapon(1,"Models/Weapons/Pistols/Handgun");
         AddWeapon(2,"Models/Weapons/Swords/Morfus");
+        AddWeapon(3,"Models/Weapons/Tools/Hatchet");
     }
 
     // Instantiate and place weapon object to hands, Update animator

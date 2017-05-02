@@ -1,26 +1,27 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 // Perform when tool attack animation ends
 public class OnToolEnd : StateMachineBehaviour {
 
+    public float soundDelay = 1f;
+    private Character c = null;
+    private Tool weapon;
+
+    public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex){
+        c = animator.GetComponent<Character>();
+        if ( c != null ){
+            weapon = c.GetComponent<WeaponHandler>().currentWeapon as Tool;
+            weapon.PlayDelayedSound(weapon.atkSound,soundDelay);
+        }
+    }
     public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex){
-        animator.SetInteger(Settings.instance.anim_attack, 0);
-
-        Character character = animator.GetComponent<Character>();
-        if ( character && character.IsPlayer ){
-            Inventory inventory = character.GetComponent<Inventory>();
-
-            RaycastHit hit;
-            Vector3 direction = Camera.main.transform.forward;
-            if ( Physics.Raycast(new Ray(Camera.main.transform.position, direction), out hit, 2f, 1 << LayerMask.NameToLayer("Resource")) ){
-                Resource resource = hit.collider.GetComponent<Resource>();
-                int amt = resource.Hit(character.MeleeDamage);
-
-                animator.GetComponent<WeaponHandler>().currentWeapon.GetComponent<AudioSource>().PlayOneShot(resource.hitSound);
-
-                inventory.AddItem(resource.resourceId, amt);
+        if ( c != null && weapon != null ){
+            foreach (Resource target in weapon.targets){
+                int amt = target.Hit(c.MeleeDamage);
             }
+            weapon.targets = new List<Resource>();
         }
     }
 

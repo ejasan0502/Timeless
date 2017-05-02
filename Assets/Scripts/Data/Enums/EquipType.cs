@@ -5,7 +5,7 @@ public enum EquipType {
     pistol = 1,
     sword = 2,
     rifle = 3,
-    hatchet = 4,
+    axe = 4,
     block = 5
 
 }

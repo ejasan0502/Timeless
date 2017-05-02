@@ -143,6 +143,7 @@ ModelImporter:
     400134: //RootNode
     7400000: standing_melee_attack_horizontal
     7400002: hatchet_attack
+    7400004: standing_melee_attack_horizontal0
     9500000: //RootNode
   materials:
     importMaterials: 1
@@ -333,10 +334,10 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: hatchet_attack
+      name: standing_melee_attack_horizontal0
       takeName: mixamo.com
-      firstFrame: 20
-      lastFrame: 35
+      firstFrame: 0
+      lastFrame: 72
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -344,7 +345,7 @@ ModelImporter:
       loop: 0
       hasAdditiveReferencePose: 0
       loopTime: 0
-      loopBlend: 0
+      loopBlend: 1
       loopBlendOrientation: 1
       loopBlendPositionY: 1
       loopBlendPositionXZ: 0
