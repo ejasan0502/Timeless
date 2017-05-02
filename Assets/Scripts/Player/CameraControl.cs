@@ -28,6 +28,7 @@ public class CameraControl : MonoBehaviour {
     private WeaponHandler weaponHandler;
     private bool aiming = false;
     private bool crouching = false;
+    private bool restrictX = false;
 
     void Start(){
         weaponHandler = this.GetSelf().GetComponent<WeaponHandler>();
@@ -43,11 +44,11 @@ public class CameraControl : MonoBehaviour {
             rotX = Mathf.Clamp(rotX, minX, maxX);
         
             target.transform.Rotate(Vector3.up * rotY);
-            transform.localEulerAngles = Vector3.left * rotX;
+            if ( !restrictX ) transform.localEulerAngles = Vector3.left * rotX;
         }
     }
     void LateUpdate(){
-        if ( weaponHandler.currentWeapon != null ){
+        if ( weaponHandler.currentWeapon != null && !restrictX ){
             spine.RotateAround(transform.position,-transform.parent.right, rotX);
             //spine.Rotate(weaponHandler.currentWeapon.spineRotOffset);
         }
@@ -80,6 +81,10 @@ public class CameraControl : MonoBehaviour {
         } else {
             transform.localPosition = standPivotPos;
         }
+    }
+    // Restrict the rotation along the X axis
+    public void SetRestrictX(bool restrict){
+        restrictX = restrict;
     }
 
 }

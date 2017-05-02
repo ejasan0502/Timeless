@@ -141,6 +141,7 @@ public class UserInput : MonoBehaviour {
             this.Log("OnProneUp");
             proning = !proning;
             charMovt.Prone(proning);
+            camControl.SetRestrictX(proning);
         }
     }
     // Handle attacking logic
