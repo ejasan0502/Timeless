@@ -12,6 +12,7 @@ public class Weapon : MonoBehaviour {
     public float atkRange;
 
     [Header("-Equip Settings-")]
+    public Vector3 crouchPivotPos = new Vector3(0,0.6f,0);
     public Vector3 camOffset;
     public Vector3 equipPos;
     public Vector3 equipRot;

@@ -4,6 +4,7 @@ using System.Collections;
 // Handles input from player other than main camera
 public class UserInput : MonoBehaviour {
 
+    private CameraControl camControl;
     private CharacterMovement charMovt;
     private WeaponHandler weaponHandler;
     private Animator anim;
@@ -19,6 +20,7 @@ public class UserInput : MonoBehaviour {
     private bool hideMouse = true;
 
     void Awake(){
+        camControl = GetComponentInChildren<CameraControl>();
         charMovt = GetComponent<CharacterMovement>();
         weaponHandler = GetComponent<WeaponHandler>();
         anim = GetComponent<Animator>();
@@ -123,12 +125,14 @@ public class UserInput : MonoBehaviour {
             if ( !crouching ) {
                 crouching = true;
                 charMovt.Crouch(crouching);
+                camControl.Crouch(crouching);
             }
         }
         if ( Input.GetButtonUp("Crouch") ){
             this.Log("OnCrouchUp");
             crouching = false;
             charMovt.Crouch(crouching);
+            camControl.Crouch(crouching);
         }
     }
     // Handle proning logic

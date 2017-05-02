@@ -5,6 +5,10 @@ using System.Collections.Generic;
 // Handles camera movement with user input
 public class CameraControl : MonoBehaviour {
 
+    [Header("Positions")]
+    public Vector3 standPivotPos;
+    public Vector3 crouchPivotPos;
+
     [Header("Speeds")]
     public float camSpd = 5f;
     public float zoomSpd = 5f;
@@ -23,6 +27,7 @@ public class CameraControl : MonoBehaviour {
     private float rotX = 0f, rotY = 0f;
     private WeaponHandler weaponHandler;
     private bool aiming = false;
+    private bool crouching = false;
 
     void Start(){
         weaponHandler = this.GetSelf().GetComponent<WeaponHandler>();
@@ -61,6 +66,19 @@ public class CameraControl : MonoBehaviour {
             Camera.main.fieldOfView = Settings.instance.default_fov;
             Camera.main.transform.SetParent(transform);
             Camera.main.transform.localEulerAngles = Vector3.zero;
+        }
+    }
+    // Adjust camera pivot point
+    public void Crouch(bool crouch){
+        crouching = crouch;
+
+        if ( crouching ){
+            if ( weaponHandler.currentWeapon == null )
+                transform.localPosition = crouchPivotPos;
+            else
+                transform.localPosition = weaponHandler.currentWeapon.crouchPivotPos;
+        } else {
+            transform.localPosition = standPivotPos;
         }
     }
 
