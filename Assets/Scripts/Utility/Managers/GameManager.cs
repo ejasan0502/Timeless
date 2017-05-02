@@ -55,7 +55,7 @@ public class GameManager : MonoBehaviour {
     }
     // Ignore physics for certain layers
     private void PhysicsIgnoreCollision(){
-        Physics.IgnoreLayerCollision(LayerMask.NameToLayer("Environment"), LayerMask.NameToLayer("Water"));
+        
     }
 
     // Determine if system should ignore controls input

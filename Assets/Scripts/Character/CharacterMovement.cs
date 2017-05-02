@@ -45,9 +45,9 @@ public class CharacterMovement : MonoBehaviour {
 
     private bool canJetPack = false;
     private bool jetPacking = false;
-    public bool isGrounded = false;
+    private bool isGrounded = false;
 
-    public bool underwater = false;
+    private bool underwater = false;
     
 	void Awake() {
         weaponHandler = GetComponent<WeaponHandler>();
@@ -247,13 +247,9 @@ public class CharacterMovement : MonoBehaviour {
     // Check if character is grounded
     private void CheckGround(){
         RaycastHit hit;
-        Debug.DrawRay(transform.position, -transform.up*0.2f, Color.red);
-        if ( Physics.Raycast(transform.position, -transform.up, out hit, 0.2f, 1 << LayerMask.NameToLayer("Environment")) ){
-            if ( hit.collider.gameObject.isStatic ){
-                isGrounded = true;
-            } else {
-                isGrounded = false;
-            }
+        Debug.DrawRay(transform.position, -transform.up*0.1f, Color.red);
+        if ( Physics.Raycast(transform.position, -transform.up, out hit, 0.1f, 1 << LayerMask.NameToLayer("Default")) ){
+            isGrounded = true;
         } else {
             isGrounded = false;
         }

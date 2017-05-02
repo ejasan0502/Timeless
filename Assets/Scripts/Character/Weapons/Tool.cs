@@ -9,8 +9,6 @@ public class Tool : Weapon {
 
     public List<Resource> targets = new List<Resource>();
 
-    private int atkCounter = 0;
-
     // Override bool to true since weapon is melee
     public override bool isTool
     {

@@ -18,8 +18,10 @@ public class OnToolEnd : StateMachineBehaviour {
     }
     public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex){
         if ( c != null && weapon != null ){
+            Inventory inventory = c.GetComponent<Inventory>();
             foreach (Resource target in weapon.targets){
                 int amt = target.Hit(c.MeleeDamage);
+                inventory.AddItem(target.resourceId, amt);
             }
             weapon.targets = new List<Resource>();
         }
