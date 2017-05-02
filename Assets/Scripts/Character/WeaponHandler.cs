@@ -35,6 +35,7 @@ public class WeaponHandler : MonoBehaviour {
         AddWeapon(1,"Models/Weapons/Pistols/Handgun");
         AddWeapon(2,"Models/Weapons/Swords/Morfus");
         AddWeapon(3,"Models/Weapons/Tools/Hatchet");
+        AddWeapon(4,"Models/Blocks/Wood_Block");
     }
 
     // Instantiate and place weapon object to hands, Update animator
