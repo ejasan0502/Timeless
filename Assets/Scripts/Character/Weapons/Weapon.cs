@@ -10,6 +10,7 @@ public class Weapon : MonoBehaviour {
     public EquipType weaponType;
     public float atkRate;
     public float atkRange;
+    public bool oneHanded = false;
 
     [Header("-Equip Settings-")]
     public Vector3 crouchPivotPos = new Vector3(0,0.6f,0);

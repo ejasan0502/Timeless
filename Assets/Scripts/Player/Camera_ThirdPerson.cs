@@ -45,7 +45,7 @@ public class Camera_ThirdPerson : MonoBehaviour {
         CheckMesh();
     }
     void LateUpdate(){
-        if ( weaponHandler.currentWeapon != null ){
+        if ( weaponHandler.currentWeapons.Count > 0 ){
             Vector3 lookRot = Quaternion.LookRotation(Camera.main.transform.forward*10f).eulerAngles;
 
             spine.RotateAround(transform.position,-transform.parent.right, -lookRot.x);

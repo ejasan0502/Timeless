@@ -269,7 +269,6 @@ public class CharacterMovement : MonoBehaviour {
             if ( hit.collider.gameObject.layer == LayerMask.NameToLayer("Water") ){
                 if ( !underwater ) {
                     underwater = true;
-                    weaponHandler.Unequip();
                 }   
             } else {
                 underwater = false;

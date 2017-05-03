@@ -34,8 +34,7 @@ public class CameraControl : MonoBehaviour {
         weaponHandler = this.GetSelf().GetComponent<WeaponHandler>();
     }
     void Update(){
-        //if ( weaponHandler.currentWeapon != null && !aiming ) Camera.main.transform.localPosition = weaponHandler.currentWeapon.camOffset;
-        if ( !aiming && weaponHandler.currentWeapon != null ) Camera.main.transform.position = eyes.transform.position + weaponHandler.currentWeapon.camOffset;
+        if ( !aiming ) Camera.main.transform.position = eyes.transform.position;
 
         if ( !GameManager.instance.ignoreControlsInput ){
             rotY = Input.GetAxis("Mouse X") * sensitivity;
@@ -48,9 +47,8 @@ public class CameraControl : MonoBehaviour {
         }
     }
     void LateUpdate(){
-        if ( weaponHandler.currentWeapon != null && !restrictX ){
+        if ( !restrictX ){
             spine.RotateAround(transform.position,-transform.parent.right, rotX);
-            //spine.Rotate(weaponHandler.currentWeapon.spineRotOffset);
         }
     }
 
@@ -74,10 +72,10 @@ public class CameraControl : MonoBehaviour {
         crouching = crouch;
 
         if ( crouching ){
-            if ( weaponHandler.currentWeapon == null )
+            if ( weaponHandler.currentWeapons.Count < 1 )
                 transform.localPosition = crouchPivotPos;
             else
-                transform.localPosition = weaponHandler.currentWeapon.crouchPivotPos;
+                transform.localPosition = weaponHandler.currentWeapons[0].crouchPivotPos;
         } else {
             transform.localPosition = standPivotPos;
         }

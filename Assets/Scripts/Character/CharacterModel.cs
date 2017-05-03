@@ -4,6 +4,7 @@ using System.Collections;
 // Save transforms to use for equipment
 public class CharacterModel : MonoBehaviour {
 
+    public Transform leftHand;
     public Transform rightHand;
     public Transform spine1;
 
@@ -18,6 +19,8 @@ public class CharacterModel : MonoBehaviour {
         foreach (Transform t in GetComponentsInChildren<Transform>()){
             if ( !rightHand && t.name.Contains("RightHand") ){
                 rightHand = t;
+            } else if ( !leftHand && t.name.Contains("LeftHand") ){
+                leftHand = t;
             } else if ( !leftHolster && t.name.Contains("LeftHolster") ){
                 leftHolster = t;
             } else if ( !rightHolster && t.name.Contains("RightHolster") ){

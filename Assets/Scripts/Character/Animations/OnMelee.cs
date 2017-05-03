@@ -11,8 +11,9 @@ public class OnMelee : StateMachineBehaviour {
 
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex){
         c = animator.GetComponent<Character>();
+
         if ( c != null ){
-            weapon = c.GetComponent<WeaponHandler>().currentWeapon as Melee;
+            weapon = c.GetComponent<WeaponHandler>().currentWeapons[0] as Melee;
             weapon.PlayDelayedSound(weapon.atkSound,soundDelay);
         }
     }

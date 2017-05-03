@@ -5,16 +5,16 @@ using System.Collections.Generic;
 // Handles all weapon objects to character object
 public class WeaponHandler : MonoBehaviour {
 
-    public Weapon currentWeapon {
-        get {
-            return weaponIndex < weapons.Length && weaponIndex >= 0 ? weapons[weaponIndex] : null;
-        }
-    }
+    public const int MaxWeaponEquipped = 2;
+    public const int MaxWeaponCount = 10;
+
+    public string[] starterWeapons;
+
+    public List<Weapon> currentWeapons { get; private set; }
     public CharacterModel charModel { get; private set; }
-    public Weapon[] weapons { get; private set; }
+    public Weapon[] weapons;
 
     private Animator anim;
-    public int weaponIndex = -1;
     public int nextAvailableIndex { 
         get {
             for (int i = 0; i < weapons.Length; i++){
@@ -28,46 +28,71 @@ public class WeaponHandler : MonoBehaviour {
         charModel = GetComponentInChildren<CharacterModel>();
         anim = GetComponent<Animator>();
 
-        weapons = new Weapon[10];
+        weapons = new Weapon[MaxWeaponCount];
+        currentWeapons = new List<Weapon>();
     }
     void Start(){
-        AddWeapon(0,"Models/Weapons/Rifles/AK12");
-        AddWeapon(1,"Models/Weapons/Pistols/Handgun");
-        AddWeapon(2,"Models/Weapons/Swords/Morfus");
-        AddWeapon(3,"Models/Weapons/Tools/Hatchet");
-        AddWeapon(4,"Models/Blocks/Wood_Block");
+        for (int i = 0; i < starterWeapons.Length; i++){
+            AddWeapon(i,starterWeapons[i]);
+        }
     }
 
     // Instantiate and place weapon object to hands, Update animator
     public void Equip(int index){
         if ( charModel == null ) return;
 
-        if ( weaponIndex != -1 ){
-            currentWeapon.Unequip(charModel);
+        if ( currentWeapons.Count > 0 ){
+            if ( !currentWeapons[0].oneHanded ){
+                currentWeapons[0].Unequip(charModel);
+
+                currentWeapons = new List<Weapon>();
+            }
         }
 
         this.Log("Equipping index " + index);
         if ( weapons[index] != null ){
-            weaponIndex = index;
+            Weapon weapon = weapons[index];
+            if ( currentWeapons.Count > 0 ){
+                // Character already has a weapon equipped
+                if ( currentWeapons[0].weaponType == weapon.weaponType ){
+                    weapon.Equip(charModel.leftHand);
 
-            Weapon weapon = weapons[weaponIndex];
-            weapon.Equip(charModel.rightHand);
+                    if ( weapon.isMelee ){
+                        anim.SetInteger(Settings.instance.anim_weapon_type, (int)EquipType.dualMelee);
+                    } else {
+                        anim.SetInteger(Settings.instance.anim_weapon_type, (int)EquipType.dualPistol);
+                    }
+                } else {
+                    if ( currentWeapons[0].isFirearm ){
+                        weapon.Equip(charModel.rightHand);
+                        currentWeapons[0].Equip(charModel.leftHand);
+                    } else {
+                        weapon.Equip(charModel.leftHand);
+                    }   
 
-            anim.SetInteger(Settings.instance.anim_weapon_type, (int)currentWeapon.weaponType);
+                    anim.SetInteger(Settings.instance.anim_weapon_type, (int)EquipType.meleeAndPistol);
+                }
+            } else {
+                // Character does not have a weapon equipped
+                weapon.Equip(charModel.rightHand);
+                anim.SetInteger(Settings.instance.anim_weapon_type, (int)weapon.weaponType);
+            }
+
+            currentWeapons.Add(weapon);
         } else {
             anim.SetInteger(Settings.instance.anim_weapon_type, 0);
         }
     }
     // Unequip current weapon
-    public void Unequip(){
-        if ( weaponIndex != -1 ){
-            currentWeapon.Unequip(charModel);
-            anim.SetInteger(Settings.instance.anim_weapon_type, 0);
-            charModel.transform.localPosition = charModel.originalPos;
-            charModel.transform.localEulerAngles = charModel.originalRot;
-            weaponIndex = -1;
-        }
-    }
+    //public void Unequip(){
+    //    if ( weaponIndex != -1 ){
+    //        currentWeapon.Unequip(charModel);
+    //        anim.SetInteger(Settings.instance.anim_weapon_type, 0);
+    //        charModel.transform.localPosition = charModel.originalPos;
+    //        charModel.transform.localEulerAngles = charModel.originalRot;
+    //        weaponIndex = -1;
+    //    }
+    //}
     // Add weapon to list, return index of equip
     public void AddWeapon(int index, string path){
         if ( index == -1 ) return;

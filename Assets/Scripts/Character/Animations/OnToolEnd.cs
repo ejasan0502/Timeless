@@ -12,7 +12,7 @@ public class OnToolEnd : StateMachineBehaviour {
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex){
         c = animator.GetComponent<Character>();
         if ( c != null ){
-            weapon = c.GetComponent<WeaponHandler>().currentWeapon as Tool;
+            weapon = c.GetComponent<WeaponHandler>().currentWeapons[0] as Tool;
             weapon.PlayDelayedSound(weapon.atkSound,soundDelay);
         }
     }

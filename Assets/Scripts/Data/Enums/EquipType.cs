@@ -6,6 +6,9 @@ public enum EquipType {
     sword = 2,
     rifle = 3,
     axe = 4,
-    block = 5
+    block = 5,
+    dualMelee = 20,
+    dualPistol = 21,
+    meleeAndPistol = 22
 
 }

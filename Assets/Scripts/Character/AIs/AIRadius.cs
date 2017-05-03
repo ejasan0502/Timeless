@@ -6,7 +6,7 @@ using System.Collections.Generic;
 [RequireComponent(typeof(SphereCollider))]
 public class AIRadius : MonoBehaviour {
 
-    public List<Character> enemiesWithinRange { get; private set; }
+    public List<Character> enemiesWithinRange = new List<Character>();
 
     void Awake(){
         enemiesWithinRange = new List<Character>();

@@ -11,7 +11,6 @@ public class UserInput : MonoBehaviour {
 
     private KeyCode lastKeyPressed;
     private float dodgeTime = 0f;
-    private bool dodging = false;
 
     private bool crouching = false;
     private bool proning = false;
@@ -47,13 +46,11 @@ public class UserInput : MonoBehaviour {
 
     // Handles movement logic
     private void Movement(){
-        if ( !dodging ){
-            Vector3 v = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
-            if ( !charMovt.IsUnderWater ) v = transform.TransformDirection(v);
-            else v = Camera.main.transform.TransformDirection(v);
+        Vector3 v = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
+        if ( !charMovt.IsUnderWater ) v = transform.TransformDirection(v);
+        else v = Camera.main.transform.TransformDirection(v);
 
-            charMovt.Move(v);
-        }
+        charMovt.Move(v);
 
         charMovt.Animate(Input.GetAxis("Vertical"),Input.GetAxis("Horizontal"));
     }
@@ -96,29 +93,6 @@ public class UserInput : MonoBehaviour {
             charMovt.Sprint(sprinting);
         }
     }
-    // Handle dodging logic
-    private void Dodging(){
-        if ( crouching || proning ) return;
-
-        KeyCode currentPressed = GetKeyDown(KeyCode.W, KeyCode.S, KeyCode.A, KeyCode.D);
-        if ( currentPressed != KeyCode.None ){
-            if ( lastKeyPressed != KeyCode.None ){
-                if ( GetKeyDown(KeyCode.W, KeyCode.S, KeyCode.A, KeyCode.D) == lastKeyPressed ){
-                    this.Log("OnDodgeDown");
-                    charMovt.Dodge(currentPressed);
-                    dodging = true;
-                } else {
-                    lastKeyPressed = KeyCode.None;
-                }
-            } else {
-                lastKeyPressed = currentPressed;
-            }
-            dodgeTime = Time.time;
-        } else if ( Time.time - dodgeTime >= 1f ){
-            lastKeyPressed = KeyCode.None;
-            dodging = false;
-        }
-    }
     // Handle crouching logic
     private void Crouching(){
         if ( Input.GetButton("Crouch") ){
@@ -146,15 +120,15 @@ public class UserInput : MonoBehaviour {
     }
     // Handle attacking logic
     private void Attack(){
-        if ( dodging || sprinting || weaponHandler && weaponHandler.currentWeapon == null ) return;
+        if ( sprinting || weaponHandler && weaponHandler.currentWeapons.Count < 1 ) return;
 
         // Primary Fire
         if ( Input.GetButtonDown("Fire1") ){
             this.Log("OnPrimaryFireDown");
-            weaponHandler.currentWeapon.SinglePrimaryFire();
+            weaponHandler.currentWeapons[0].SinglePrimaryFire();
         }
         if ( Input.GetButton("Fire1") ){
-            weaponHandler.currentWeapon.PrimaryFire();
+            weaponHandler.currentWeapons[0].PrimaryFire();
         }
         if ( Input.GetButtonUp("Fire1") ){
             this.Log("OnPrimaryFireUp");
@@ -164,19 +138,19 @@ public class UserInput : MonoBehaviour {
         // Secondary Fire
         if ( Input.GetButtonDown("Fire2") ){
             this.Log("OnSecondaryFireDown");
-            weaponHandler.currentWeapon.SecondaryFire();
+            weaponHandler.currentWeapons[0].SecondaryFire();
         }
         if ( Input.GetButtonUp("Fire2") ){
             this.Log("OnSecondaryFireUp");
-            weaponHandler.currentWeapon.SecondaryFireEnd();
+            weaponHandler.currentWeapons[0].SecondaryFireEnd();
         }
     }
     // Handle reloading logic
     private void Reload(){
-        if ( weaponHandler && weaponHandler.currentWeapon == null ) return;
+        if ( weaponHandler && weaponHandler.currentWeapons.Count < 1 ) return;
 
         if ( Input.GetButtonDown("Reload") ){
-            weaponHandler.currentWeapon.AltFire();
+            weaponHandler.currentWeapons[0].AltFire();
         }
     }
     // Handle weapon switching
