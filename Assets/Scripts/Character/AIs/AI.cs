@@ -6,6 +6,8 @@ using System.Collections.Generic;
 [RequireComponent(typeof(CharacterMovement))]
 public class AI : Character {
 
+    public float viewField = 0.5f;      // -1 to 1 where 1 is front and -1 is behind
+
     private AIState aiState = AIState.idle;
 
     protected CharacterMovement charMovt;
@@ -19,6 +21,8 @@ public class AI : Character {
     private bool combat = false;
     protected bool attack = false;
     protected int atkCounter = 0;
+
+    protected bool canAttack = true;
 
     protected Character target = null;
 
@@ -36,6 +40,11 @@ public class AI : Character {
         audioSource = GetComponent<AudioSource>();
 
         moveToPosition = transform.position;
+
+        maxCharStats = new CharStats(Settings.instance.base_enemy_charStats);
+        maxCombatStats = new CombatStats(Settings.instance.base_enemy_combatStats);
+        currentCharStats = new CharStats(maxCharStats);
+        currentCombatStats = new CombatStats(maxCombatStats);
     }
     void Update(){
         Movement();
@@ -87,12 +96,70 @@ public class AI : Character {
     }
 
     // Logic when AI has no target
-    protected virtual void Idle(){}
+    protected virtual void Idle(){
+        if ( !HasTarget ){
+            LookForTarget();   
+        } else {
+            SetState(AIState.combat);
+        }
+    }
     // Logic when AI has a target
-    protected virtual void Combat(){}
+    protected virtual void Combat(){
+        if ( HasTarget && target.IsAlive ){
+            if ( Vector3.Distance(transform.position, target.transform.position) < currentCombatStats.atkRange ){
+                Stop();
+                if ( canAttack ){
+                    atkCounter++;
+                    if ( atkCounter > 3 ){
+                        atkCounter = 1;
+                    }
+
+                    canAttack = false;
+                    StartCoroutine(AttackDelay());
+                }
+            } else if ( atkCounter < 1){
+                MoveTo(target.transform.position);
+            }
+        } else {
+            SetState(AIState.idle);
+        }
+    }
     // Logic when AI is casting
     protected virtual void Cast(){}
     
+    
+    // Looks for a desired target
+    protected void LookForTarget(){
+        if ( target != null ) return;
+        
+        Character desiredTarget = null;
+        if ( aiRadius.enemiesWithinRange.Count > 0 ){
+            float distance = 100f;
+
+            foreach (Character c in aiRadius.enemiesWithinRange){
+                Vector3 direction = c.transform.position - transform.position;
+                float dot = Vector3.Dot(direction.normalized, transform.forward);
+
+                // Check if in view
+                if ( dot > viewField ){
+                    // Look for closest
+                    float d = Vector3.Distance(transform.position, c.transform.position);
+                    if ( d < distance ){
+                        desiredTarget = c;
+                        distance = d;
+                    }
+                }
+            }
+        }
+            
+        SetTarget(desiredTarget);
+    } 
+    // Delay between attacks
+    protected IEnumerator AttackDelay(){
+        yield return new WaitForSeconds(currentCombatStats.atkRate);
+        canAttack = true;
+    }
+
     // Destroy object with delay on death
     protected override void OnDeath(){
         Stop();

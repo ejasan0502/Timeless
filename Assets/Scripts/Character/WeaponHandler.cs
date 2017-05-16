@@ -10,9 +10,9 @@ public class WeaponHandler : MonoBehaviour {
 
     public string[] starterWeapons;
 
-    public List<Weapon> currentWeapons { get; private set; }
+    public List<Weapon> currentWeapons = new List<Weapon>();
     public CharacterModel charModel { get; private set; }
-    public Weapon[] weapons;
+    private Weapon[] weapons;
 
     private Animator anim;
     public int nextAvailableIndex { 
@@ -29,9 +29,13 @@ public class WeaponHandler : MonoBehaviour {
         anim = GetComponent<Animator>();
 
         weapons = new Weapon[MaxWeaponCount];
-        currentWeapons = new List<Weapon>();
     }
     void Start(){
+        if ( currentWeapons.Count > 1 ){
+            // Setup dual wielding
+            anim.SetInteger(Settings.instance.anim_weapon_type, (int)EquipType.dualMelee);
+        }
+
         for (int i = 0; i < starterWeapons.Length; i++){
             AddWeapon(i,starterWeapons[i]);
         }

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 // Handle melee attacks
 public class OnMelee : StateMachineBehaviour {
 
+    public int weaponIndex = -1;
     public float soundDelay = 1f;
     private Character c = null;
     private Melee weapon;
@@ -13,7 +14,13 @@ public class OnMelee : StateMachineBehaviour {
         c = animator.GetComponent<Character>();
 
         if ( c != null ){
-            weapon = c.GetComponent<WeaponHandler>().currentWeapons[0] as Melee;
+            if ( weaponIndex == -1 ){
+                // Character is not dual wielding
+                weapon = c.GetComponent<WeaponHandler>().currentWeapons[0] as Melee;
+            } else {
+                // Character is dual wielding
+                weapon = c.GetComponent<WeaponHandler>().currentWeapons[weaponIndex] as Melee;
+            }
             weapon.PlayDelayedSound(weapon.atkSound,soundDelay);
         }
     }

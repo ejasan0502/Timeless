@@ -98,30 +98,4 @@ public class Monster : AI {
     private void Chase(){
         MoveTo(target.transform.position);
     }
-    // Looks for a desired target
-    private void LookForTarget(){
-        if ( target != null || disableTargetting ) return;
-        
-        Character desiredTarget = null;
-        if ( aiRadius.enemiesWithinRange.Count > 0 ){
-            float distance = 100f;
-
-            foreach (Character c in aiRadius.enemiesWithinRange){
-                Vector3 direction = c.transform.position - transform.position;
-                float dot = Vector3.Dot(direction.normalized, transform.forward);
-
-                // Check if in view
-                if ( dot > viewField ){
-                    // Look for closest
-                    float d = Vector3.Distance(transform.position, c.transform.position);
-                    if ( d < distance ){
-                        desiredTarget = c;
-                        distance = d;
-                    }
-                }
-            }
-        }
-            
-        SetTarget(desiredTarget);
-    } 
 }
