@@ -13,6 +13,7 @@ public class AI : Character {
     protected CharacterMovement charMovt;
     protected AIRadius aiRadius;
     protected AudioSource audioSource;
+    protected WeaponHandler weaponHandler;
 
     private Vector3 moveToPosition = Vector3.zero;
     private Vector3 velocity = Vector3.zero;
@@ -38,6 +39,7 @@ public class AI : Character {
         charMovt = GetComponent<CharacterMovement>();
         aiRadius = GetComponentInChildren<AIRadius>();
         audioSource = GetComponent<AudioSource>();
+        weaponHandler = GetComponent<WeaponHandler>();
 
         moveToPosition = transform.position;
 
@@ -109,11 +111,7 @@ public class AI : Character {
             if ( Vector3.Distance(transform.position, target.transform.position) < currentCombatStats.atkRange ){
                 Stop();
                 if ( canAttack ){
-                    atkCounter++;
-                    if ( atkCounter > 3 ){
-                        atkCounter = 1;
-                    }
-
+                    Attack();
                     canAttack = false;
                     StartCoroutine(AttackDelay());
                 }
@@ -126,7 +124,24 @@ public class AI : Character {
     }
     // Logic when AI is casting
     protected virtual void Cast(){}
-    
+
+    // Attack based on type of weapon
+    protected virtual void Attack(){
+        if ( weaponHandler.HasWeaponEquipped ){
+            Weapon weapon = weaponHandler.currentWeapons[0];
+            
+            if ( weapon.isFirearm ){
+                Firearm firearm = weapon as Firearm;
+                if ( firearm.autoFire ){
+                    firearm.PrimaryFire();
+                } else {
+                    firearm.SinglePrimaryFire();
+                }
+            } else {
+                weapon.SinglePrimaryFire();
+            }
+        }
+    }
     
     // Looks for a desired target
     protected void LookForTarget(){

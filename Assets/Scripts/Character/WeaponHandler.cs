@@ -23,6 +23,11 @@ public class WeaponHandler : MonoBehaviour {
             return -1;
         }
     }
+    public bool HasWeaponEquipped {
+        get {
+            return currentWeapons.Count > 0;
+        }
+    }
 
     void Awake(){
         charModel = GetComponentInChildren<CharacterModel>();
