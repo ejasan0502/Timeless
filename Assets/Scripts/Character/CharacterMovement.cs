@@ -30,7 +30,6 @@ public class CharacterMovement : MonoBehaviour {
     private AudioSource audioSource;
     private Character character;
     private Rigidbody rb;
-    private WeaponHandler weaponHandler;
 
     private Vector3 velocity = Vector3.zero;
     private Vector3 targetVelocity = Vector3.zero;
@@ -50,7 +49,6 @@ public class CharacterMovement : MonoBehaviour {
     private bool underwater = false;
     
 	void Awake() {
-        weaponHandler = GetComponent<WeaponHandler>();
         anim = GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();
         character = GetComponent<Character>();

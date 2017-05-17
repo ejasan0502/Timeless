@@ -13,6 +13,7 @@ public class WeaponHandler : MonoBehaviour {
     public List<Weapon> currentWeapons = new List<Weapon>();
     public CharacterModel charModel { get; private set; }
     private Weapon[] weapons;
+    private Character character;
 
     private Animator anim;
     public int nextAvailableIndex { 
@@ -34,6 +35,7 @@ public class WeaponHandler : MonoBehaviour {
         anim = GetComponent<Animator>();
 
         weapons = new Weapon[MaxWeaponCount];
+        character = GetComponent<Character>();
     }
     void Start(){
         if ( currentWeapons.Count > 1 ){
@@ -59,7 +61,7 @@ public class WeaponHandler : MonoBehaviour {
         }
 
         this.Log("Equipping index " + index);
-        if ( weapons[index] != null ){
+        if ( index != -1 && weapons[index] != null ){
             Weapon weapon = weapons[index];
             if ( currentWeapons.Count > 0 ){
                 // Character already has a weapon equipped
@@ -91,6 +93,8 @@ public class WeaponHandler : MonoBehaviour {
         } else {
             anim.SetInteger(Settings.instance.anim_weapon_type, 0);
         }
+
+        character.UpdateCombatStats();
     }
     // Unequip current weapon
     //public void Unequip(){

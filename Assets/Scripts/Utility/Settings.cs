@@ -26,9 +26,7 @@ public class Settings : MonoBehaviour {
     [Header("Base Stat Settings")]
     public float default_fov = 60f;
     public CharStats base_player_charStats;
-    public CombatStats base_player_combatStats;
     public CharStats base_enemy_charStats;
-    public CombatStats base_enemy_combatStats;
 
     [Header("-Resource Paths-")]
     public string path_icons = "Icons/";

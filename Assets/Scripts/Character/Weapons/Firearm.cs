@@ -124,7 +124,7 @@ public class Firearm : Weapon {
         }
 
         RaycastHit hit;
-        if ( Physics.Raycast(bulletSpawn.position, direction, out hit, atkRange) ){
+        if ( Physics.Raycast(bulletSpawn.position, direction, out hit, stats.atkRange) ){
             if ( GameManager.isDebugging ) Debug.DrawRay(bulletSpawn.position, hit.point-bulletSpawn.position, Color.red, 1f);
 
             // Decal
@@ -158,7 +158,7 @@ public class Firearm : Weapon {
     }
     // Apply fire delay
     private IEnumerator FireDelay(){
-        yield return new WaitForSeconds(atkRate);
+        yield return new WaitForSeconds(stats.atkRate);
         canFire = true;
     }
 }

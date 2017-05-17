@@ -7,7 +7,7 @@ public class Player : Character {
         base.Awake();
 
         maxCharStats = new CharStats(Settings.instance.base_player_charStats);
-        maxCombatStats = new CombatStats(Settings.instance.base_player_combatStats);
+        maxCombatStats = new CombatStats();
         currentCharStats = new CharStats(maxCharStats);
         currentCombatStats = new CombatStats(maxCombatStats);
     }

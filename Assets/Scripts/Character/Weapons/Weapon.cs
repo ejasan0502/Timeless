@@ -8,8 +8,7 @@ public class Weapon : MonoBehaviour {
 
     [Header("-Weapon Info-")]
     public EquipType weaponType;
-    public float atkRate;
-    public float atkRange;
+    public CombatStats stats;
     public bool oneHanded = false;
 
     [Header("-Equip Settings-")]

@@ -39,4 +39,40 @@ public class CombatStats {
         }
     }
 
+    public static CombatStats operator+(CombatStats stats1, CombatStats stats2){
+        CombatStats stats = new CombatStats();
+        FieldInfo[] fields = stats.GetType().GetFields();
+        FieldInfo[] fields1 = stats1.GetType().GetFields();
+        FieldInfo[] fields2 = stats2.GetType().GetFields();
+        
+        for (int i = 0; i < fields.Length; i++){
+            fields[i].SetValue(stats, (float)fields1[i].GetValue(stats1) + (float)fields2[i].GetValue(stats2));
+        }
+
+        return stats;
+    }
+    public static CombatStats operator-(CombatStats stats1, CombatStats stats2){
+        CombatStats stats = new CombatStats();
+        FieldInfo[] fields = stats.GetType().GetFields();
+        FieldInfo[] fields1 = stats1.GetType().GetFields();
+        FieldInfo[] fields2 = stats2.GetType().GetFields();
+        
+        for (int i = 0; i < fields.Length; i++){
+            fields[i].SetValue(stats, (float)fields1[i].GetValue(stats1) - (float)fields2[i].GetValue(stats2));
+        }
+
+        return stats;
+    }
+    public static CombatStats operator*(CombatStats stats1, CombatStats stats2){
+        CombatStats stats = new CombatStats();
+        FieldInfo[] fields = stats.GetType().GetFields();
+        FieldInfo[] fields1 = stats1.GetType().GetFields();
+        FieldInfo[] fields2 = stats2.GetType().GetFields();
+        
+        for (int i = 0; i < fields.Length; i++){
+            fields[i].SetValue(stats, (float)fields1[i].GetValue(stats1) * (float)fields2[i].GetValue(stats2));
+        }
+
+        return stats;
+    }
 }

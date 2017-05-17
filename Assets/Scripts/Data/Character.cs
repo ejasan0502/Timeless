@@ -45,6 +45,7 @@ public class Character : MonoBehaviour {
     protected Animator anim;
     protected SkinnedMeshRenderer skinMeshRenderer;
     protected Material meshMat;
+    protected WeaponHandler weaponHandler;
 
     private int bloodyTextureIndex = 0;
 
@@ -53,6 +54,7 @@ public class Character : MonoBehaviour {
         skinMeshRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
         meshMat = new Material(skinMeshRenderer.sharedMaterial);
         skinMeshRenderer.sharedMaterial = meshMat;
+        weaponHandler = GetComponent<WeaponHandler>();
 
         currentCharStats = new CharStats(maxCharStats);
         currentCombatStats = new CombatStats(maxCombatStats);
@@ -126,5 +128,17 @@ public class Character : MonoBehaviour {
         }
 
         CheckDeath();
+    }
+    // Update current combat stats of character based on current weapons
+    public void UpdateCombatStats(){
+        maxCombatStats = new CombatStats();
+
+        if ( weaponHandler.HasWeaponEquipped ){
+            foreach (Weapon weapon in weaponHandler.currentWeapons){
+                maxCombatStats += weapon.stats;
+            }
+        }
+
+        currentCombatStats = new CombatStats(maxCombatStats);
     }
 }

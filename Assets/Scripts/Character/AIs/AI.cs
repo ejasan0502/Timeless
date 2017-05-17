@@ -13,7 +13,6 @@ public class AI : Character {
     protected CharacterMovement charMovt;
     protected AIRadius aiRadius;
     protected AudioSource audioSource;
-    protected WeaponHandler weaponHandler;
 
     private Vector3 moveToPosition = Vector3.zero;
     private Vector3 velocity = Vector3.zero;
@@ -39,12 +38,11 @@ public class AI : Character {
         charMovt = GetComponent<CharacterMovement>();
         aiRadius = GetComponentInChildren<AIRadius>();
         audioSource = GetComponent<AudioSource>();
-        weaponHandler = GetComponent<WeaponHandler>();
 
         moveToPosition = transform.position;
 
         maxCharStats = new CharStats(Settings.instance.base_enemy_charStats);
-        maxCombatStats = new CombatStats(Settings.instance.base_enemy_combatStats);
+        maxCombatStats = new CombatStats();
         currentCharStats = new CharStats(maxCharStats);
         currentCombatStats = new CombatStats(maxCombatStats);
     }
