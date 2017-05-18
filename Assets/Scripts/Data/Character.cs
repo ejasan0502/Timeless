@@ -52,8 +52,10 @@ public class Character : MonoBehaviour {
     protected virtual void Awake(){
         anim = GetComponent<Animator>();
         skinMeshRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
-        meshMat = new Material(skinMeshRenderer.sharedMaterial);
-        skinMeshRenderer.sharedMaterial = meshMat;
+        if ( skinMeshRenderer != null ) {
+            meshMat = new Material(skinMeshRenderer.sharedMaterial);
+            skinMeshRenderer.sharedMaterial = meshMat;
+        }
         weaponHandler = GetComponent<WeaponHandler>();
 
         currentCharStats = new CharStats(maxCharStats);

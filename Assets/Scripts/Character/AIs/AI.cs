@@ -6,13 +6,16 @@ using System.Collections.Generic;
 [RequireComponent(typeof(CharacterMovement))]
 public class AI : Character {
 
+    public float lookSpd = 2f;
     public float viewField = 0.5f;      // -1 to 1 where 1 is front and -1 is behind
+    public float fireViewField = 0.9f;
 
     private AIState aiState = AIState.idle;
 
     protected CharacterMovement charMovt;
     protected AIRadius aiRadius;
     protected AudioSource audioSource;
+    protected CharacterModel charModel;
 
     private Vector3 moveToPosition = Vector3.zero;
     private Vector3 velocity = Vector3.zero;
@@ -38,6 +41,7 @@ public class AI : Character {
         charMovt = GetComponent<CharacterMovement>();
         aiRadius = GetComponentInChildren<AIRadius>();
         audioSource = GetComponent<AudioSource>();
+        charModel = GetComponentInChildren<CharacterModel>();
 
         moveToPosition = transform.position;
 
@@ -51,6 +55,14 @@ public class AI : Character {
     }
     void FixedUpdate(){
         StateMachine();
+    }
+    void LateUpdate(){
+        if ( HasTarget && target.IsAlive ){
+            Vector3 direction = transform.position - target.transform.position;
+            Debug.DrawRay(charModel.spine1.position, direction*currentCombatStats.atkRange, Color.green);
+            Quaternion lookRot = Quaternion.LookRotation(direction.normalized,transform.up);
+            charModel.spine1.rotation = lookRot * charModel.spine1.rotation;
+        }
     }
 
     // Handle AI states logic
@@ -108,11 +120,31 @@ public class AI : Character {
         if ( HasTarget && target.IsAlive ){
             if ( Vector3.Distance(transform.position, target.transform.position) < currentCombatStats.atkRange ){
                 Stop();
-                if ( canAttack ){
-                    Attack();
-                    canAttack = false;
-                    StartCoroutine(AttackDelay());
+
+                Vector3 direction = target.transform.position - transform.position;
+                float dot = Vector3.Dot(direction.normalized, transform.forward);
+
+                // Attack when target is in view
+                if ( dot > fireViewField ){
+                    RaycastHit hit;
+                    // Check if attack has a clear line of sight
+                    Debug.DrawRay(charModel.spine1.position, direction*currentCombatStats.atkRange, Color.green);
+                    if ( Physics.Raycast(charModel.spine1.position, direction, out hit, currentCombatStats.atkRange) ){
+                        if ( hit.collider.tag != "Untagged" ){
+                            if ( canAttack ){
+                                Attack();
+                                canAttack = false;
+                                StartCoroutine(AttackDelay());
+                            }
+                        } else {
+                            // Do some logic
+                        }
+                    }
                 }
+
+                // Face target
+                Quaternion lookRot = Quaternion.LookRotation(direction.normalized,transform.up);
+                transform.rotation = Quaternion.Lerp(transform.rotation, lookRot, lookSpd*Time.deltaTime);
             } else if ( atkCounter < 1){
                 MoveTo(target.transform.position);
             }
